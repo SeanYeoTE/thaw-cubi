@@ -39,6 +39,7 @@ final class CubiView: UIView {
     private let propLayer = CALayer()
 
     private(set) var mood: CubiMood
+    private(set) var onFrost: Bool
     private let size: CGFloat
     private var playedInitialMotion = false
 
@@ -46,8 +47,10 @@ final class CubiView: UIView {
         didSet { updateAccessibility() }
     }
 
-    init(mood: CubiMood, size: CGFloat = 64) {
+    /// `onFrost` draws a white body so Cubi stays distinct on Frost (`cubeFill`) backgrounds.
+    init(mood: CubiMood, size: CGFloat = 64, onFrost: Bool = false) {
         self.mood = mood
+        self.onFrost = onFrost
         self.size = size
         super.init(frame: CGRect(x: 0, y: 0, width: size, height: size * Self.viewBox.height / Self.viewBox.width))
         backgroundColor = .clear
@@ -90,6 +93,12 @@ final class CubiView: UIView {
         guard window != nil, !playedInitialMotion else { return }
         playedInitialMotion = true
         playMotion(for: mood)
+    }
+
+    func setOnFrost(_ onFrost: Bool) {
+        guard onFrost != self.onFrost else { return }
+        self.onFrost = onFrost
+        buildBody()
     }
 
     func setMood(_ mood: CubiMood, animated: Bool) {
@@ -145,7 +154,7 @@ final class CubiView: UIView {
 
     private func buildBody() {
         bodyLayer.path = Self.bodyPath().cgPath
-        bodyLayer.fillColor = Theme.cubeFill.cgColor
+        bodyLayer.fillColor = (onFrost ? UIColor.white : Theme.cubeFill).cgColor
         bodyLayer.strokeColor = Theme.cubeOutline.cgColor
         bodyLayer.lineWidth = size < 64 ? 9 : 6
         bodyLayer.lineJoin = .round
@@ -155,7 +164,7 @@ final class CubiView: UIView {
         highlight.addQuadCurve(to: CGPoint(x: 52, y: 42), controlPoint: CGPoint(x: 40, y: 42))
         highlight.addLine(to: CGPoint(x: 68, y: 42))
         highlightLayer.path = highlight.cgPath
-        highlightLayer.strokeColor = UIColor.white.cgColor
+        highlightLayer.strokeColor = (onFrost ? Theme.cubeFill : UIColor.white).cgColor
         highlightLayer.fillColor = nil
         highlightLayer.lineWidth = 8
         highlightLayer.lineCap = .round
