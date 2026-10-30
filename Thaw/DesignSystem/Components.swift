@@ -91,7 +91,7 @@ final class PaydayCardView: UIControl {
         label.numberOfLines = 0
 
         let days = UILabel()
-        days.text = "\(daysLeft) days"
+        days.text = daysLeft == 1 ? "1 day" : "\(daysLeft) days"
         days.font = ThawFont.display(34)
         days.textColor = .white
         days.numberOfLines = 0
