@@ -7,10 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		034D0F658E7D05D2D150F08C /* ItemDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A199DB16D8CA01565CA1D0 /* ItemDetailViewController.swift */; };
+		143C42978466B1B5EE8EAB15 /* ScrollStackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77B232B93745E1F8D0B2AD4 /* ScrollStackViewController.swift */; };
+		1BED418734EE4CD5AC5FE304 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0893C400A63049F594E0D049 /* OFL.txt */; };
+		2B92CBD7D929238DFA7D1317 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40459DC7F21FA527CDD4EDB /* HomeViewController.swift */; };
+		35324E25139A016A1EE66770 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC10361CA6AD892FF7286B1 /* SettingsViewController.swift */; };
+		4724D224B9E4A2B5C9AF5776 /* PaydayNotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE44617D04F73E53BB79AE44 /* PaydayNotificationViewController.swift */; };
+		55ABEDA9BA4FA4A661C12B84 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C6FD23F86B998D45F66CF5 /* Theme.swift */; };
+		5AA9AE7F5A6EF49DFF335D08 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A2D557655FBDFAA2CD42A2 /* Components.swift */; };
 		66DC78546A58C9E96120FB40 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F643E9DC31DC1D8D2612A8C8 /* Assets.xcassets */; };
+		7257CC23CCDB2CC790723511 /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A504E812CFA3EF891C88120E /* Formatting.swift */; };
+		77446FE5744E1246A6A119B2 /* WantCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377D9BE27783B2F43FA60BAA /* WantCardView.swift */; };
 		7D84639939839902B993DE3F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CA6D24F6CB292754099B8D /* AppDelegate.swift */; };
 		95CB4B0F39F73C632849D468 /* ThawTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CF9D5B08FBDC17107454B /* ThawTests.swift */; };
+		9BF415AF2DEB3CEE68DB1D8B /* Want.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10507C7F0C9C40E5DC492E0B /* Want.swift */; };
 		9C8B01191DBA08A3B9A70570 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0147AF4CE7EB91C9076C794A /* SceneDelegate.swift */; };
+		9EBB3668C44C880491BC5B72 /* StillWantItViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4A8A25D66EDB6BFB83EEF4 /* StillWantItViewController.swift */; };
+		A1509D4BA82C8B621F800BFE /* WantStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1675D89853A74544E7BBD5AE /* WantStore.swift */; };
+		A810B5B80CED64D88C599EC8 /* AddWantViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8046A6BE40C36BFCD77BF1 /* AddWantViewController.swift */; };
+		BDF3C5346934F35A322E6649 /* RootTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66599F653BA988F281AB8C7 /* RootTabBarController.swift */; };
+		F09731979A4A95E50A8022FD /* BricolageGrotesque-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 41F4D283A05F4F0E6E80572E /* BricolageGrotesque-ExtraBold.ttf */; };
+		FA6896D273AFF5862011BBCF /* SavedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6666F05D171DC492048B8C /* SavedViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,23 +42,35 @@
 
 /* Begin PBXFileReference section */
 		0147AF4CE7EB91C9076C794A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		01A199DB16D8CA01565CA1D0 /* ItemDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailViewController.swift; sourceTree = "<group>"; };
+		0893C400A63049F594E0D049 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
+		0F8046A6BE40C36BFCD77BF1 /* AddWantViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWantViewController.swift; sourceTree = "<group>"; };
+		10507C7F0C9C40E5DC492E0B /* Want.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Want.swift; sourceTree = "<group>"; };
+		1675D89853A74544E7BBD5AE /* WantStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WantStore.swift; sourceTree = "<group>"; };
 		295AF7CFCF3F362F41C48E78 /* ThawTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ThawTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		3A15E083CAF36BD5CDDCAEBF /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
-		4DAEF127108ACB39E0FE335B /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		377D9BE27783B2F43FA60BAA /* WantCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WantCardView.swift; sourceTree = "<group>"; };
+		3A4A8A25D66EDB6BFB83EEF4 /* StillWantItViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillWantItViewController.swift; sourceTree = "<group>"; };
+		41F4D283A05F4F0E6E80572E /* BricolageGrotesque-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "BricolageGrotesque-ExtraBold.ttf"; sourceTree = "<group>"; };
+		4A6666F05D171DC492048B8C /* SavedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedViewController.swift; sourceTree = "<group>"; };
+		50C6FD23F86B998D45F66CF5 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		57A2D557655FBDFAA2CD42A2 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		6E8CF9D5B08FBDC17107454B /* ThawTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThawTests.swift; sourceTree = "<group>"; };
-		77E75CF905289E4CB7F47E41 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
-		9F848C6EB72A266FE5733606 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
-		A9D8EFE8548D33D4365EDA33 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		8FC10361CA6AD892FF7286B1 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		A504E812CFA3EF891C88120E /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
+		B66599F653BA988F281AB8C7 /* RootTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabBarController.swift; sourceTree = "<group>"; };
 		CC9B9F784C898762FCD1FDCB /* Thaw.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Thaw.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7CA6D24F6CB292754099B8D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		DE44617D04F73E53BB79AE44 /* PaydayNotificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayNotificationViewController.swift; sourceTree = "<group>"; };
+		E40459DC7F21FA527CDD4EDB /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		F643E9DC31DC1D8D2612A8C8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F77B232B93745E1F8D0B2AD4 /* ScrollStackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollStackViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
 		0ABA807237617B9019B1AFE5 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				4DAEF127108ACB39E0FE335B /* .gitkeep */,
+				D932BE2F8507C357F4F6E289 /* Fonts */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -49,7 +78,9 @@
 		0F28897218D3172056AAE1F6 /* DesignSystem */ = {
 			isa = PBXGroup;
 			children = (
-				3A15E083CAF36BD5CDDCAEBF /* .gitkeep */,
+				57A2D557655FBDFAA2CD42A2 /* Components.swift */,
+				F77B232B93745E1F8D0B2AD4 /* ScrollStackViewController.swift */,
+				50C6FD23F86B998D45F66CF5 /* Theme.swift */,
 			);
 			path = DesignSystem;
 			sourceTree = "<group>";
@@ -72,6 +103,14 @@
 			);
 			sourceTree = "<group>";
 		};
+		3833DB7B9FDEF8725354C6B5 /* ItemDetail */ = {
+			isa = PBXGroup;
+			children = (
+				01A199DB16D8CA01565CA1D0 /* ItemDetailViewController.swift */,
+			);
+			path = ItemDetail;
+			sourceTree = "<group>";
+		};
 		4223677E0C4B9625DB2A79F8 /* Thaw */ = {
 			isa = PBXGroup;
 			children = (
@@ -86,10 +125,35 @@
 			path = Thaw;
 			sourceTree = "<group>";
 		};
+		506C0387C4AB4EB1F2CDCB71 /* AddWant */ = {
+			isa = PBXGroup;
+			children = (
+				0F8046A6BE40C36BFCD77BF1 /* AddWantViewController.swift */,
+			);
+			path = AddWant;
+			sourceTree = "<group>";
+		};
+		52CA183F25871317DAFB7E6A /* Payday */ = {
+			isa = PBXGroup;
+			children = (
+				DE44617D04F73E53BB79AE44 /* PaydayNotificationViewController.swift */,
+			);
+			path = Payday;
+			sourceTree = "<group>";
+		};
+		716AF558EC639751482DC48C /* StillWantIt */ = {
+			isa = PBXGroup;
+			children = (
+				3A4A8A25D66EDB6BFB83EEF4 /* StillWantItViewController.swift */,
+			);
+			path = StillWantIt;
+			sourceTree = "<group>";
+		};
 		7EAAD4176F4794ED24548759 /* App */ = {
 			isa = PBXGroup;
 			children = (
 				D7CA6D24F6CB292754099B8D /* AppDelegate.swift */,
+				B66599F653BA988F281AB8C7 /* RootTabBarController.swift */,
 				0147AF4CE7EB91C9076C794A /* SceneDelegate.swift */,
 			);
 			path = App;
@@ -98,15 +162,30 @@
 		99ED9CA97B0071935DD580D8 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				9F848C6EB72A266FE5733606 /* .gitkeep */,
+				A504E812CFA3EF891C88120E /* Formatting.swift */,
+				1675D89853A74544E7BBD5AE /* WantStore.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		9A12A9AA4E7309E5517EE47C /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				8FC10361CA6AD892FF7286B1 /* SettingsViewController.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		B62A4F14D5B9011C7BA3FC6F /* Features */ = {
 			isa = PBXGroup;
 			children = (
-				77E75CF905289E4CB7F47E41 /* .gitkeep */,
+				506C0387C4AB4EB1F2CDCB71 /* AddWant */,
+				BF93A78A142F58DDAD001B7F /* Home */,
+				3833DB7B9FDEF8725354C6B5 /* ItemDetail */,
+				52CA183F25871317DAFB7E6A /* Payday */,
+				C384296E14A84211AF3F21DE /* Saved */,
+				9A12A9AA4E7309E5517EE47C /* Settings */,
+				716AF558EC639751482DC48C /* StillWantIt */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -114,9 +193,18 @@
 		B80F165FF0B009AFF8834F7B /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				A9D8EFE8548D33D4365EDA33 /* .gitkeep */,
+				10507C7F0C9C40E5DC492E0B /* Want.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		BF93A78A142F58DDAD001B7F /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				E40459DC7F21FA527CDD4EDB /* HomeViewController.swift */,
+				377D9BE27783B2F43FA60BAA /* WantCardView.swift */,
+			);
+			path = Home;
 			sourceTree = "<group>";
 		};
 		BFE57F8A872B42D3AD33AB18 /* ThawTests */ = {
@@ -125,6 +213,23 @@
 				6E8CF9D5B08FBDC17107454B /* ThawTests.swift */,
 			);
 			path = ThawTests;
+			sourceTree = "<group>";
+		};
+		C384296E14A84211AF3F21DE /* Saved */ = {
+			isa = PBXGroup;
+			children = (
+				4A6666F05D171DC492048B8C /* SavedViewController.swift */,
+			);
+			path = Saved;
+			sourceTree = "<group>";
+		};
+		D932BE2F8507C357F4F6E289 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				41F4D283A05F4F0E6E80572E /* BricolageGrotesque-ExtraBold.ttf */,
+				0893C400A63049F594E0D049 /* OFL.txt */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -209,6 +314,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				66DC78546A58C9E96120FB40 /* Assets.xcassets in Resources */,
+				F09731979A4A95E50A8022FD /* BricolageGrotesque-ExtraBold.ttf in Resources */,
+				1BED418734EE4CD5AC5FE304 /* OFL.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,8 +326,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A810B5B80CED64D88C599EC8 /* AddWantViewController.swift in Sources */,
 				7D84639939839902B993DE3F /* AppDelegate.swift in Sources */,
+				5AA9AE7F5A6EF49DFF335D08 /* Components.swift in Sources */,
+				7257CC23CCDB2CC790723511 /* Formatting.swift in Sources */,
+				2B92CBD7D929238DFA7D1317 /* HomeViewController.swift in Sources */,
+				034D0F658E7D05D2D150F08C /* ItemDetailViewController.swift in Sources */,
+				4724D224B9E4A2B5C9AF5776 /* PaydayNotificationViewController.swift in Sources */,
+				BDF3C5346934F35A322E6649 /* RootTabBarController.swift in Sources */,
+				FA6896D273AFF5862011BBCF /* SavedViewController.swift in Sources */,
 				9C8B01191DBA08A3B9A70570 /* SceneDelegate.swift in Sources */,
+				143C42978466B1B5EE8EAB15 /* ScrollStackViewController.swift in Sources */,
+				35324E25139A016A1EE66770 /* SettingsViewController.swift in Sources */,
+				9EBB3668C44C880491BC5B72 /* StillWantItViewController.swift in Sources */,
+				55ABEDA9BA4FA4A661C12B84 /* Theme.swift in Sources */,
+				9BF415AF2DEB3CEE68DB1D8B /* Want.swift in Sources */,
+				77446FE5744E1246A6A119B2 /* WantCardView.swift in Sources */,
+				A1509D4BA82C8B621F800BFE /* WantStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
