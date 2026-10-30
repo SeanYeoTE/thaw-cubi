@@ -20,6 +20,8 @@ targets:
       path: Thaw-Info.plist
       properties:
         CFBundleDisplayName: Thaw
+        UIAppFonts:
+          - BricolageGrotesque-ExtraBold.ttf
         UILaunchScreen: {}
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
