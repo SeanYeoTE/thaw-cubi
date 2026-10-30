@@ -2,14 +2,16 @@ import UIKit
 
 final class AddWantViewController: ScrollStackViewController {
     private let store: WantStore
+    private let reminders: Reminders
     private let onSave: () -> Void
     private let nameField = UITextField()
     private let priceField = UITextField()
     private let reasonView = UITextView()
     private let errorLabel = UILabel()
 
-    init(store: WantStore, onSave: @escaping () -> Void) {
+    init(store: WantStore, reminders: Reminders, onSave: @escaping () -> Void) {
         self.store = store
+        self.reminders = reminders
         self.onSave = onSave
         super.init(nibName: nil, bundle: nil)
         title = "Add to Thaw"
@@ -79,6 +81,7 @@ final class AddWantViewController: ScrollStackViewController {
             return showError("Enter a price above S$0.")
         }
         store.add(name: name, price: price, reason: reasonView.text ?? "")
+        reminders.refresh(requestingPermission: true)
         onSave()
         dismiss(animated: true)
     }

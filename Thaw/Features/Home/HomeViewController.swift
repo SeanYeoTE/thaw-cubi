@@ -2,10 +2,11 @@ import UIKit
 
 final class HomeViewController: ScrollStackViewController {
     private let store: WantStore
-    private let summaryLabel = UILabel()
+    private let reminders: Reminders
 
-    init(store: WantStore) {
+    init(store: WantStore, reminders: Reminders) {
         self.store = store
+        self.reminders = reminders
         super.init(nibName: nil, bundle: nil)
         title = "Cooling"
     }
@@ -69,7 +70,7 @@ final class HomeViewController: ScrollStackViewController {
     }
 
     @objc private func addTapped() {
-        let controller = AddWantViewController(store: store) { [weak self] in self?.render() }
+        let controller = AddWantViewController(store: store, reminders: reminders) { [weak self] in self?.render() }
         present(UINavigationController(rootViewController: controller), animated: true)
     }
 

@@ -11,9 +11,12 @@
 		143C42978466B1B5EE8EAB15 /* ScrollStackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77B232B93745E1F8D0B2AD4 /* ScrollStackViewController.swift */; };
 		1BED418734EE4CD5AC5FE304 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0893C400A63049F594E0D049 /* OFL.txt */; };
 		2B92CBD7D929238DFA7D1317 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40459DC7F21FA527CDD4EDB /* HomeViewController.swift */; };
-		35324E25139A016A1EE66770 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC10361CA6AD892FF7286B1 /* SettingsViewController.swift */; };
+		314A655DCAE970AF3128C20D /* PaydaySetupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFC22758084946F20CD5A /* PaydaySetupViewController.swift */; };
+		41269E2C1BDB189CE71D8DE0 /* BackendStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 774410E8898607E96664E034 /* BackendStateTests.swift */; };
 		4724D224B9E4A2B5C9AF5776 /* PaydayNotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE44617D04F73E53BB79AE44 /* PaydayNotificationViewController.swift */; };
+		53044846F6BE79392A10D335 /* Reminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11CF9F0D8CE38238BDC664E3 /* Reminders.swift */; };
 		55ABEDA9BA4FA4A661C12B84 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C6FD23F86B998D45F66CF5 /* Theme.swift */; };
+		5731B18B98459E850CF4E1C8 /* CubiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8070CCDDAC342DF0FAB276ED /* CubiView.swift */; };
 		5AA9AE7F5A6EF49DFF335D08 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A2D557655FBDFAA2CD42A2 /* Components.swift */; };
 		66DC78546A58C9E96120FB40 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F643E9DC31DC1D8D2612A8C8 /* Assets.xcassets */; };
 		7257CC23CCDB2CC790723511 /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A504E812CFA3EF891C88120E /* Formatting.swift */; };
@@ -24,8 +27,10 @@
 		9C8B01191DBA08A3B9A70570 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0147AF4CE7EB91C9076C794A /* SceneDelegate.swift */; };
 		9EBB3668C44C880491BC5B72 /* StillWantItViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4A8A25D66EDB6BFB83EEF4 /* StillWantItViewController.swift */; };
 		A1509D4BA82C8B621F800BFE /* WantStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1675D89853A74544E7BBD5AE /* WantStore.swift */; };
+		A77C71C06CA2CD2063A84A27 /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3B4E3149C88147A66F9AC8 /* NotificationScheduler.swift */; };
 		A810B5B80CED64D88C599EC8 /* AddWantViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8046A6BE40C36BFCD77BF1 /* AddWantViewController.swift */; };
 		BDF3C5346934F35A322E6649 /* RootTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66599F653BA988F281AB8C7 /* RootTabBarController.swift */; };
+		E6327A4C3C87CFA3E9F7856A /* StepperSettingRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CAFEF63EF52BAAC52FB8EFB /* StepperSettingRow.swift */; };
 		F09731979A4A95E50A8022FD /* BricolageGrotesque-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 41F4D283A05F4F0E6E80572E /* BricolageGrotesque-ExtraBold.ttf */; };
 		FA6896D273AFF5862011BBCF /* SavedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6666F05D171DC492048B8C /* SavedViewController.swift */; };
 /* End PBXBuildFile section */
@@ -46,22 +51,27 @@
 		0893C400A63049F594E0D049 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
 		0F8046A6BE40C36BFCD77BF1 /* AddWantViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWantViewController.swift; sourceTree = "<group>"; };
 		10507C7F0C9C40E5DC492E0B /* Want.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Want.swift; sourceTree = "<group>"; };
+		11CF9F0D8CE38238BDC664E3 /* Reminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminders.swift; sourceTree = "<group>"; };
 		1675D89853A74544E7BBD5AE /* WantStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WantStore.swift; sourceTree = "<group>"; };
 		295AF7CFCF3F362F41C48E78 /* ThawTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ThawTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		377D9BE27783B2F43FA60BAA /* WantCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WantCardView.swift; sourceTree = "<group>"; };
 		3A4A8A25D66EDB6BFB83EEF4 /* StillWantItViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillWantItViewController.swift; sourceTree = "<group>"; };
 		41F4D283A05F4F0E6E80572E /* BricolageGrotesque-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "BricolageGrotesque-ExtraBold.ttf"; sourceTree = "<group>"; };
 		4A6666F05D171DC492048B8C /* SavedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedViewController.swift; sourceTree = "<group>"; };
+		4BFDFC22758084946F20CD5A /* PaydaySetupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydaySetupViewController.swift; sourceTree = "<group>"; };
 		50C6FD23F86B998D45F66CF5 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		57A2D557655FBDFAA2CD42A2 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		6E8CF9D5B08FBDC17107454B /* ThawTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThawTests.swift; sourceTree = "<group>"; };
-		8FC10361CA6AD892FF7286B1 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		774410E8898607E96664E034 /* BackendStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendStateTests.swift; sourceTree = "<group>"; };
+		8070CCDDAC342DF0FAB276ED /* CubiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubiView.swift; sourceTree = "<group>"; };
+		9CAFEF63EF52BAAC52FB8EFB /* StepperSettingRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepperSettingRow.swift; sourceTree = "<group>"; };
 		A504E812CFA3EF891C88120E /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
 		B66599F653BA988F281AB8C7 /* RootTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabBarController.swift; sourceTree = "<group>"; };
 		CC9B9F784C898762FCD1FDCB /* Thaw.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Thaw.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7CA6D24F6CB292754099B8D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DE44617D04F73E53BB79AE44 /* PaydayNotificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayNotificationViewController.swift; sourceTree = "<group>"; };
 		E40459DC7F21FA527CDD4EDB /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		ED3B4E3149C88147A66F9AC8 /* NotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScheduler.swift; sourceTree = "<group>"; };
 		F643E9DC31DC1D8D2612A8C8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F77B232B93745E1F8D0B2AD4 /* ScrollStackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollStackViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -79,6 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				57A2D557655FBDFAA2CD42A2 /* Components.swift */,
+				8070CCDDAC342DF0FAB276ED /* CubiView.swift */,
 				F77B232B93745E1F8D0B2AD4 /* ScrollStackViewController.swift */,
 				50C6FD23F86B998D45F66CF5 /* Theme.swift */,
 			);
@@ -153,6 +164,7 @@
 			isa = PBXGroup;
 			children = (
 				D7CA6D24F6CB292754099B8D /* AppDelegate.swift */,
+				11CF9F0D8CE38238BDC664E3 /* Reminders.swift */,
 				B66599F653BA988F281AB8C7 /* RootTabBarController.swift */,
 				0147AF4CE7EB91C9076C794A /* SceneDelegate.swift */,
 			);
@@ -163,6 +175,7 @@
 			isa = PBXGroup;
 			children = (
 				A504E812CFA3EF891C88120E /* Formatting.swift */,
+				ED3B4E3149C88147A66F9AC8 /* NotificationScheduler.swift */,
 				1675D89853A74544E7BBD5AE /* WantStore.swift */,
 			);
 			path = Services;
@@ -171,7 +184,8 @@
 		9A12A9AA4E7309E5517EE47C /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				8FC10361CA6AD892FF7286B1 /* SettingsViewController.swift */,
+				4BFDFC22758084946F20CD5A /* PaydaySetupViewController.swift */,
+				9CAFEF63EF52BAAC52FB8EFB /* StepperSettingRow.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -210,6 +224,7 @@
 		BFE57F8A872B42D3AD33AB18 /* ThawTests */ = {
 			isa = PBXGroup;
 			children = (
+				774410E8898607E96664E034 /* BackendStateTests.swift */,
 				6E8CF9D5B08FBDC17107454B /* ThawTests.swift */,
 			);
 			path = ThawTests;
@@ -329,15 +344,19 @@
 				A810B5B80CED64D88C599EC8 /* AddWantViewController.swift in Sources */,
 				7D84639939839902B993DE3F /* AppDelegate.swift in Sources */,
 				5AA9AE7F5A6EF49DFF335D08 /* Components.swift in Sources */,
+				5731B18B98459E850CF4E1C8 /* CubiView.swift in Sources */,
 				7257CC23CCDB2CC790723511 /* Formatting.swift in Sources */,
 				2B92CBD7D929238DFA7D1317 /* HomeViewController.swift in Sources */,
 				034D0F658E7D05D2D150F08C /* ItemDetailViewController.swift in Sources */,
+				A77C71C06CA2CD2063A84A27 /* NotificationScheduler.swift in Sources */,
 				4724D224B9E4A2B5C9AF5776 /* PaydayNotificationViewController.swift in Sources */,
+				314A655DCAE970AF3128C20D /* PaydaySetupViewController.swift in Sources */,
+				53044846F6BE79392A10D335 /* Reminders.swift in Sources */,
 				BDF3C5346934F35A322E6649 /* RootTabBarController.swift in Sources */,
 				FA6896D273AFF5862011BBCF /* SavedViewController.swift in Sources */,
 				9C8B01191DBA08A3B9A70570 /* SceneDelegate.swift in Sources */,
 				143C42978466B1B5EE8EAB15 /* ScrollStackViewController.swift in Sources */,
-				35324E25139A016A1EE66770 /* SettingsViewController.swift in Sources */,
+				E6327A4C3C87CFA3E9F7856A /* StepperSettingRow.swift in Sources */,
 				9EBB3668C44C880491BC5B72 /* StillWantItViewController.swift in Sources */,
 				55ABEDA9BA4FA4A661C12B84 /* Theme.swift in Sources */,
 				9BF415AF2DEB3CEE68DB1D8B /* Want.swift in Sources */,
@@ -350,6 +369,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				41269E2C1BDB189CE71D8DE0 /* BackendStateTests.swift in Sources */,
 				95CB4B0F39F73C632849D468 /* ThawTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
