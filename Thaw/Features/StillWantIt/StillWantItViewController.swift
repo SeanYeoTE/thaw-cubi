@@ -1,11 +1,12 @@
 import UIKit
 
-final class StillWantItViewController: UIViewController {
+/// One-want-at-a-time decision, reached from Item detail.
+final class StillWantItViewController: ScrollStackViewController {
     private let store: WantStore
-    private var queue: [Want]
+    private let reminders: Reminders
+    private let queue: [Want]
     private var index = 0
     private var boughtTotal: Decimal = 0
-    private let total: Int
 
     private let progressLabel = UILabel()
     private let question = UILabel()
@@ -16,33 +17,33 @@ final class StillWantItViewController: UIViewController {
     private let buy = PillButton(title: "Yes, I'll buy it", style: .primary)
     private let unsure = PillButton(title: "Not sure? Wait one more payday", style: .quiet)
 
-    init(store: WantStore, queue: [Want]) {
+    init(store: WantStore, reminders: Reminders, queue: [Want]) {
         self.store = store
+        self.reminders = reminders
         self.queue = queue
-        self.total = queue.count
         super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = Theme.background
+    override func buildContent() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeTapped))
+        stack.spacing = 14
 
         progressLabel.font = ThawFont.body(13, weight: .medium)
         progressLabel.textColor = Theme.inkSecondary
         question.font = ThawFont.display(28)
         question.textColor = Theme.ink
-        question.numberOfLines = 0
         price.font = ThawFont.money(20)
         price.textColor = Theme.ink
         quote.font = ThawFont.body(16)
         quote.textColor = Theme.inkSecondary
-        quote.numberOfLines = 0
         funLabel.font = ThawFont.body(15)
         funLabel.textColor = Theme.inkSecondary
-        funLabel.numberOfLines = 0
+        for label in [progressLabel, question, price, quote, funLabel] {
+            label.numberOfLines = 0
+            label.adjustsFontForContentSizeCategory = true
+        }
 
         let card = CardView()
         let inner = UIStackView(arrangedSubviews: [progressLabel, question, price, quote])
@@ -57,21 +58,12 @@ final class StillWantItViewController: UIViewController {
             inner.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -18),
         ])
 
-        keep.addAction(UIAction { [weak self] _ in self?.decide(.skipped) }, for: .touchUpInside)
-        buy.addAction(UIAction { [weak self] _ in self?.decide(.bought) }, for: .touchUpInside)
+        keep.addAction(UIAction { [weak self] _ in self?.skip() }, for: .touchUpInside)
+        buy.addAction(UIAction { [weak self] _ in self?.decideBuy() }, for: .touchUpInside)
         unsure.addAction(UIAction { [weak self] _ in self?.decideWait() }, for: .touchUpInside)
 
-        let stack = UIStackView(arrangedSubviews: [card, funLabel, keep, buy, unsure])
-        stack.axis = .vertical
-        stack.spacing = 14
+        [card, funLabel, keep, buy, unsure].forEach(stack.addArrangedSubview)
         stack.setCustomSpacing(18, after: funLabel)
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(stack)
-        NSLayoutConstraint.activate([
-            stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Theme.Spacing.screen),
-            stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Theme.Spacing.screen),
-            stack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-        ])
         render()
     }
 
@@ -79,24 +71,39 @@ final class StillWantItViewController: UIViewController {
 
     private func render() {
         let want = current
-        progressLabel.text = "Payday review · \(index + 1) of \(total)"
+        progressLabel.text = "Payday review · \(index + 1) of \(queue.count)"
         question.text = "Still want the \(want.name.lowercased())?"
         price.text = Formatting.sgd(want.price)
         quote.text = "On \(Formatting.paydayDate(want.frozenOn)), you said\n\u{201C}\(want.reason.isEmpty ? "No reason written." : want.reason)\u{201D}"
-        let left = store.payday.funMoney - boughtTotal
-        let ifBuy = left - want.price
-        funLabel.text = "Fun money if you buy: \(Formatting.sgd(ifBuy)) of \(Formatting.sgd(store.payday.funMoney)) left"
+        let budget = store.effectiveSettings.funMoney
+        let ifBuy = budget - boughtTotal - want.price
+        funLabel.text = "Fun money if you buy: \(Formatting.sgd(ifBuy)) of \(Formatting.sgd(budget)) left"
         keep.configuration?.title = "Skip and keep \(Formatting.sgd(want.price))"
     }
 
-    private func decide(_ status: Want.Status) {
-        store.update(current.id, status: status)
-        if status == .bought { boughtTotal += current.price }
+    private func skip() {
+        let want = current
+        store.update(want.id, status: .skipped)
+        reminders.refresh(requestingPermission: false)
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+        navigationController?.setNavigationBarHidden(true, animated: true)
+        MomentView.present(on: view, mood: .proud, line: CubiMood.proudLine(amount: Formatting.sgd(want.price))) { [weak self] in
+            self?.navigationController?.setNavigationBarHidden(false, animated: false)
+            self?.advance()
+        }
+    }
+
+    private func decideBuy() {
+        let want = current
+        store.decide(id: want.id, keep: true)
+        boughtTotal += want.price
+        reminders.refresh(requestingPermission: false)
         advance()
     }
 
     private func decideWait() {
         store.decide(id: current.id, keep: false)
+        reminders.refresh(requestingPermission: false)
         advance()
     }
 

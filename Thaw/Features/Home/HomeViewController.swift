@@ -42,18 +42,18 @@ final class HomeViewController: ScrollStackViewController {
 
     private func render() {
         clearContent()
-        let thawing = store.cooling.filter { !$0.isUnderTimerThreshold }
+        let thawing = store.reviewQueue
         let thawingTotal = thawing.reduce(Decimal(0)) { $0 + $1.price }
         let payday = PaydayCardView(
             daysLeft: store.payday.daysUntilNext,
             nextPayday: Formatting.paydayDate(store.payday.nextPayday),
-            subtitle: "\(thawing.count) wants thaw then · \(Formatting.sgd(thawingTotal)) vs \(Formatting.sgd(store.payday.funMoney)) fun money"
+            subtitle: "\(thawing.count) \(thawing.count == 1 ? "want thaws" : "wants thaw") then · \(Formatting.sgd(thawingTotal)) vs \(Formatting.sgd(store.payday.funMoney)) fun money"
         )
         payday.addTarget(self, action: #selector(paydayTapped), for: .touchUpInside)
         stack.addArrangedSubview(payday)
 
         let items = store.cooling.map { want -> UIView in
-            let card = WantCardView(want: want)
+            let card = WantCardView(want: want, settings: store.effectiveSettings)
             card.addAction(UIAction { [weak self] _ in self?.open(want.id) }, for: .touchUpInside)
             return card
         }
@@ -66,7 +66,7 @@ final class HomeViewController: ScrollStackViewController {
 
     private func open(_ id: UUID) {
         guard let want = store.want(id: id) else { return }
-        navigationController?.pushViewController(ItemDetailViewController(store: store, want: want), animated: true)
+        navigationController?.pushViewController(ItemDetailViewController(store: store, reminders: reminders, want: want), animated: true)
     }
 
     @objc private func addTapped() {

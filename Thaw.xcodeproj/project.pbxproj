@@ -25,6 +25,7 @@
 		77446FE5744E1246A6A119B2 /* WantCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377D9BE27783B2F43FA60BAA /* WantCardView.swift */; };
 		7D84639939839902B993DE3F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CA6D24F6CB292754099B8D /* AppDelegate.swift */; };
 		95CB4B0F39F73C632849D468 /* ThawTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CF9D5B08FBDC17107454B /* ThawTests.swift */; };
+		99F0B8ECD534804C44AD9586 /* MomentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5FDD6B49F220715E738273 /* MomentView.swift */; };
 		9BF415AF2DEB3CEE68DB1D8B /* Want.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10507C7F0C9C40E5DC492E0B /* Want.swift */; };
 		9C8B01191DBA08A3B9A70570 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0147AF4CE7EB91C9076C794A /* SceneDelegate.swift */; };
 		9EBB3668C44C880491BC5B72 /* StillWantItViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4A8A25D66EDB6BFB83EEF4 /* StillWantItViewController.swift */; };
@@ -61,6 +62,7 @@
 		377D9BE27783B2F43FA60BAA /* WantCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WantCardView.swift; sourceTree = "<group>"; };
 		39B4F29CBE565E362EFA5635 /* AdaptiveViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveViews.swift; sourceTree = "<group>"; };
 		3A4A8A25D66EDB6BFB83EEF4 /* StillWantItViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillWantItViewController.swift; sourceTree = "<group>"; };
+		3D5FDD6B49F220715E738273 /* MomentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentView.swift; sourceTree = "<group>"; };
 		41F4D283A05F4F0E6E80572E /* BricolageGrotesque-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "BricolageGrotesque-ExtraBold.ttf"; sourceTree = "<group>"; };
 		4A6666F05D171DC492048B8C /* SavedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedViewController.swift; sourceTree = "<group>"; };
 		4BFDFC22758084946F20CD5A /* PaydaySetupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydaySetupViewController.swift; sourceTree = "<group>"; };
@@ -118,6 +120,14 @@
 				BFE57F8A872B42D3AD33AB18 /* ThawTests */,
 				11B85A4B01DB89817AA355AC /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		2B071A0D10BC361FA3DEBF6F /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				3D5FDD6B49F220715E738273 /* MomentView.swift */,
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 		3833DB7B9FDEF8725354C6B5 /* ItemDetail */ = {
@@ -208,6 +218,7 @@
 				52CA183F25871317DAFB7E6A /* Payday */,
 				C384296E14A84211AF3F21DE /* Saved */,
 				9A12A9AA4E7309E5517EE47C /* Settings */,
+				2B071A0D10BC361FA3DEBF6F /* Shared */,
 				716AF558EC639751482DC48C /* StillWantIt */,
 			);
 			path = Features;
@@ -358,6 +369,7 @@
 				7257CC23CCDB2CC790723511 /* Formatting.swift in Sources */,
 				2B92CBD7D929238DFA7D1317 /* HomeViewController.swift in Sources */,
 				034D0F658E7D05D2D150F08C /* ItemDetailViewController.swift in Sources */,
+				99F0B8ECD534804C44AD9586 /* MomentView.swift in Sources */,
 				A77C71C06CA2CD2063A84A27 /* NotificationScheduler.swift in Sources */,
 				4724D224B9E4A2B5C9AF5776 /* PaydayNotificationViewController.swift in Sources */,
 				FFEA9574F9EDCC4AC5B0AC78 /* PaydayReviewViewController.swift in Sources */,

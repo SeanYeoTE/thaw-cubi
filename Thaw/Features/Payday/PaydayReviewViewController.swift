@@ -90,7 +90,7 @@ final class PaydayReviewViewController: ScrollStackViewController {
         let name = makeLabel(want.name, font: ThawFont.body(16, weight: .semibold))
         let reason = makeLabel(want.reason.isEmpty ? "No reason written." : "\u{201C}\(want.reason)\u{201D}",
                                font: ThawFont.body(13), color: Theme.inkSecondary)
-        reason.numberOfLines = 2
+        reason.numberOfLines = 0
         let price = makeLabel(Formatting.sgd(want.price), font: ThawFont.money(16))
         price.setContentHuggingPriority(.required, for: .horizontal)
         price.setContentCompressionResistancePriority(.required, for: .horizontal)

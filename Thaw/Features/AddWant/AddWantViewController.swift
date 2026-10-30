@@ -20,6 +20,7 @@ final class AddWantViewController: ScrollStackViewController {
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
 
     override func buildContent() {
+        let settings = store.effectiveSettings
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelTapped))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add to Thaw", style: .done, target: self, action: #selector(saveTapped))
 
@@ -40,11 +41,12 @@ final class AddWantViewController: ScrollStackViewController {
         reasonView.layer.borderWidth = 1
         reasonView.layer.borderColor = Theme.border.cgColor
         reasonView.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
-        reasonView.heightAnchor.constraint(equalToConstant: 120).isActive = true
+        reasonView.heightAnchor.constraint(greaterThanOrEqualToConstant: 120).isActive = true
+        reasonView.adjustsFontForContentSizeCategory = true
         stack.addArrangedSubview(reasonView)
 
         let note = makeLabel(
-            "Thaw will read this back to you when it thaws. Items under S$30 use a 2-day timer; the rest thaw on payday.",
+            "Thaw will read this back to you when it thaws. Items under \(Formatting.sgd(settings.timerThreshold)) use a \(settings.timerDays)-day timer; the rest thaw on payday.",
             font: ThawFont.body(13),
             color: Theme.inkSecondary
         )
@@ -53,6 +55,7 @@ final class AddWantViewController: ScrollStackViewController {
         errorLabel.font = ThawFont.body(13)
         errorLabel.textColor = .systemRed
         errorLabel.numberOfLines = 0
+        errorLabel.adjustsFontForContentSizeCategory = true
         errorLabel.isHidden = true
         stack.addArrangedSubview(errorLabel)
     }
@@ -67,7 +70,8 @@ final class AddWantViewController: ScrollStackViewController {
         field.layer.borderColor = Theme.border.cgColor
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 14, height: 1))
         field.leftViewMode = .always
-        field.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        field.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true
+        field.adjustsFontForContentSizeCategory = true
     }
 
     @objc private func cancelTapped() {
@@ -83,7 +87,12 @@ final class AddWantViewController: ScrollStackViewController {
         store.add(name: name, price: price, reason: reasonView.text ?? "")
         reminders.refresh(requestingPermission: true)
         onSave()
-        dismiss(animated: true)
+        view.endEditing(true)
+        navigationItem.leftBarButtonItem?.isEnabled = false
+        navigationItem.rightBarButtonItem?.isEnabled = false
+        MomentView.present(on: view, mood: .frozen, line: CubiMood.frozen.line) { [weak self] in
+            self?.dismiss(animated: true)
+        }
     }
 
     private func showError(_ message: String) {
