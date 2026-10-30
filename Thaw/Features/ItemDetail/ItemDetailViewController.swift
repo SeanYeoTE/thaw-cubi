@@ -52,12 +52,28 @@ final class ItemDetailViewController: ScrollStackViewController {
         stack.addArrangedSubview(thaws)
 
         let wait = PillButton(title: "Wait one more payday", style: .secondary)
-        wait.addAction(UIAction { [weak self] _ in self?.navigationController?.popViewController(animated: true) }, for: .touchUpInside)
+        wait.addAction(UIAction { [weak self] _ in self?.waitOnePayday() }, for: .touchUpInside)
         stack.addArrangedSubview(wait)
+
+        let decide = PillButton(title: "Decide now", style: .quiet)
+        decide.addAction(UIAction { [weak self] _ in self?.decideNow() }, for: .touchUpInside)
+        stack.addArrangedSubview(decide)
 
         let skip = PillButton(title: "Skip it now", style: .quiet)
         skip.addAction(UIAction { [weak self] _ in self?.skip() }, for: .touchUpInside)
         stack.addArrangedSubview(skip)
+    }
+
+    private func decideNow() {
+        let controller = StillWantItViewController(store: store, queue: [want])
+        let nav = UINavigationController(rootViewController: controller)
+        nav.modalPresentationStyle = .fullScreen
+        present(nav, animated: true)
+    }
+
+    private func waitOnePayday() {
+        store.decide(id: want.id, keep: false)
+        navigationController?.popViewController(animated: true)
     }
 
     private func skip() {

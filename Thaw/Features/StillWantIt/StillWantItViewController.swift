@@ -59,7 +59,7 @@ final class StillWantItViewController: UIViewController {
 
         keep.addAction(UIAction { [weak self] _ in self?.decide(.skipped) }, for: .touchUpInside)
         buy.addAction(UIAction { [weak self] _ in self?.decide(.bought) }, for: .touchUpInside)
-        unsure.addAction(UIAction { [weak self] _ in self?.advance() }, for: .touchUpInside)
+        unsure.addAction(UIAction { [weak self] _ in self?.decideWait() }, for: .touchUpInside)
 
         let stack = UIStackView(arrangedSubviews: [card, funLabel, keep, buy, unsure])
         stack.axis = .vertical
@@ -92,6 +92,11 @@ final class StillWantItViewController: UIViewController {
     private func decide(_ status: Want.Status) {
         store.update(current.id, status: status)
         if status == .bought { boughtTotal += current.price }
+        advance()
+    }
+
+    private func decideWait() {
+        store.decide(id: current.id, keep: false)
         advance()
     }
 

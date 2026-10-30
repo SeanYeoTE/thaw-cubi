@@ -75,7 +75,8 @@ final class HomeViewController: ScrollStackViewController {
     }
 
     @objc private func paydayTapped() {
-        let controller = PaydayNotificationViewController(store: store)
+        let controller = PaydayNotificationViewController(store: store, reminders: reminders)
+        controller.modalPresentationStyle = .fullScreen
         present(controller, animated: true)
     }
 }
