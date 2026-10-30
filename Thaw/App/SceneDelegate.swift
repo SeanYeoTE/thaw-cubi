@@ -3,8 +3,9 @@ import UIKit
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
-    private let store = WantStore.launch(arguments: ProcessInfo.processInfo.arguments)
-    private lazy var reminders = Reminders(store: store)
+    private var appDelegate: AppDelegate? { UIApplication.shared.delegate as? AppDelegate }
+    private var store: WantStore { appDelegate?.store ?? .shared }
+    private var reminders: Reminders { appDelegate?.reminders ?? Reminders(store: store) }
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options: UIScene.ConnectionOptions) {
         guard let windowScene = scene as? UIWindowScene else { return }
@@ -15,6 +16,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.rootViewController = store.settings == nil ? onboarding() : tabs()
         window.makeKeyAndVisible()
         self.window = window
+        appDelegate?.router.window = window
+        appDelegate?.router.presentIfPossible()
     }
 
     private func tabs() -> UIViewController {
@@ -26,6 +29,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             guard let self, let window else { return }
             UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve) {
                 window.rootViewController = self.tabs()
+            } completion: { _ in
+                self.appDelegate?.router.presentIfPossible()
             }
         })
     }
