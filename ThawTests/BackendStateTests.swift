@@ -140,4 +140,36 @@ final class BackendStateTests: XCTestCase {
         let fresh = WantStore.launch(arguments: [])
         XCTAssertTrue(fresh.wants.isEmpty)
     }
+
+    func testFixtureThawsAtIsNeverStale() {
+        let now = date(2026, 10, 31, 10)
+        let wants = WantStore.fixtureWants(now: now, settings: .default, calendar: calendar)
+        let grinder = wants.first { $0.name == "Espresso grinder" }
+        XCTAssertEqual(grinder?.thawsAt, date(2026, 11, 25, 9))
+        for want in wants where want.price >= 30 {
+            XCTAssertEqual(want.thawsAt, date(2026, 11, 25, 9))
+        }
+        let phone = wants.first { $0.name == "Phone case" }
+        XCTAssertEqual(phone?.thawsAt, calendar.date(byAdding: .day, value: 2, to: phone?.frozenOn ?? now))
+    }
+
+    func testWaitFromStaleThawsAtLandsInFuture() {
+        let now = date(2026, 10, 31, 10)
+        let stale = Want(id: UUID(), name: "Old", price: 100, reason: "", frozenOn: date(2026, 10, 1),
+                         progress: 0, status: .cooling, thawsAt: date(2026, 10, 25, 9))
+        let store = WantStore(wants: [stale], payday: WantStore.fixturePayday())
+        store.save(settings: .default)
+        store.decide(id: stale.id, keep: false, now: now)
+        XCTAssertGreaterThan(store.want(id: stale.id)?.thawsAt ?? .distantPast, now)
+    }
+
+    func testWaitFromFutureThawsAtAdvancesOnePayday() {
+        let now = date(2026, 10, 31, 10)
+        let future = Want(id: UUID(), name: "New", price: 100, reason: "", frozenOn: now,
+                          progress: 0, status: .cooling, thawsAt: date(2026, 11, 25, 9))
+        let store = WantStore(wants: [future], payday: WantStore.fixturePayday())
+        store.save(settings: .default)
+        store.decide(id: future.id, keep: false, now: now)
+        XCTAssertGreaterThan(store.want(id: future.id)?.thawsAt ?? .distantPast, date(2026, 11, 25, 9))
+    }
 }

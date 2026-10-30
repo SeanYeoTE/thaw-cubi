@@ -55,7 +55,7 @@ nonisolated final class WantStore: @unchecked Sendable {
         let store = WantStore(fileURL: url)
         if let index = arguments.firstIndex(of: "-thawFixture"),
            arguments.indices.contains(index + 1), arguments[index + 1] == "sprint1" {
-            store.wants = fixtureWants()
+            store.wants = fixtureWants(settings: store.effectiveSettings)
             store.persist()
         }
         return store
@@ -82,18 +82,12 @@ nonisolated final class WantStore: @unchecked Sendable {
         persist()
     }
 
-    func decide(id: UUID, keep: Bool) {
+    func decide(id: UUID, keep: Bool, now: Date = .now) {
         guard let index = wants.firstIndex(where: { $0.id == id }) else { return }
         if keep {
             wants[index].status = .bought
         } else {
-            let current = effectiveSettings
-            let now = Date.now
-            var next = current.paydayAfter(wants[index].thawsAt, calendar: calendar)
-            while next <= now {
-                next = current.paydayAfter(next, calendar: calendar)
-            }
-            wants[index].thawsAt = next
+            wants[index].thawsAt = effectiveSettings.paydayAfter(max(wants[index].thawsAt, now), calendar: calendar)
         }
         persist()
     }
@@ -141,18 +135,22 @@ nonisolated final class WantStore: @unchecked Sendable {
         return result
     }
 
-    static func fixtureWants() -> [Want] {
-        let now = Date.now
+    static func fixtureWants(now: Date = .now, settings: PaydaySettings = .default,
+                             calendar: Calendar = .current) -> [Want] {
+        func make(_ name: String, _ price: Decimal, _ reason: String, daysAgo: Int, progress: Double) -> Want {
+            let frozenOn = now.addingTimeInterval(-86_400 * Double(daysAgo))
+            let thawsAt = price < settings.timerThreshold
+                ? calendar.date(byAdding: .day, value: settings.timerDays, to: frozenOn) ?? frozenOn
+                : settings.nextPayday(after: now, calendar: calendar)
+            return Want(id: UUID(), name: name, price: price, reason: reason, frozenOn: frozenOn,
+                        progress: progress, status: .cooling, thawsAt: thawsAt)
+        }
         return [
-            Want(id: UUID(), name: "Phone case", price: 24, reason: "Mine has a crack near the camera.",
-                 frozenOn: now.addingTimeInterval(-86_400 * 1), progress: 0.8, status: .cooling),
-            Want(id: UUID(), name: "Mechanical keyboard", price: 189,
-                 reason: "My current one double-types. I type all day for work.",
-                 frozenOn: now.addingTimeInterval(-86_400 * 2), progress: 0.59, status: .cooling),
-            Want(id: UUID(), name: "Linen overshirt", price: 69, reason: "Good for the hot weather.",
-                 frozenOn: now.addingTimeInterval(-86_400 * 4), progress: 0.4, status: .cooling),
-            Want(id: UUID(), name: "Espresso grinder", price: 420, reason: "Pre-ground tastes flat.",
-                 frozenOn: now.addingTimeInterval(-86_400 * 6), progress: 0.2, status: .cooling),
+            make("Phone case", 24, "Mine has a crack near the camera.", daysAgo: 1, progress: 0.8),
+            make("Mechanical keyboard", 189, "My current one double-types. I type all day for work.",
+                 daysAgo: 2, progress: 0.59),
+            make("Linen overshirt", 69, "Good for the hot weather.", daysAgo: 4, progress: 0.4),
+            make("Espresso grinder", 420, "Pre-ground tastes flat.", daysAgo: 6, progress: 0.2),
         ]
     }
 
