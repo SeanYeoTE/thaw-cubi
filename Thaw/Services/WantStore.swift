@@ -1,29 +1,135 @@
 import Foundation
+import os
 
 nonisolated final class WantStore: @unchecked Sendable {
     static let shared = WantStore()
 
-    private(set) var wants: [Want]
-    let payday: PaydaySchedule
-    private let calendar = Calendar(identifier: .gregorian)
+    private static let logger = Logger(subsystem: "app.thaw", category: "WantStore")
 
+    private struct Persisted: Codable {
+        var wants: [Want]
+        var settings: PaydaySettings?
+    }
+
+    private(set) var wants: [Want]
+    private(set) var settings: PaydaySettings?
+    private let fileURL: URL?
+    private let legacyPayday: PaydaySchedule?
+    private let calendar = Calendar.current
+
+    /// Legacy in-memory store with a fixed payday.
     init(wants: [Want] = WantStore.fixtureWants(), payday: PaydaySchedule = WantStore.fixturePayday()) {
         self.wants = wants
-        self.payday = payday
+        self.settings = nil
+        self.fileURL = nil
+        self.legacyPayday = payday
+    }
+
+    /// Loads state from `fileURL`; nil keeps everything in memory.
+    init(fileURL: URL?) {
+        self.fileURL = fileURL
+        self.legacyPayday = nil
+        var loaded = Persisted(wants: [], settings: nil)
+        if let fileURL, let data = try? Data(contentsOf: fileURL) {
+            do {
+                loaded = try JSONDecoder().decode(Persisted.self, from: data)
+            } catch {
+                Self.logger.error("Could not decode state: \(error.localizedDescription, privacy: .public)")
+            }
+        }
+        self.wants = loaded.wants
+        self.settings = loaded.settings
+    }
+
+    static var defaultFileURL: URL? {
+        guard let base = try? FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask,
+                                                      appropriateFor: nil, create: true) else { return nil }
+        return base.appendingPathComponent("Thaw", isDirectory: true).appendingPathComponent("state.json")
+    }
+
+    static func launch(arguments: [String] = ProcessInfo.processInfo.arguments) -> WantStore {
+        let url = defaultFileURL
+        if arguments.contains("-thawReset") || arguments.contains("-thawFixture"), let url {
+            try? FileManager.default.removeItem(at: url)
+        }
+        let store = WantStore(fileURL: url)
+        if let index = arguments.firstIndex(of: "-thawFixture"),
+           arguments.indices.contains(index + 1), arguments[index + 1] == "sprint1" {
+            store.wants = fixtureWants()
+            store.persist()
+        }
+        return store
+    }
+
+    var effectiveSettings: PaydaySettings { settings ?? .default }
+
+    var payday: PaydaySchedule {
+        if let legacyPayday { return legacyPayday }
+        let current = effectiveSettings
+        return PaydaySchedule(nextPayday: current.nextPayday(after: .now, calendar: calendar),
+                              funMoney: current.funMoney)
+    }
+
+    var daysUntilNext: Int { payday.daysUntilNext }
+
+    var thawedWants: [Want] {
+        let now = Date.now
+        return cooling.filter { $0.thawsAt <= now }
+    }
+
+    func save(settings newSettings: PaydaySettings) {
+        settings = newSettings
+        persist()
+    }
+
+    func decide(id: UUID, keep: Bool) {
+        guard let index = wants.firstIndex(where: { $0.id == id }) else { return }
+        if keep {
+            wants[index].status = .bought
+        } else {
+            let current = effectiveSettings
+            let now = Date.now
+            var next = current.paydayAfter(wants[index].thawsAt, calendar: calendar)
+            while next <= now {
+                next = current.paydayAfter(next, calendar: calendar)
+            }
+            wants[index].thawsAt = next
+        }
+        persist()
+    }
+
+    private func persist() {
+        guard let fileURL else { return }
+        do {
+            try FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(),
+                                                    withIntermediateDirectories: true)
+            let data = try JSONEncoder().encode(Persisted(wants: wants, settings: settings))
+            try data.write(to: fileURL, options: .atomic)
+        } catch {
+            Self.logger.error("Could not save state: \(error.localizedDescription, privacy: .public)")
+        }
     }
 
     var cooling: [Want] { wants.filter { $0.status == .cooling } }
     var saved: [Want] { wants.filter { $0.status != .cooling } }
 
     func add(name: String, price: Decimal, reason: String) {
-        let want = Want(id: UUID(), name: name, price: Self.rounded(price), reason: reason,
-                        frozenOn: .now, progress: 0, status: .cooling)
+        let current = effectiveSettings
+        let now = Date.now
+        let rounded = Self.rounded(price)
+        let thawsAt = rounded < current.timerThreshold
+            ? calendar.date(byAdding: .day, value: current.timerDays, to: now) ?? now
+            : current.nextPayday(after: now, calendar: calendar)
+        let want = Want(id: UUID(), name: name, price: rounded, reason: reason,
+                        frozenOn: now, progress: 0, status: .cooling, thawsAt: thawsAt)
         wants.insert(want, at: 0)
+        persist()
     }
 
     func update(_ id: UUID, status: Want.Status) {
         guard let index = wants.firstIndex(where: { $0.id == id }) else { return }
         wants[index].status = status
+        persist()
     }
 
     func want(id: UUID) -> Want? { wants.first { $0.id == id } }
