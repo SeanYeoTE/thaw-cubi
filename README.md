@@ -1,6 +1,6 @@
 # Thaw
 
-iOS UIKit app for the "Wishlist Cooldown" design. Sprint 1 covers the core flow.
+iOS UIKit app for the "Wishlist Cooldown" design. Sprint 1 built the core flow; sprint 2 adds payday setup, the Keep/Wait review, Cubi, Dynamic Type, persistence and local notifications.
 
 ## Screens (sprint 1)
 
@@ -13,14 +13,24 @@ iOS UIKit app for the "Wishlist Cooldown" design. Sprint 1 covers the core flow.
 | Still want it? (payday review) | `Thaw/Features/StillWantIt/StillWantItViewController.swift` |
 | Saved dashboard | `Thaw/Features/Saved/SavedViewController.swift` |
 
-Settings is a placeholder; payday setup is sprint 2.
+| Payday setup (onboarding + Settings tab) | `Thaw/Features/Settings/` |
+| Payday review (Keep/Wait vs fun money) | `Thaw/Features/Payday/PaydayReviewViewController.swift` |
+
+Sprint 2 contract: `docs/contracts/sprint-2.md`. QA reports: `docs/qa/`.
 
 ## Architecture
 
-- Plain UIKit view controllers with a shared `WantStore` (in memory, fixtures seeded). The handover's VIPER-per-screen rule is not applied in sprint 1.
+- Plain UIKit view controllers with a shared `WantStore` persisted as JSON in Application Support. The handover's VIPER-per-screen rule is not applied.
 - Design tokens and components live in `Thaw/DesignSystem/`.
 - Display type uses Bricolage Grotesque ExtraBold (`Thaw/Resources/Fonts/`, SIL OFL 1.1, licence in `OFL.txt`). Body text uses the system font.
-- Local payday notifications are not built yet.
+- Payday rules, fun money and notification scheduling live in `Thaw/Models` and `Thaw/Services`. Notification permission is asked on first Add or first Save of settings, never at launch.
+- Cubi (`CubiView`) shows only at Home status, Add success, review header and Skip.
+- Fonts scale with Dynamic Type; the app is light mode only.
+
+## Launch arguments
+
+- `-thawReset` clears saved state (shows onboarding).
+- `-thawFixture sprint1` seeds the four sample wants.
 
 ## Setup
 
@@ -36,4 +46,4 @@ xcodebuild -project Thaw.xcodeproj -scheme Thaw -sdk iphonesimulator -derivedDat
 xcodebuild -project Thaw.xcodeproj -scheme Thaw -destination 'platform=iOS Simulator,name=iPhone 17' -derivedDataPath .build/dd test
 ```
 
-Unit tests cover the store, cooling split, rounding and formatting.
+Unit tests (21) cover payday rules, fun money, persistence, the store and formatting. Notification scheduling is compile-checked only.

@@ -1,7 +1,7 @@
 import UIKit
 
 final class WantCardView: UIControl {
-    init(want: Want) {
+    init(want: Want, settings: PaydaySettings) {
         super.init(frame: .zero)
         let card = CardView()
         card.isUserInteractionEnabled = false
@@ -12,27 +12,32 @@ final class WantCardView: UIControl {
         name.text = want.name
         name.font = ThawFont.body(16, weight: .semibold)
         name.textColor = Theme.ink
-        name.lineBreakMode = .byTruncatingTail
+        name.numberOfLines = 0
+        name.adjustsFontForContentSizeCategory = true
 
         let price = UILabel()
         price.text = Formatting.sgd(want.price)
         price.font = ThawFont.money(16)
         price.textColor = Theme.ink
+        price.adjustsFontForContentSizeCategory = true
         price.setContentHuggingPriority(.required, for: .horizontal)
+        price.setContentCompressionResistancePriority(.required, for: .horizontal)
 
-        let header = UIStackView(arrangedSubviews: [name, price])
+        let header = AdaptiveStackView(arrangedSubviews: [name, price])
+        header.compactAlignment = .firstBaseline
         header.spacing = 8
 
-        let bar = ProgressBarView(fraction: CGFloat(want.progress),
-                                  color: want.isUnderTimerThreshold ? Theme.warm : Theme.accent)
+        let isTimer = want.price < settings.timerThreshold
+        let bar = ProgressBarView(fraction: CGFloat(want.progress), color: isTimer ? Theme.warm : Theme.accent)
 
         let status = UILabel()
         status.font = ThawFont.body(13)
         status.textColor = Theme.inkSecondary
         status.numberOfLines = 0
-        status.text = want.isUnderTimerThreshold
-            ? "Under S$30 · 2-day timer · thaws Sun, 15 Nov"
-            : "Thaws on payday"
+        status.adjustsFontForContentSizeCategory = true
+        status.text = isTimer
+            ? "Under \(Formatting.sgd(settings.timerThreshold)) · \(settings.timerDays)-day timer · thaws \(Formatting.paydayDate(want.thawsAt))"
+            : "Thaws on payday · \(Formatting.paydayDate(want.thawsAt))"
 
         let stack = UIStackView(arrangedSubviews: [header, bar, status])
         stack.axis = .vertical
