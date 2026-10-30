@@ -255,6 +255,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.tinkercademy.ThawTests;
 				SDKROOT = iphoneos;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Thaw.app/Thaw";
 			};
@@ -272,6 +273,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.tinkercademy.ThawTests;
 				SDKROOT = iphoneos;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Thaw.app/Thaw";
 			};
