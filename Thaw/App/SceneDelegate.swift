@@ -7,6 +7,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = scene as? UIWindowScene else { return }
         ThawAppearance.apply()
         let window = UIWindow(windowScene: windowScene)
+        window.tintColor = Theme.accent
+        window.overrideUserInterfaceStyle = .light
         window.rootViewController = RootTabBarController(store: .shared)
         window.makeKeyAndVisible()
         self.window = window

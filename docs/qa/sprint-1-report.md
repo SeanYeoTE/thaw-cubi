@@ -10,14 +10,16 @@ Simulator: iPhone 17 Pro (iOS 26.0), driven with serve-sim taps and `simctl` scr
 | Item detail from a want card | Pass, matches design |
 | Payday notification sheet from payday card | Pass, matches design |
 | Still want it? review, first item | Pass, fun-money maths matches design (S$300 − S$189 = S$111) |
-| Saved tab (empty state) | Pass |
+| Add a want: sheet, submit, new card and payday totals update (S$678 → S$723) | Pass |
+| Payday review queue: skip, buy, not sure, skip; Saved shows 2 of 3 skipped, S$465 kept | Pass |
+| Dark mode | Pass after pinning light (design is light only) |
+| Large text (AX5) | Fail (P2): text uses fixed point sizes, no Dynamic Type scaling |
 
-## Not yet checked
+## Known issues
 
-- Add a want (form submit and validation): not driven on the simulator yet.
-- Skip / Buy / Not sure decisions through the full review queue, and Saved after decisions.
-- Dark mode, large text (AX5), and the 2-day timer for items under S$30 beyond the label.
+- P2: Dynamic Type not supported. Fonts are fixed size, so AX5 does not enlarge text.
 - Payday days count uses the device date, so it reads 26 days today rather than the design's 12.
+- The 2-day timer is shown as a label only; no timer runs.
 
 ## Known deviations
 
