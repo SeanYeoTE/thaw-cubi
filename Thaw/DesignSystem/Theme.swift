@@ -14,6 +14,15 @@ enum Theme {
     static let paydaySubtext = UIColor(hex: 0xF2C6B4)
     static let cubeFill = UIColor(hex: 0xD9EEF5)
     static let cubeStroke = UIColor(hex: 0x6FB7CF)
+    static let cubeOutline = UIColor(hex: 0x08708F)
+    static let ember = UIColor(hex: 0xC2560F)
+    static let glow = UIColor(hex: 0xFBE3D3)
+    static let puddle = UIColor(hex: 0xBFE3EF)
+    static let meterTrack = UIColor(hex: 0x2A4150)
+    static let radioDot = UIColor(hex: 0x9FB2BD)
+    static let toggleBorder = UIColor(hex: 0xC3D0D7)
+    static let toggleText = UIColor(hex: 0x2F4653)
+    static let divider = UIColor(hex: 0xEDF2F5)
 
     enum Radius {
         static let card: CGFloat = 16
@@ -27,17 +36,33 @@ enum Theme {
 }
 
 enum ThawFont {
+    private static func style(for size: CGFloat) -> UIFont.TextStyle {
+        switch size {
+        case 30...: return .largeTitle
+        case 24..<30: return .title1
+        case 20..<24: return .title2
+        case 17..<20: return .headline
+        case 15..<17: return .body
+        case 13..<15: return .footnote
+        default: return .caption1
+        }
+    }
+
+    private static func scaled(_ font: UIFont, for size: CGFloat) -> UIFont {
+        UIFontMetrics(forTextStyle: style(for: size)).scaledFont(for: font, maximumPointSize: size * 2.4)
+    }
+
     static func display(_ size: CGFloat) -> UIFont {
-        UIFont(name: "BricolageGrotesque-96ptExtraBold", size: size)
-            ?? UIFont.systemFont(ofSize: size, weight: .heavy)
+        scaled(UIFont(name: "BricolageGrotesque-96ptExtraBold", size: size)
+            ?? UIFont.systemFont(ofSize: size, weight: .heavy), for: size)
     }
 
     static func body(_ size: CGFloat, weight: UIFont.Weight = .regular) -> UIFont {
-        UIFont.systemFont(ofSize: size, weight: weight)
+        scaled(UIFont.systemFont(ofSize: size, weight: weight), for: size)
     }
 
     static func money(_ size: CGFloat, weight: UIFont.Weight = .semibold) -> UIFont {
-        UIFont.monospacedDigitSystemFont(ofSize: size, weight: weight)
+        scaled(UIFont.monospacedDigitSystemFont(ofSize: size, weight: weight), for: size)
     }
 }
 
