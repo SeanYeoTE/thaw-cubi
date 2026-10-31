@@ -28,7 +28,18 @@ final class StepperSettingRow: UIView {
         }, for: .valueChanged)
 
         container.addArrangedSubview(row)
-        container.addArrangedSubview(stepper)
+        // The stepper is 32pt tall; the wrapper gives it a 44pt touch row.
+        let stepperHost = UIView()
+        stepper.translatesAutoresizingMaskIntoConstraints = false
+        stepperHost.addSubview(stepper)
+        NSLayoutConstraint.activate([
+            stepper.leadingAnchor.constraint(equalTo: stepperHost.leadingAnchor),
+            stepper.trailingAnchor.constraint(equalTo: stepperHost.trailingAnchor),
+            stepper.centerYAnchor.constraint(equalTo: stepperHost.centerYAnchor),
+            stepperHost.heightAnchor.constraint(greaterThanOrEqualToConstant: 44),
+        ])
+        stepperHost.setContentHuggingPriority(.required, for: .horizontal)
+        container.addArrangedSubview(stepperHost)
         container.spacing = 12
         container.translatesAutoresizingMaskIntoConstraints = false
         addSubview(container)

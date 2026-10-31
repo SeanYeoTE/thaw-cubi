@@ -61,6 +61,7 @@ final class PillButton: UIButton {
         }
         config.title = title
         config.cornerStyle = .capsule
+        config.titleLineBreakMode = .byWordWrapping
         config.contentInsets = NSDirectionalEdgeInsets(top: 14, leading: 20, bottom: 14, trailing: 20)
         config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attributes in
             var updated = attributes
@@ -68,6 +69,7 @@ final class PillButton: UIButton {
             return updated
         }
         configuration = config
+        heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
@@ -293,6 +295,7 @@ final class KeepToggleButton: UIButton {
         var config = UIButton.Configuration.filled()
         config.cornerStyle = .capsule
         config.title = isKeeping ? "Keep" : "Wait"
+        config.titleLineBreakMode = .byWordWrapping
         config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16)
         if isKeeping {
             config.baseBackgroundColor = Theme.accent
