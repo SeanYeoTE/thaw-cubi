@@ -10,3 +10,20 @@ enum DataChange {
         NotificationCenter.default.post(name: .thawDataChanged, object: nil)
     }
 }
+
+/// Interactors use this to forward `DataChange` notifications to their presenter.
+@MainActor
+final class DataChangeObserver {
+    private var token: NSObjectProtocol?
+
+    init(handler: @escaping @MainActor () -> Void) {
+        token = NotificationCenter.default.addObserver(forName: .thawDataChanged, object: nil, queue: .main) { _ in
+            MainActor.assumeIsolated { handler() }
+        }
+    }
+
+    func stop() {
+        if let token { NotificationCenter.default.removeObserver(token) }
+        token = nil
+    }
+}
