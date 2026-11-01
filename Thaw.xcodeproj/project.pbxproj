@@ -13,6 +13,7 @@
 		2B92CBD7D929238DFA7D1317 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40459DC7F21FA527CDD4EDB /* HomeViewController.swift */; };
 		314A655DCAE970AF3128C20D /* PaydaySetupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFC22758084946F20CD5A /* PaydaySetupViewController.swift */; };
 		41269E2C1BDB189CE71D8DE0 /* BackendStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 774410E8898607E96664E034 /* BackendStateTests.swift */; };
+		463B94ED4648C0695D874149 /* BackendNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A472570F75E9931EE7849ED5 /* BackendNotificationTests.swift */; };
 		4724D224B9E4A2B5C9AF5776 /* PaydayNotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE44617D04F73E53BB79AE44 /* PaydayNotificationViewController.swift */; };
 		53044846F6BE79392A10D335 /* Reminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11CF9F0D8CE38238BDC664E3 /* Reminders.swift */; };
 		55ABEDA9BA4FA4A661C12B84 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C6FD23F86B998D45F66CF5 /* Theme.swift */; };
@@ -23,6 +24,7 @@
 		67B94277E782DF624BE0001C /* AdaptiveViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B4F29CBE565E362EFA5635 /* AdaptiveViews.swift */; };
 		7257CC23CCDB2CC790723511 /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A504E812CFA3EF891C88120E /* Formatting.swift */; };
 		77446FE5744E1246A6A119B2 /* WantCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377D9BE27783B2F43FA60BAA /* WantCardView.swift */; };
+		7A1EAA326A34E3DF5A170F95 /* ReviewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3608794257CA9D2CD63855E5 /* ReviewRouter.swift */; };
 		7D84639939839902B993DE3F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CA6D24F6CB292754099B8D /* AppDelegate.swift */; };
 		95CB4B0F39F73C632849D468 /* ThawTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CF9D5B08FBDC17107454B /* ThawTests.swift */; };
 		99F0B8ECD534804C44AD9586 /* MomentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5FDD6B49F220715E738273 /* MomentView.swift */; };
@@ -59,6 +61,7 @@
 		1675D89853A74544E7BBD5AE /* WantStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WantStore.swift; sourceTree = "<group>"; };
 		22C11BA85B4C7E44A4DAF338 /* WantStore+Review.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WantStore+Review.swift"; sourceTree = "<group>"; };
 		295AF7CFCF3F362F41C48E78 /* ThawTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ThawTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3608794257CA9D2CD63855E5 /* ReviewRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRouter.swift; sourceTree = "<group>"; };
 		377D9BE27783B2F43FA60BAA /* WantCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WantCardView.swift; sourceTree = "<group>"; };
 		39B4F29CBE565E362EFA5635 /* AdaptiveViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveViews.swift; sourceTree = "<group>"; };
 		3A4A8A25D66EDB6BFB83EEF4 /* StillWantItViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillWantItViewController.swift; sourceTree = "<group>"; };
@@ -73,6 +76,7 @@
 		774410E8898607E96664E034 /* BackendStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendStateTests.swift; sourceTree = "<group>"; };
 		8070CCDDAC342DF0FAB276ED /* CubiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubiView.swift; sourceTree = "<group>"; };
 		9CAFEF63EF52BAAC52FB8EFB /* StepperSettingRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepperSettingRow.swift; sourceTree = "<group>"; };
+		A472570F75E9931EE7849ED5 /* BackendNotificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendNotificationTests.swift; sourceTree = "<group>"; };
 		A504E812CFA3EF891C88120E /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
 		B66599F653BA988F281AB8C7 /* RootTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabBarController.swift; sourceTree = "<group>"; };
 		CC9B9F784C898762FCD1FDCB /* Thaw.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Thaw.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -184,6 +188,7 @@
 			children = (
 				D7CA6D24F6CB292754099B8D /* AppDelegate.swift */,
 				11CF9F0D8CE38238BDC664E3 /* Reminders.swift */,
+				3608794257CA9D2CD63855E5 /* ReviewRouter.swift */,
 				B66599F653BA988F281AB8C7 /* RootTabBarController.swift */,
 				0147AF4CE7EB91C9076C794A /* SceneDelegate.swift */,
 			);
@@ -244,6 +249,7 @@
 		BFE57F8A872B42D3AD33AB18 /* ThawTests */ = {
 			isa = PBXGroup;
 			children = (
+				A472570F75E9931EE7849ED5 /* BackendNotificationTests.swift */,
 				774410E8898607E96664E034 /* BackendStateTests.swift */,
 				6E8CF9D5B08FBDC17107454B /* ThawTests.swift */,
 			);
@@ -375,6 +381,7 @@
 				FFEA9574F9EDCC4AC5B0AC78 /* PaydayReviewViewController.swift in Sources */,
 				314A655DCAE970AF3128C20D /* PaydaySetupViewController.swift in Sources */,
 				53044846F6BE79392A10D335 /* Reminders.swift in Sources */,
+				7A1EAA326A34E3DF5A170F95 /* ReviewRouter.swift in Sources */,
 				BDF3C5346934F35A322E6649 /* RootTabBarController.swift in Sources */,
 				FA6896D273AFF5862011BBCF /* SavedViewController.swift in Sources */,
 				9C8B01191DBA08A3B9A70570 /* SceneDelegate.swift in Sources */,
@@ -393,6 +400,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				463B94ED4648C0695D874149 /* BackendNotificationTests.swift in Sources */,
 				41269E2C1BDB189CE71D8DE0 /* BackendStateTests.swift in Sources */,
 				95CB4B0F39F73C632849D468 /* ThawTests.swift in Sources */,
 			);
