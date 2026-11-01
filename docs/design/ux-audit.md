@@ -94,3 +94,19 @@ Rule: fix every P2, plus P3s that touch the same files or are one-line changes. 
 | UX-18 | Fix now | Frontend | One-line footnote above Save about the reminder permission prompt. |
 
 Orientation note: the audit could not see orientation keys because they are not on this branch; they are in PR #4.
+
+## 6. Fix status
+
+Implemented in `[ux-ds-scroll]` (4e268d6, 8480afb) and `[ux-fe-modals]` / `[ux-fe-scroll]` (1645fd3, ce3bf16). Clean build exit 0, 24 unit tests pass, greps for `print`/`NSLog`/`rootViewController?.dismiss` clean.
+
+| ID | Status | Evidence |
+|---|---|---|
+| UX-01 | Fixed | Checked on simulator: page sheet "Payday preview" with a close (X); X returns to Home. |
+| UX-02, 03, 04, 07, 08, 09 (keyboard / scroll-to-field), 13 | Fixed in code | Not exercised on a simulator: reminder scheduling, empty-queue alert, Moment tap-skip and VoiceOver timing, Decide-now pop, keyboard scrolling, VoiceOver escape. |
+| UX-05, 06, 11, 12 | Fixed | Frontend checked on a simulator: preview to review as sheets, review Close shows "Discard choices?", Wait on all dismisses both sheets to Home, Add Cancel with input shows Discard. |
+| UX-10 | Fixed | Onboarding and Home render full width on iPhone portrait (a first version collapsed the column; fixed in 8480afb). Landscape and iPad not checked. |
+| UX-14 | Fixed | Checked: the tab bar is hidden on Item detail. Moment at AX5 not checked. |
+| UX-17, 18 | Fixed | Title "Payday preview"; onboarding footnote "We'll ask to send payday reminders next." visible. |
+| UX-15, 16 | Backlog | Need a product decision. |
+
+Also added: Home and Item detail refresh through a `.thawDataChanged` notification after a review or Decide now.
