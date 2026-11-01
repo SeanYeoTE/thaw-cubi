@@ -5,6 +5,7 @@ final class StillWantItViewController: ScrollStackViewController {
     private let store: WantStore
     private let reminders: Reminders
     private let queue: [Want]
+    private let onFinish: (() -> Void)?
     private var index = 0
     private var boughtTotal: Decimal = 0
 
@@ -17,7 +18,8 @@ final class StillWantItViewController: ScrollStackViewController {
     private let buy = PillButton(title: "Yes, I'll buy it", style: .primary)
     private let unsure = PillButton(title: "Not sure? Wait one more payday", style: .quiet)
 
-    init(store: WantStore, reminders: Reminders, queue: [Want]) {
+    init(store: WantStore, reminders: Reminders, queue: [Want], onFinish: (() -> Void)? = nil) {
+        self.onFinish = onFinish
         self.store = store
         self.reminders = reminders
         self.queue = queue
@@ -109,14 +111,21 @@ final class StillWantItViewController: ScrollStackViewController {
 
     private func advance() {
         index += 1
+        DataChange.post()
         if index >= queue.count {
-            view.window?.rootViewController?.dismiss(animated: true)
+            let done = onFinish
+            navigationController?.dismiss(animated: true) { done?() }
         } else {
             render()
         }
     }
 
     @objc private func closeTapped() {
-        view.window?.rootViewController?.dismiss(animated: true)
+        navigationController?.dismiss(animated: true)
+    }
+
+    override func accessibilityPerformEscape() -> Bool {
+        closeTapped()
+        return true
     }
 }

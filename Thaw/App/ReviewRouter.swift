@@ -21,12 +21,23 @@ final class ReviewRouter {
         guard pending, let root = window?.rootViewController, root is RootTabBarController else { return }
         pending = false
         let wants = store.reviewQueue
-        guard !wants.isEmpty else { return }
-        let show = {
-            let review = PaydayReviewViewController(store: self.store, reminders: self.reminders, wants: wants)
-            let nav = UINavigationController(rootViewController: review)
-            nav.modalPresentationStyle = .fullScreen
-            root.present(nav, animated: true)
+        let show = { [self] in
+            guard !wants.isEmpty else {
+                let alert = UIAlertController(title: "Nothing to review right now",
+                                              message: "Your payday wants are already decided.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                root.present(alert, animated: true)
+                return
+            }
+            // Land on Home so the finished review leaves the user on the Cooling list.
+            if let tabs = root as? UITabBarController {
+                tabs.selectedIndex = 0
+                (tabs.selectedViewController as? UINavigationController)?.popToRootViewController(animated: false)
+            }
+            let review = PaydayReviewViewController(store: store, reminders: reminders, wants: wants) { [weak root] in
+                root?.dismiss(animated: true)
+            }
+            root.present(ReviewSheet.wrap(review), animated: true)
         }
         if root.presentedViewController != nil {
             root.dismiss(animated: false, completion: show)

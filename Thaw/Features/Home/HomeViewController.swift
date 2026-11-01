@@ -31,6 +31,7 @@ final class HomeViewController: ScrollStackViewController {
         navigationItem.rightBarButtonItem = addItem
         navigationController?.navigationBar.prefersLargeTitles = true
         view.backgroundColor = Theme.background
+        NotificationCenter.default.addObserver(self, selector: #selector(dataChanged), name: .thawDataChanged, object: nil)
         stack.spacing = 18
         scrollView.contentInsetAdjustmentBehavior = .automatic
     }
@@ -50,6 +51,10 @@ final class HomeViewController: ScrollStackViewController {
             subtitle: "\(thawing.count) \(thawing.count == 1 ? "want thaws" : "wants thaw") then · \(Formatting.sgd(thawingTotal)) vs \(Formatting.sgd(store.payday.funMoney)) fun money"
         )
         payday.addTarget(self, action: #selector(paydayTapped), for: .touchUpInside)
+        let hasReview = !thawing.isEmpty
+        payday.isEnabled = hasReview
+        payday.alpha = hasReview ? 1 : 0.5
+        payday.accessibilityHint = hasReview ? "Opens the payday preview" : "Nothing has thawed yet"
         stack.addArrangedSubview(payday)
 
         let items = store.cooling.map { want -> UIView in
@@ -69,14 +74,18 @@ final class HomeViewController: ScrollStackViewController {
         navigationController?.pushViewController(ItemDetailViewController(store: store, reminders: reminders, want: want), animated: true)
     }
 
+    @objc private func dataChanged() {
+        render()
+    }
+
     @objc private func addTapped() {
         let controller = AddWantViewController(store: store, reminders: reminders) { [weak self] in self?.render() }
         present(UINavigationController(rootViewController: controller), animated: true)
     }
 
     @objc private func paydayTapped() {
+        guard !store.reviewQueue.isEmpty else { return }
         let controller = PaydayNotificationViewController(store: store, reminders: reminders)
-        controller.modalPresentationStyle = .fullScreen
-        present(controller, animated: true)
+        present(UINavigationController(rootViewController: controller), animated: true)
     }
 }

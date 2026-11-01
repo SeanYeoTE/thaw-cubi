@@ -11,6 +11,7 @@ final class ItemDetailViewController: ScrollStackViewController {
         self.want = want
         super.init(nibName: nil, bundle: nil)
         title = "Item detail"
+        hidesBottomBarWhenPushed = true
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
@@ -75,20 +76,22 @@ final class ItemDetailViewController: ScrollStackViewController {
     }
 
     private func decideNow() {
-        let controller = StillWantItViewController(store: store, reminders: reminders, queue: [want])
-        let nav = UINavigationController(rootViewController: controller)
-        nav.modalPresentationStyle = .fullScreen
-        present(nav, animated: true)
+        let controller = StillWantItViewController(store: store, reminders: reminders, queue: [want]) { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
+        present(ReviewSheet.wrap(controller), animated: true)
     }
 
     private func waitOnePayday() {
         store.decide(id: want.id, keep: false)
+        DataChange.post()
         reminders.refresh(requestingPermission: false)
         navigationController?.popViewController(animated: true)
     }
 
     private func skip() {
         store.update(want.id, status: .skipped)
+        DataChange.post()
         reminders.refresh(requestingPermission: false)
         UINotificationFeedbackGenerator().notificationOccurred(.success)
         let line = CubiMood.proudLine(amount: Formatting.sgd(want.price))
