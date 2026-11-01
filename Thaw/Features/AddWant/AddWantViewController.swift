@@ -1,6 +1,6 @@
 import UIKit
 
-final class AddWantViewController: ScrollStackViewController {
+final class AddWantViewController: ScrollStackViewController, UITextViewDelegate, UIAdaptivePresentationControllerDelegate {
     private let store: WantStore
     private let reminders: Reminders
     private let onSave: () -> Void
@@ -8,6 +8,7 @@ final class AddWantViewController: ScrollStackViewController {
     private let priceField = UITextField()
     private let reasonView = UITextView()
     private let errorLabel = UILabel()
+    private var saving = false
 
     init(store: WantStore, reminders: Reminders, onSave: @escaping () -> Void) {
         self.store = store
@@ -21,7 +22,9 @@ final class AddWantViewController: ScrollStackViewController {
 
     override func buildContent() {
         let settings = store.effectiveSettings
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelTapped))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(systemItem: .cancel, primaryAction: UIAction { [weak self] _ in
+            self?.cancelTapped()
+        })
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add to Thaw", style: .done, target: self, action: #selector(saveTapped))
 
         stack.addArrangedSubview(makeLabel("What do you want?", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
@@ -34,6 +37,7 @@ final class AddWantViewController: ScrollStackViewController {
         stack.addArrangedSubview(priceField)
 
         stack.addArrangedSubview(makeLabel("Why do you want it? In your words.", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
+        reasonView.delegate = self
         reasonView.font = ThawFont.body(16)
         reasonView.textColor = Theme.ink
         reasonView.backgroundColor = Theme.surface
@@ -62,6 +66,10 @@ final class AddWantViewController: ScrollStackViewController {
 
     private func configure(_ field: UITextField, placeholder: String) {
         field.placeholder = placeholder
+        field.addAction(UIAction { [weak self, weak field] _ in
+            if let field { self?.scrollToVisible(field) }
+        }, for: .editingDidBegin)
+        field.addAction(UIAction { [weak self] _ in self?.updateDirty() }, for: .editingChanged)
         field.font = ThawFont.body(16)
         field.textColor = Theme.ink
         field.backgroundColor = Theme.surface
@@ -74,8 +82,52 @@ final class AddWantViewController: ScrollStackViewController {
         field.adjustsFontForContentSizeCategory = true
     }
 
-    @objc private func cancelTapped() {
-        dismiss(animated: true)
+    private var hasInput: Bool {
+        [nameField.text, priceField.text, reasonView.text].contains { !($0 ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    }
+
+    private func updateDirty() {
+        let dirty = hasInput && !saving
+        isModalInPresentation = dirty
+        navigationController?.isModalInPresentation = dirty
+    }
+
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        scrollToVisible(textView)
+    }
+
+    func textViewDidChange(_ textView: UITextView) {
+        updateDirty()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.presentationController?.delegate = self
+    }
+
+    func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
+        confirmDiscard()
+    }
+
+    private func cancelTapped() {
+        if hasInput { confirmDiscard() } else { dismiss(animated: true) }
+    }
+
+    private func confirmDiscard() {
+        guard presentedViewController == nil else { return }
+        let sheet = UIAlertController(title: "Discard this want?", message: "What you typed won't be saved.",
+                                      preferredStyle: .actionSheet)
+        sheet.addAction(UIAlertAction(title: "Discard", style: .destructive) { [weak self] _ in
+            self?.dismiss(animated: true)
+        })
+        sheet.addAction(UIAlertAction(title: "Keep editing", style: .cancel))
+        sheet.popoverPresentationController?.sourceItem = navigationItem.leftBarButtonItem
+        present(sheet, animated: true)
+    }
+
+    override func accessibilityPerformEscape() -> Bool {
+        cancelTapped()
+        return true
     }
 
     @objc private func saveTapped() {
@@ -86,6 +138,8 @@ final class AddWantViewController: ScrollStackViewController {
         }
         store.add(name: name, price: price, reason: reasonView.text ?? "")
         reminders.refresh(requestingPermission: true)
+        saving = true
+        updateDirty()
         onSave()
         view.endEditing(true)
         navigationItem.leftBarButtonItem?.isEnabled = false
@@ -98,5 +152,6 @@ final class AddWantViewController: ScrollStackViewController {
     private func showError(_ message: String) {
         errorLabel.text = message
         errorLabel.isHidden = false
+        scrollToVisible(errorLabel)
     }
 }

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		034D0F658E7D05D2D150F08C /* ItemDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A199DB16D8CA01565CA1D0 /* ItemDetailViewController.swift */; };
+		0AB802797C98D0682EFC8BB7 /* ReviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4EBA4161660F177F921754F /* ReviewSheet.swift */; };
 		143C42978466B1B5EE8EAB15 /* ScrollStackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77B232B93745E1F8D0B2AD4 /* ScrollStackViewController.swift */; };
 		1BED418734EE4CD5AC5FE304 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0893C400A63049F594E0D049 /* OFL.txt */; };
 		2B92CBD7D929238DFA7D1317 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40459DC7F21FA527CDD4EDB /* HomeViewController.swift */; };
@@ -15,6 +16,7 @@
 		41269E2C1BDB189CE71D8DE0 /* BackendStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 774410E8898607E96664E034 /* BackendStateTests.swift */; };
 		463B94ED4648C0695D874149 /* BackendNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A472570F75E9931EE7849ED5 /* BackendNotificationTests.swift */; };
 		4724D224B9E4A2B5C9AF5776 /* PaydayNotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE44617D04F73E53BB79AE44 /* PaydayNotificationViewController.swift */; };
+		4DB0F0102A5B37863A881027 /* DataChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB1CBBF1150D43B709CEC53 /* DataChange.swift */; };
 		53044846F6BE79392A10D335 /* Reminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11CF9F0D8CE38238BDC664E3 /* Reminders.swift */; };
 		55ABEDA9BA4FA4A661C12B84 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C6FD23F86B998D45F66CF5 /* Theme.swift */; };
 		5731B18B98459E850CF4E1C8 /* CubiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8070CCDDAC342DF0FAB276ED /* CubiView.swift */; };
@@ -59,6 +61,7 @@
 		10507C7F0C9C40E5DC492E0B /* Want.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Want.swift; sourceTree = "<group>"; };
 		11CF9F0D8CE38238BDC664E3 /* Reminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminders.swift; sourceTree = "<group>"; };
 		1675D89853A74544E7BBD5AE /* WantStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WantStore.swift; sourceTree = "<group>"; };
+		1BB1CBBF1150D43B709CEC53 /* DataChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataChange.swift; sourceTree = "<group>"; };
 		22C11BA85B4C7E44A4DAF338 /* WantStore+Review.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WantStore+Review.swift"; sourceTree = "<group>"; };
 		295AF7CFCF3F362F41C48E78 /* ThawTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ThawTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3608794257CA9D2CD63855E5 /* ReviewRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRouter.swift; sourceTree = "<group>"; };
@@ -83,6 +86,7 @@
 		D7CA6D24F6CB292754099B8D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DE44617D04F73E53BB79AE44 /* PaydayNotificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayNotificationViewController.swift; sourceTree = "<group>"; };
 		E40459DC7F21FA527CDD4EDB /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		E4EBA4161660F177F921754F /* ReviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSheet.swift; sourceTree = "<group>"; };
 		ED3B4E3149C88147A66F9AC8 /* NotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScheduler.swift; sourceTree = "<group>"; };
 		F643E9DC31DC1D8D2612A8C8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F77B232B93745E1F8D0B2AD4 /* ScrollStackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollStackViewController.swift; sourceTree = "<group>"; };
@@ -129,7 +133,9 @@
 		2B071A0D10BC361FA3DEBF6F /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				1BB1CBBF1150D43B709CEC53 /* DataChange.swift */,
 				3D5FDD6B49F220715E738273 /* MomentView.swift */,
+				E4EBA4161660F177F921754F /* ReviewSheet.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -372,6 +378,7 @@
 				7D84639939839902B993DE3F /* AppDelegate.swift in Sources */,
 				5AA9AE7F5A6EF49DFF335D08 /* Components.swift in Sources */,
 				5731B18B98459E850CF4E1C8 /* CubiView.swift in Sources */,
+				4DB0F0102A5B37863A881027 /* DataChange.swift in Sources */,
 				7257CC23CCDB2CC790723511 /* Formatting.swift in Sources */,
 				2B92CBD7D929238DFA7D1317 /* HomeViewController.swift in Sources */,
 				034D0F658E7D05D2D150F08C /* ItemDetailViewController.swift in Sources */,
@@ -382,6 +389,7 @@
 				314A655DCAE970AF3128C20D /* PaydaySetupViewController.swift in Sources */,
 				53044846F6BE79392A10D335 /* Reminders.swift in Sources */,
 				7A1EAA326A34E3DF5A170F95 /* ReviewRouter.swift in Sources */,
+				0AB802797C98D0682EFC8BB7 /* ReviewSheet.swift in Sources */,
 				BDF3C5346934F35A322E6649 /* RootTabBarController.swift in Sources */,
 				FA6896D273AFF5862011BBCF /* SavedViewController.swift in Sources */,
 				9C8B01191DBA08A3B9A70570 /* SceneDelegate.swift in Sources */,

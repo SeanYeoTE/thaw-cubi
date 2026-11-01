@@ -13,6 +13,11 @@ final class PaydayNotificationViewController: ScrollStackViewController {
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
 
     override func buildContent() {
+        title = "Payday preview"
+        navigationItem.largeTitleDisplayMode = .never
+        navigationItem.rightBarButtonItem = UIBarButtonItem(systemItem: .close, primaryAction: UIAction { [weak self] _ in
+            self?.closeTapped()
+        })
         stack.spacing = 12
 
         let thawing = store.reviewQueue
@@ -56,18 +61,39 @@ final class PaydayNotificationViewController: ScrollStackViewController {
         let review = PillButton(title: "Review now", style: .primary)
         review.addAction(UIAction { [weak self] _ in self?.startReview() }, for: .touchUpInside)
         let later = PillButton(title: "Remind me tonight", style: .quiet)
-        later.addAction(UIAction { [weak self] _ in self?.dismiss(animated: true) }, for: .touchUpInside)
+        later.addAction(UIAction { [weak self, weak later] _ in
+            later?.isEnabled = false
+            self?.remindTonight()
+        }, for: .touchUpInside)
 
         [card, review, later].forEach(stack.addArrangedSubview)
     }
 
+    private func closeTapped() {
+        dismiss(animated: true)
+    }
+
+    override func accessibilityPerformEscape() -> Bool {
+        closeTapped()
+        return true
+    }
+
+    private func remindTonight() {
+        reminders.remindTonight { [weak self] in
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            self?.dismiss(animated: true)
+        }
+    }
+
     private func startReview() {
-        let thawing = store.reviewQueue
-        guard !thawing.isEmpty else { return dismiss(animated: true) }
-        let review = PaydayReviewViewController(store: store, reminders: reminders, wants: thawing)
-        let nav = UINavigationController(rootViewController: review)
-        nav.modalPresentationStyle = .fullScreen
-        present(nav, animated: true)
+        let wants = store.reviewQueue
+        guard !wants.isEmpty else { return }
+        // Finishing the review closes the preview as well, landing on Home.
+        let presenter = navigationController?.presentingViewController ?? presentingViewController
+        let review = PaydayReviewViewController(store: store, reminders: reminders, wants: wants) {
+            presenter?.dismiss(animated: true)
+        }
+        present(ReviewSheet.wrap(review), animated: true)
     }
 }
 

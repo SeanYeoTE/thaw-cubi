@@ -6,6 +6,8 @@ final class PaydayReviewViewController: ScrollStackViewController {
     private let reminders: Reminders
     private let wants: [Want]
     private var keeping: Set<UUID>
+    private let initialKeeping: Set<UUID>
+    private let onFinish: (() -> Void)?
 
     private let amountLabel = UILabel()
     private let statusLabel = UILabel()
@@ -14,7 +16,9 @@ final class PaydayReviewViewController: ScrollStackViewController {
 
     private var budget: Decimal { store.effectiveSettings.funMoney }
 
-    init(store: WantStore, reminders: Reminders, wants: [Want]) {
+    /// `onFinish` closes the whole flow after the choices are applied; without it the review dismisses itself.
+    init(store: WantStore, reminders: Reminders, wants: [Want], onFinish: (() -> Void)? = nil) {
+        self.onFinish = onFinish
         self.store = store
         self.reminders = reminders
         self.wants = wants
@@ -24,6 +28,7 @@ final class PaydayReviewViewController: ScrollStackViewController {
         } else {
             keeping = []
         }
+        initialKeeping = keeping
         super.init(nibName: nil, bundle: nil)
         title = "Payday review"
     }
@@ -140,10 +145,28 @@ final class PaydayReviewViewController: ScrollStackViewController {
         }
         reminders.refresh(requestingPermission: false)
         UINotificationFeedbackGenerator().notificationOccurred(.success)
-        view.window?.rootViewController?.dismiss(animated: true)
+        DataChange.post()
+        if let onFinish {
+            onFinish()
+        } else {
+            navigationController?.dismiss(animated: true)
+        }
     }
 
     @objc private func closeTapped() {
-        view.window?.rootViewController?.dismiss(animated: true)
+        guard keeping != initialKeeping else { return navigationController?.dismiss(animated: true) ?? () }
+        let sheet = UIAlertController(title: "Discard choices?", message: "Your Keep and Wait picks won't be applied.",
+                                      preferredStyle: .actionSheet)
+        sheet.addAction(UIAlertAction(title: "Discard", style: .destructive) { [weak self] _ in
+            self?.navigationController?.dismiss(animated: true)
+        })
+        sheet.addAction(UIAlertAction(title: "Keep choosing", style: .cancel))
+        sheet.popoverPresentationController?.sourceItem = navigationItem.leftBarButtonItem
+        present(sheet, animated: true)
+    }
+
+    override func accessibilityPerformEscape() -> Bool {
+        closeTapped()
+        return true
     }
 }
