@@ -1,13 +1,8 @@
 import UIKit
 
 /// One-want-at-a-time decision, reached from Item detail.
-final class StillWantItViewController: ScrollStackViewController {
-    private let store: WantStore
-    private let reminders: Reminders
-    private let queue: [Want]
-    private let onFinish: (() -> Void)?
-    private var index = 0
-    private var boughtTotal: Decimal = 0
+final class StillWantItViewController: ScrollStackViewController, StillWantItViewProtocol {
+    var presenter: StillWantItPresenterProtocol?
 
     private let progressLabel = UILabel()
     private let question = UILabel()
@@ -18,11 +13,7 @@ final class StillWantItViewController: ScrollStackViewController {
     private let buy = PillButton(title: "Yes, I'll buy it", style: .primary)
     private let unsure = PillButton(title: "Not sure? Wait one more payday", style: .quiet)
 
-    init(store: WantStore, reminders: Reminders, queue: [Want], onFinish: (() -> Void)? = nil) {
-        self.onFinish = onFinish
-        self.store = store
-        self.reminders = reminders
-        self.queue = queue
+    init() {
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -60,68 +51,35 @@ final class StillWantItViewController: ScrollStackViewController {
             inner.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -18),
         ])
 
-        keep.addAction(UIAction { [weak self] _ in self?.skip() }, for: .touchUpInside)
-        buy.addAction(UIAction { [weak self] _ in self?.decideBuy() }, for: .touchUpInside)
-        unsure.addAction(UIAction { [weak self] _ in self?.decideWait() }, for: .touchUpInside)
+        keep.addAction(UIAction { [weak self] _ in self?.presenter?.tapSkip() }, for: .touchUpInside)
+        buy.addAction(UIAction { [weak self] _ in self?.presenter?.tapBuy() }, for: .touchUpInside)
+        unsure.addAction(UIAction { [weak self] _ in self?.presenter?.tapWait() }, for: .touchUpInside)
 
         [card, funLabel, keep, buy, unsure].forEach(stack.addArrangedSubview)
         stack.setCustomSpacing(18, after: funLabel)
-        render()
+        presenter?.viewDidLoad()
     }
 
-    private var current: Want { queue[index] }
-
-    private func render() {
-        let want = current
-        progressLabel.text = "Payday review · \(index + 1) of \(queue.count)"
-        question.text = "Still want the \(want.name.lowercased())?"
-        price.text = Formatting.sgd(want.price)
-        quote.text = "On \(Formatting.paydayDate(want.frozenOn)), you said\n\u{201C}\(want.reason.isEmpty ? "No reason written." : want.reason)\u{201D}"
-        let budget = store.effectiveSettings.funMoney
-        let ifBuy = budget - boughtTotal - want.price
-        funLabel.text = "Fun money if you buy: \(Formatting.sgd(ifBuy)) of \(Formatting.sgd(budget)) left"
-        keep.configuration?.title = "Skip and keep \(Formatting.sgd(want.price))"
+    func render(_ model: StillWantItViewModel) {
+        progressLabel.text = model.progressText
+        question.text = model.question
+        price.text = model.priceText
+        quote.text = model.quote
+        funLabel.text = model.funText
+        keep.configuration?.title = model.keepTitle
     }
 
-    private func skip() {
-        let want = current
-        store.update(want.id, status: .skipped)
-        reminders.refresh(requestingPermission: false)
+    func showSkipMoment(line: String, completion: @escaping () -> Void) {
         UINotificationFeedbackGenerator().notificationOccurred(.success)
         navigationController?.setNavigationBarHidden(true, animated: true)
-        MomentView.present(on: view, mood: .proud, line: CubiMood.proudLine(amount: Formatting.sgd(want.price))) { [weak self] in
+        MomentView.present(on: view, mood: .proud, line: line) { [weak self] in
             self?.navigationController?.setNavigationBarHidden(false, animated: false)
-            self?.advance()
-        }
-    }
-
-    private func decideBuy() {
-        let want = current
-        store.decide(id: want.id, keep: true)
-        boughtTotal += want.price
-        reminders.refresh(requestingPermission: false)
-        advance()
-    }
-
-    private func decideWait() {
-        store.decide(id: current.id, keep: false)
-        reminders.refresh(requestingPermission: false)
-        advance()
-    }
-
-    private func advance() {
-        index += 1
-        DataChange.post()
-        if index >= queue.count {
-            let done = onFinish
-            navigationController?.dismiss(animated: true) { done?() }
-        } else {
-            render()
+            completion()
         }
     }
 
     @objc private func closeTapped() {
-        navigationController?.dismiss(animated: true)
+        presenter?.tapClose()
     }
 
     override func accessibilityPerformEscape() -> Bool {
