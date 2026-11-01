@@ -20,6 +20,15 @@ targets:
       path: Thaw-Info.plist
       properties:
         CFBundleDisplayName: Thaw
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
         UIAppFonts:
           - BricolageGrotesque-ExtraBold.ttf
         UILaunchScreen: {}
