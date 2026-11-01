@@ -1,0 +1,34 @@
+import UIKit
+
+final class ItemDetailRouter: ItemDetailRouterProtocol {
+    weak var viewController: UIViewController?
+    private let store: WantStore
+    private let reminders: Reminders
+
+    init(store: WantStore, reminders: Reminders) {
+        self.store = store
+        self.reminders = reminders
+    }
+
+    static func createModule(store: WantStore, reminders: Reminders, wantID: UUID) -> UIViewController? {
+        guard let want = store.want(id: wantID) else { return nil }
+        let view = ItemDetailViewController()
+        let router = ItemDetailRouter(store: store, reminders: reminders)
+        let interactor = ItemDetailInteractor(store: store, reminders: reminders, want: want)
+        let presenter = ItemDetailPresenter(view: view, interactor: interactor, router: router)
+        view.presenter = presenter
+        router.viewController = view
+        return view
+    }
+
+    func showDecideNow(want: Want) {
+        let module = StillWantItRouter.createModule(store: store, reminders: reminders, wants: [want]) { [weak self] in
+            self?.pop()
+        }
+        viewController?.present(ReviewSheet.wrap(module), animated: true)
+    }
+
+    func pop() {
+        viewController?.navigationController?.popViewController(animated: true)
+    }
+}
