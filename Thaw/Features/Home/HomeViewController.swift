@@ -1,12 +1,9 @@
 import UIKit
 
-final class HomeViewController: ScrollStackViewController {
-    private let store: WantStore
-    private let reminders: Reminders
+final class HomeViewController: ScrollStackViewController, HomeViewProtocol {
+    var presenter: HomePresenterProtocol?
 
-    init(store: WantStore, reminders: Reminders) {
-        self.store = store
-        self.reminders = reminders
+    init() {
         super.init(nibName: nil, bundle: nil)
         title = "Cooling"
     }
@@ -31,61 +28,40 @@ final class HomeViewController: ScrollStackViewController {
         navigationItem.rightBarButtonItem = addItem
         navigationController?.navigationBar.prefersLargeTitles = true
         view.backgroundColor = Theme.background
-        NotificationCenter.default.addObserver(self, selector: #selector(dataChanged), name: .thawDataChanged, object: nil)
         stack.spacing = 18
         scrollView.contentInsetAdjustmentBehavior = .automatic
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        render()
+        presenter?.viewWillAppear()
     }
 
-    private func render() {
+    func render(_ model: HomeViewModel) {
         clearContent()
-        let thawing = store.reviewQueue
-        let thawingTotal = thawing.reduce(Decimal(0)) { $0 + $1.price }
-        let payday = PaydayCardView(
-            daysLeft: store.payday.daysUntilNext,
-            nextPayday: Formatting.paydayDate(store.payday.nextPayday),
-            subtitle: "\(thawing.count) \(thawing.count == 1 ? "want thaws" : "wants thaw") then · \(Formatting.sgd(thawingTotal)) vs \(Formatting.sgd(store.payday.funMoney)) fun money"
-        )
+        let payday = PaydayCardView(daysLeft: model.daysLeft, nextPayday: model.nextPaydayText,
+                                    subtitle: model.paydaySubtitle)
         payday.addTarget(self, action: #selector(paydayTapped), for: .touchUpInside)
-        let hasReview = !thawing.isEmpty
-        payday.isEnabled = hasReview
-        payday.alpha = hasReview ? 1 : 0.5
-        payday.accessibilityHint = hasReview ? "Opens the payday preview" : "Nothing has thawed yet"
+        payday.isEnabled = model.hasReview
+        payday.alpha = model.hasReview ? 1 : 0.5
+        payday.accessibilityHint = model.hasReview ? "Opens the payday preview" : "Nothing has thawed yet"
         stack.addArrangedSubview(payday)
 
-        let items = store.cooling.map { want -> UIView in
-            let card = WantCardView(want: want, settings: store.effectiveSettings)
-            card.addAction(UIAction { [weak self] _ in self?.open(want.id) }, for: .touchUpInside)
-            return card
+        if let empty = model.emptyText {
+            stack.addArrangedSubview(makeLabel(empty, font: ThawFont.body(15), color: Theme.inkSecondary))
         }
-        if items.isEmpty {
-            stack.addArrangedSubview(makeLabel("Nothing cooling. Add a want to start the wait.",
-                                               font: ThawFont.body(15), color: Theme.inkSecondary))
+        for item in model.cards {
+            let card = WantCardView(model: item)
+            card.addAction(UIAction { [weak self] _ in self?.presenter?.tapWant(id: item.id) }, for: .touchUpInside)
+            stack.addArrangedSubview(card)
         }
-        items.forEach { stack.addArrangedSubview($0) }
-    }
-
-    private func open(_ id: UUID) {
-        guard let want = store.want(id: id) else { return }
-        navigationController?.pushViewController(ItemDetailViewController(store: store, reminders: reminders, want: want), animated: true)
-    }
-
-    @objc private func dataChanged() {
-        render()
     }
 
     @objc private func addTapped() {
-        let controller = AddWantViewController(store: store, reminders: reminders) { [weak self] in self?.render() }
-        present(UINavigationController(rootViewController: controller), animated: true)
+        presenter?.tapAdd()
     }
 
     @objc private func paydayTapped() {
-        guard !store.reviewQueue.isEmpty else { return }
-        let controller = PaydayNotificationViewController(store: store, reminders: reminders)
-        present(UINavigationController(rootViewController: controller), animated: true)
+        presenter?.tapPayday()
     }
 }
