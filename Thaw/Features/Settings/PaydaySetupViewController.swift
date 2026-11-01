@@ -92,8 +92,10 @@ final class PaydaySetupViewController: ScrollStackViewController {
         stack.addArrangedSubview(footer)
 
         if onSaved != nil {
-            stack.addArrangedSubview(makeLabel("We'll ask to send payday reminders next.",
-                                               font: ThawFont.body(13), color: Theme.inkSecondary))
+            let notice = makeLabel("We'll ask to send payday reminders next.",
+                                   font: ThawFont.body(13), color: Theme.inkSecondary)
+            notice.textAlignment = .center
+            stack.addArrangedSubview(notice)
         }
         saveButton.addAction(UIAction { [weak self] _ in self?.save() }, for: .touchUpInside)
         stack.addArrangedSubview(saveButton)

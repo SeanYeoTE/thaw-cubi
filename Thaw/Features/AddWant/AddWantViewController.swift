@@ -66,6 +66,9 @@ final class AddWantViewController: ScrollStackViewController, UITextViewDelegate
 
     private func configure(_ field: UITextField, placeholder: String) {
         field.placeholder = placeholder
+        field.addAction(UIAction { [weak self, weak field] _ in
+            if let field { self?.scrollToVisible(field) }
+        }, for: .editingDidBegin)
         field.addAction(UIAction { [weak self] _ in self?.updateDirty() }, for: .editingChanged)
         field.font = ThawFont.body(16)
         field.textColor = Theme.ink
@@ -87,6 +90,10 @@ final class AddWantViewController: ScrollStackViewController, UITextViewDelegate
         let dirty = hasInput && !saving
         isModalInPresentation = dirty
         navigationController?.isModalInPresentation = dirty
+    }
+
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        scrollToVisible(textView)
     }
 
     func textViewDidChange(_ textView: UITextView) {
@@ -145,5 +152,6 @@ final class AddWantViewController: ScrollStackViewController, UITextViewDelegate
     private func showError(_ message: String) {
         errorLabel.text = message
         errorLabel.isHidden = false
+        scrollToVisible(errorLabel)
     }
 }
