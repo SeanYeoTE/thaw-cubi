@@ -2,6 +2,9 @@ import UIKit
 
 /// Base screen: a vertical stack inside a scroll view, on the Thaw background.
 class ScrollStackViewController: UIViewController {
+    /// Column cap for wide screens; larger than any iPhone width minus insets, so it never binds there.
+    private static let maxContentWidth: CGFloat = 700
+
     let stack = UIStackView()
     let scrollView = UIScrollView()
 
@@ -22,8 +25,8 @@ class ScrollStackViewController: UIViewController {
         let inset = Theme.Spacing.screen
         let leading = stack.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: inset)
         let trailing = stack.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -inset)
-        leading.priority = .defaultHigh
-        trailing.priority = .defaultHigh
+        leading.priority = UILayoutPriority(999)
+        trailing.priority = UILayoutPriority(999)
         NSLayoutConstraint.activate([
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -33,7 +36,7 @@ class ScrollStackViewController: UIViewController {
             trailing,
             stack.leadingAnchor.constraint(greaterThanOrEqualTo: guide.leadingAnchor, constant: inset),
             stack.trailingAnchor.constraint(lessThanOrEqualTo: guide.trailingAnchor, constant: -inset),
-            stack.widthAnchor.constraint(lessThanOrEqualTo: view.readableContentGuide.widthAnchor),
+            stack.widthAnchor.constraint(lessThanOrEqualToConstant: Self.maxContentWidth),
             stack.centerXAnchor.constraint(equalTo: guide.centerXAnchor),
             stack.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 16),
             stack.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -24),
