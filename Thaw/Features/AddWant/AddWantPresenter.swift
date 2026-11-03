@@ -6,6 +6,9 @@ final class AddWantPresenter: AddWantPresenterProtocol {
     private let router: AddWantRouterProtocol
     private var saving = false
 
+    // Explicit deinit: the synthesized one on a MainActor class with weak refs corrupts the heap in the test host.
+    deinit {}
+
     init(view: AddWantViewProtocol, interactor: AddWantInteractorProtocol, router: AddWantRouterProtocol) {
         self.view = view
         self.interactor = interactor

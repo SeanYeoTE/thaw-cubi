@@ -5,6 +5,9 @@ final class ItemDetailRouter: ItemDetailRouterProtocol {
     private let store: WantStore
     private let reminders: Reminders
 
+    // Explicit deinit: the synthesized one on a MainActor class with weak refs corrupts the heap in the test host.
+    deinit {}
+
     init(store: WantStore, reminders: Reminders) {
         self.store = store
         self.reminders = reminders

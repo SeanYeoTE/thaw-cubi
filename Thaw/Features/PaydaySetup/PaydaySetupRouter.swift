@@ -4,6 +4,9 @@ final class PaydaySetupRouter: PaydaySetupRouterProtocol {
     weak var viewController: UIViewController?
     private let onSaved: (() -> Void)?
 
+    // Explicit deinit: the synthesized one on a MainActor class with weak refs corrupts the heap in the test host.
+    deinit {}
+
     init(onSaved: (() -> Void)?) {
         self.onSaved = onSaved
     }

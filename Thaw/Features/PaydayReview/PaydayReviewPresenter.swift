@@ -8,6 +8,9 @@ final class PaydayReviewPresenter: PaydayReviewPresenterProtocol {
     private var keeping: Set<UUID>
     private let initialKeeping: Set<UUID>
 
+    // Explicit deinit: the synthesized one on a MainActor class with weak refs corrupts the heap in the test host.
+    deinit {}
+
     init(view: PaydayReviewViewProtocol, interactor: PaydayReviewInteractorProtocol,
          router: PaydayReviewRouterProtocol, onFinish: (() -> Void)?) {
         self.view = view

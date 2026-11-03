@@ -8,6 +8,9 @@ final class StillWantItPresenter: StillWantItPresenterProtocol {
     private var index = 0
     private var boughtTotal: Decimal = 0
 
+    // Explicit deinit: the synthesized one on a MainActor class with weak refs corrupts the heap in the test host.
+    deinit {}
+
     init(view: StillWantItViewProtocol, interactor: StillWantItInteractorProtocol,
          router: StillWantItRouterProtocol, onFinish: (() -> Void)?) {
         self.view = view

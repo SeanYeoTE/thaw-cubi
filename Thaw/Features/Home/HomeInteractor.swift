@@ -5,6 +5,9 @@ final class HomeInteractor: HomeInteractorProtocol {
     private let store: WantStore
     private var observer: DataChangeObserver?
 
+    // Explicit deinit: the synthesized one on a MainActor class with weak refs corrupts the heap in the test host.
+    deinit {}
+
     init(store: WantStore) {
         self.store = store
         observer = DataChangeObserver { [weak self] in self?.output?.dataDidChange() }

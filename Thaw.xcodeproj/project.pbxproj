@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		02454E0FCC9A7025F4635D28 /* PresenterPaydayReviewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E586F455E4F0D7ECC1D536C /* PresenterPaydayReviewTests.swift */; };
 		034D0F658E7D05D2D150F08C /* ItemDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A199DB16D8CA01565CA1D0 /* ItemDetailViewController.swift */; };
 		034F84539C8C2F04EE25E1D3 /* PaydayReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37036FE395D3487FC2A885BF /* PaydayReviewViewController.swift */; };
 		0AB802797C98D0682EFC8BB7 /* ReviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4EBA4161660F177F921754F /* ReviewSheet.swift */; };
@@ -18,11 +19,13 @@
 		1BED418734EE4CD5AC5FE304 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0893C400A63049F594E0D049 /* OFL.txt */; };
 		24FB9ABAB36DD30490273762 /* PaydayPreviewContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EF1FC55321B97CA81DBD2DF /* PaydayPreviewContracts.swift */; };
 		25B513D0270B2694D9F2D9FA /* HomeInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC4EB9D10490EC015CA5A0C1 /* HomeInteractor.swift */; };
+		28270FCCBAAC6E80CC0084F7 /* PresenterStillWantItTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDFAF7888B797FD36C49B63 /* PresenterStillWantItTests.swift */; };
 		2970DC4C05114D89257C6A22 /* PaydayReviewInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E624552AB9BFCA5178C03BD /* PaydayReviewInteractor.swift */; };
 		2B92CBD7D929238DFA7D1317 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40459DC7F21FA527CDD4EDB /* HomeViewController.swift */; };
 		2DBF036DC27DF0212D46B130 /* ItemDetailPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19097D54A37AD4340BACB25F /* ItemDetailPresenter.swift */; };
 		2F6B3665AFC048309DBD9E53 /* PaydayPreviewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA6748AB03742058362694 /* PaydayPreviewPresenter.swift */; };
 		3E05091ADA60413300AEE509 /* PaydaySetupContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE81E638F2A9EDA5221AD1A5 /* PaydaySetupContracts.swift */; };
+		40DC6FE7DA9F4E2D4992C2D1 /* PresenterPaydaySetupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33895ADF18C40EF814F7D450 /* PresenterPaydaySetupTests.swift */; };
 		41269E2C1BDB189CE71D8DE0 /* BackendStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 774410E8898607E96664E034 /* BackendStateTests.swift */; };
 		45EA33C705A77737EDEBBD92 /* AddWantRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C4225A06CE72F31F7BA7B0 /* AddWantRouter.swift */; };
 		463B94ED4648C0695D874149 /* BackendNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A472570F75E9931EE7849ED5 /* BackendNotificationTests.swift */; };
@@ -38,10 +41,12 @@
 		54FDCD55A11D8D0AF5D8F567 /* ItemDetailInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AE404F032BB93BB8EA8CC42 /* ItemDetailInteractor.swift */; };
 		55ABEDA9BA4FA4A661C12B84 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C6FD23F86B998D45F66CF5 /* Theme.swift */; };
 		5731B18B98459E850CF4E1C8 /* CubiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8070CCDDAC342DF0FAB276ED /* CubiView.swift */; };
+		59581CF85DC3577A9E6DAE1A /* PresenterTestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940971CBFA2F6DAC2CAF2E59 /* PresenterTestSupport.swift */; };
 		5AA9AE7F5A6EF49DFF335D08 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A2D557655FBDFAA2CD42A2 /* Components.swift */; };
 		60C346AC8EFA1B3A93542E31 /* PaydaySetupPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2BC6DE142818862DBDE46A0 /* PaydaySetupPresenter.swift */; };
 		669601F9ECB2C750361AF8AA /* StillWantItInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D075AB4E1E93236E8E2A7DB4 /* StillWantItInteractor.swift */; };
 		66DC78546A58C9E96120FB40 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F643E9DC31DC1D8D2612A8C8 /* Assets.xcassets */; };
+		677F55C5BE6EEBF0C42A1F9B /* PresenterAddWantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CF5EBF2543A4CBD35772C3 /* PresenterAddWantTests.swift */; };
 		69A55B2BA3306EE453F8667A /* PaydaySetupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C19EC35A2C5BBD2B0CCE5F /* PaydaySetupViewController.swift */; };
 		6D2FD02F297695334B4CEB15 /* HomePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3875C0C3237E2AC0D088414D /* HomePresenter.swift */; };
 		6F4C0CE7DD236D5CE357724F /* PaydayReviewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58BDD9230954D66A5B20A4CC /* PaydayReviewRouter.swift */; };
@@ -56,6 +61,7 @@
 		8C11E1202EB5347C59B0E480 /* SavedPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7576D63D42336C1FF3C7A179 /* SavedPresenter.swift */; };
 		939AF696715FE7B5D51C3C59 /* StillWantItPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC2AED725E7911F3A85769B /* StillWantItPresenter.swift */; };
 		95CB4B0F39F73C632849D468 /* ThawTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CF9D5B08FBDC17107454B /* ThawTests.swift */; };
+		95D64A331CCD37A628E39597 /* PresenterHomeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C10947F3321B16679791C8B /* PresenterHomeTests.swift */; };
 		99F0B8ECD534804C44AD9586 /* MomentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5FDD6B49F220715E738273 /* MomentView.swift */; };
 		9BF415AF2DEB3CEE68DB1D8B /* Want.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10507C7F0C9C40E5DC492E0B /* Want.swift */; };
 		9C8B01191DBA08A3B9A70570 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0147AF4CE7EB91C9076C794A /* SceneDelegate.swift */; };
@@ -102,7 +108,10 @@
 		1BB1CBBF1150D43B709CEC53 /* DataChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataChange.swift; sourceTree = "<group>"; };
 		1C433979969F84CA17CC9145 /* SavedContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedContracts.swift; sourceTree = "<group>"; };
 		295AF7CFCF3F362F41C48E78 /* ThawTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ThawTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C10947F3321B16679791C8B /* PresenterHomeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterHomeTests.swift; sourceTree = "<group>"; };
+		2E586F455E4F0D7ECC1D536C /* PresenterPaydayReviewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterPaydayReviewTests.swift; sourceTree = "<group>"; };
 		307E2E39C76493C1E0A39EB1 /* SavedInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedInteractor.swift; sourceTree = "<group>"; };
+		33895ADF18C40EF814F7D450 /* PresenterPaydaySetupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterPaydaySetupTests.swift; sourceTree = "<group>"; };
 		3608794257CA9D2CD63855E5 /* ReviewRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRouter.swift; sourceTree = "<group>"; };
 		37036FE395D3487FC2A885BF /* PaydayReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayReviewViewController.swift; sourceTree = "<group>"; };
 		377D9BE27783B2F43FA60BAA /* WantCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WantCardView.swift; sourceTree = "<group>"; };
@@ -127,8 +136,10 @@
 		7576D63D42336C1FF3C7A179 /* SavedPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPresenter.swift; sourceTree = "<group>"; };
 		774410E8898607E96664E034 /* BackendStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendStateTests.swift; sourceTree = "<group>"; };
 		8070CCDDAC342DF0FAB276ED /* CubiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubiView.swift; sourceTree = "<group>"; };
+		81CF5EBF2543A4CBD35772C3 /* PresenterAddWantTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterAddWantTests.swift; sourceTree = "<group>"; };
 		84D1EF4194B93EBF8CE52F1F /* StillWantItContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillWantItContracts.swift; sourceTree = "<group>"; };
 		8DCADA6457FD2F82C40913C0 /* AddWantPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWantPresenter.swift; sourceTree = "<group>"; };
+		940971CBFA2F6DAC2CAF2E59 /* PresenterTestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterTestSupport.swift; sourceTree = "<group>"; };
 		9B10807EB04E8E7DD29BA541 /* PaydayPreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayPreviewViewController.swift; sourceTree = "<group>"; };
 		A257AE77FF4C4508CB0368AE /* PaydaySetupInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydaySetupInteractor.swift; sourceTree = "<group>"; };
 		A472570F75E9931EE7849ED5 /* BackendNotificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendNotificationTests.swift; sourceTree = "<group>"; };
@@ -148,6 +159,7 @@
 		E4EBA4161660F177F921754F /* ReviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSheet.swift; sourceTree = "<group>"; };
 		E70FE21CD13500F375F4B52D /* PaydayPreviewInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayPreviewInteractor.swift; sourceTree = "<group>"; };
 		E9DA6748AB03742058362694 /* PaydayPreviewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayPreviewPresenter.swift; sourceTree = "<group>"; };
+		ECDFAF7888B797FD36C49B63 /* PresenterStillWantItTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterStillWantItTests.swift; sourceTree = "<group>"; };
 		ED3B4E3149C88147A66F9AC8 /* NotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScheduler.swift; sourceTree = "<group>"; };
 		EE81E638F2A9EDA5221AD1A5 /* PaydaySetupContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydaySetupContracts.swift; sourceTree = "<group>"; };
 		F643E9DC31DC1D8D2612A8C8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -357,6 +369,12 @@
 			children = (
 				A472570F75E9931EE7849ED5 /* BackendNotificationTests.swift */,
 				774410E8898607E96664E034 /* BackendStateTests.swift */,
+				81CF5EBF2543A4CBD35772C3 /* PresenterAddWantTests.swift */,
+				2C10947F3321B16679791C8B /* PresenterHomeTests.swift */,
+				2E586F455E4F0D7ECC1D536C /* PresenterPaydayReviewTests.swift */,
+				33895ADF18C40EF814F7D450 /* PresenterPaydaySetupTests.swift */,
+				ECDFAF7888B797FD36C49B63 /* PresenterStillWantItTests.swift */,
+				940971CBFA2F6DAC2CAF2E59 /* PresenterTestSupport.swift */,
 				6E8CF9D5B08FBDC17107454B /* ThawTests.swift */,
 			);
 			path = ThawTests;
@@ -546,6 +564,12 @@
 			files = (
 				463B94ED4648C0695D874149 /* BackendNotificationTests.swift in Sources */,
 				41269E2C1BDB189CE71D8DE0 /* BackendStateTests.swift in Sources */,
+				677F55C5BE6EEBF0C42A1F9B /* PresenterAddWantTests.swift in Sources */,
+				95D64A331CCD37A628E39597 /* PresenterHomeTests.swift in Sources */,
+				02454E0FCC9A7025F4635D28 /* PresenterPaydayReviewTests.swift in Sources */,
+				40DC6FE7DA9F4E2D4992C2D1 /* PresenterPaydaySetupTests.swift in Sources */,
+				28270FCCBAAC6E80CC0084F7 /* PresenterStillWantItTests.swift in Sources */,
+				59581CF85DC3577A9E6DAE1A /* PresenterTestSupport.swift in Sources */,
 				95CB4B0F39F73C632849D468 /* ThawTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -5,6 +5,9 @@ final class HomePresenter: HomePresenterProtocol, HomeInteractorOutput {
     private let interactor: HomeInteractorProtocol
     private let router: HomeRouterProtocol
 
+    // Explicit deinit: the synthesized one on a MainActor class with weak refs corrupts the heap in the test host.
+    deinit {}
+
     init(view: HomeViewProtocol, interactor: HomeInteractorProtocol, router: HomeRouterProtocol) {
         self.view = view
         self.interactor = interactor

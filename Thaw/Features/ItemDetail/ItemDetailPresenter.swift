@@ -5,6 +5,9 @@ final class ItemDetailPresenter: ItemDetailPresenterProtocol {
     private let interactor: ItemDetailInteractorProtocol
     private let router: ItemDetailRouterProtocol
 
+    // Explicit deinit: the synthesized one on a MainActor class with weak refs corrupts the heap in the test host.
+    deinit {}
+
     init(view: ItemDetailViewProtocol, interactor: ItemDetailInteractorProtocol, router: ItemDetailRouterProtocol) {
         self.view = view
         self.interactor = interactor

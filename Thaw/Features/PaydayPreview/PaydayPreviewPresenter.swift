@@ -5,6 +5,9 @@ final class PaydayPreviewPresenter: PaydayPreviewPresenterProtocol {
     private let interactor: PaydayPreviewInteractorProtocol
     private let router: PaydayPreviewRouterProtocol
 
+    // Explicit deinit: the synthesized one on a MainActor class with weak refs corrupts the heap in the test host.
+    deinit {}
+
     init(view: PaydayPreviewViewProtocol, interactor: PaydayPreviewInteractorProtocol, router: PaydayPreviewRouterProtocol) {
         self.view = view
         self.interactor = interactor

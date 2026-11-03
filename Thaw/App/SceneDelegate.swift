@@ -25,7 +25,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     private func onboarding() -> UIViewController {
-        PaydaySetupViewController(store: store, reminders: reminders, onSaved: { [weak self] in
+        PaydaySetupRouter.createModule(store: store, reminders: reminders, onSaved: { [weak self] in
             guard let self, let window else { return }
             UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve) {
                 window.rootViewController = self.tabs()

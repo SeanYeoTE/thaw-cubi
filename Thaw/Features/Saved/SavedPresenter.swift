@@ -6,6 +6,9 @@ final class SavedPresenter: SavedPresenterProtocol {
     private let router: SavedRouterProtocol
     private let goal = Decimal(2000)
 
+    // Explicit deinit: the synthesized one on a MainActor class with weak refs corrupts the heap in the test host.
+    deinit {}
+
     init(view: SavedViewProtocol, interactor: SavedInteractorProtocol, router: SavedRouterProtocol) {
         self.view = view
         self.interactor = interactor

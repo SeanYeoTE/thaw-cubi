@@ -16,6 +16,9 @@ final class PaydaySetupPresenter: PaydaySetupPresenterProtocol {
     private var timerThreshold: Int
     private var timerDays: Int
 
+    // Explicit deinit: the synthesized one on a MainActor class with weak refs corrupts the heap in the test host.
+    deinit {}
+
     init(view: PaydaySetupViewProtocol, interactor: PaydaySetupInteractorProtocol, router: PaydaySetupRouterProtocol) {
         self.view = view
         self.interactor = interactor
