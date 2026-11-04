@@ -3,13 +3,15 @@ import Foundation
 final class ItemDetailInteractor: ItemDetailInteractorProtocol {
     private let store: WantStore
     private let reminders: Reminders
-    let want: Want
+    private let original: Want
 
     init(store: WantStore, reminders: Reminders, want: Want) {
         self.store = store
         self.reminders = reminders
-        self.want = want
+        self.original = want
     }
+
+    var want: Want { store.want(id: original.id) ?? original }
 
     var settings: PaydaySettings { store.effectiveSettings }
 

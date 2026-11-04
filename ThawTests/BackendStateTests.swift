@@ -177,4 +177,27 @@ final class BackendStateTests: XCTestCase {
         store.decide(id: future.id, keep: false, now: now)
         XCTAssertGreaterThan(store.want(id: future.id)?.thawsAt ?? .distantPast, date(2026, 11, 25, 9))
     }
+
+    func testEditChangesFieldsButNeverShortensTheWait() {
+        let frozen = date(2026, 10, 1, 9)
+        let payday = date(2026, 10, 25, 9)
+        var want = Want(id: UUID(), name: "Grinder", price: 420, reason: "r", frozenOn: frozen, progress: 0.2,
+                        status: .cooling, thawsAt: payday)
+        let store = WantStore(wants: [want], payday: WantStore.fixturePayday())
+        store.edit(want.id, name: "Grinder Pro", price: 20, reason: "new reason")
+        want = store.want(id: want.id)!
+        XCTAssertEqual(want.name, "Grinder Pro")
+        XCTAssertEqual(want.price, 20)
+        XCTAssertEqual(want.reason, "new reason")
+        XCTAssertEqual(want.thawsAt, payday)
+        XCTAssertEqual(want.frozenOn, frozen)
+    }
+
+    func testEditCannotTouchDecidedWants() {
+        let want = Want(id: UUID(), name: "Done", price: 50, reason: "r", frozenOn: .now, progress: 1,
+                        status: .skipped, thawsAt: .now)
+        let store = WantStore(wants: [want], payday: WantStore.fixturePayday())
+        store.edit(want.id, name: "Changed", price: 99, reason: "x")
+        XCTAssertEqual(store.want(id: want.id)?.name, "Done")
+    }
 }

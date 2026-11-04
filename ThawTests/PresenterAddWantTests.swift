@@ -10,6 +10,8 @@ final class PresenterAddWantTests: XCTestCase {
         var discardShown = 0
         var momentLine: String?
         var momentCompletion: (() -> Void)?
+        var screen: AddWantScreen?
+        func configure(_ screen: AddWantScreen) { self.screen = screen }
         func render(note: String) { self.note = note }
         func setModalInPresentation(_ isModal: Bool) { modal.append(isModal) }
         func showError(_ message: String) { errors.append(message) }
@@ -22,8 +24,11 @@ final class PresenterAddWantTests: XCTestCase {
 
     private final class FakeInteractor: AddWantInteractorProtocol {
         var settings = PaydaySettings.default
+        var editing: Want?
         var added: [(String, Decimal, String)] = []
+        var saved: [(String, Decimal, String)] = []
         func add(name: String, price: Decimal, reason: String) { added.append((name, price, reason)) }
+        func save(name: String, price: Decimal, reason: String) { saved.append((name, price, reason)) }
     }
 
     private final class FakeRouter: AddWantRouterProtocol {
@@ -81,5 +86,58 @@ final class PresenterAddWantTests: XCTestCase {
         XCTAssertEqual(view.discardShown, 2)
         presenter.confirmDiscard()
         XCTAssertEqual(router.dismissed, 2)
+    }
+
+    private func makeEditing() -> (AddWantPresenter, FakeView, FakeInteractor, FakeRouter) {
+        let made = make()
+        made.2.editing = Fixture.want("Keyboard", 189, reason: "Double-types")
+        made.0.viewDidLoad()
+        return made
+    }
+
+    func testEditModePrefillsAndRetitles() {
+        let (_, view, _, _) = makeEditing()
+        XCTAssertEqual(view.screen?.title, "Edit want")
+        XCTAssertEqual(view.screen?.actionTitle, "Save")
+        XCTAssertEqual(view.screen?.initial, AddWantInput(name: "Keyboard", price: "189", reason: "Double-types"))
+    }
+
+    func testEditWithoutChangesDismissesWithoutConfirmation() {
+        let (presenter, view, _, router) = makeEditing()
+        let same = AddWantInput(name: "Keyboard", price: "189", reason: "Double-types")
+        presenter.inputChanged(same)
+        XCTAssertEqual(view.modal.last, false)
+        presenter.tapCancel(same)
+        XCTAssertEqual(router.dismissed, 1)
+        XCTAssertEqual(view.discardShown, 0)
+    }
+
+    func testEditWithChangesAsksBeforeDiscarding() {
+        let (presenter, view, _, router) = makeEditing()
+        let changed = AddWantInput(name: "Keyboard", price: "199", reason: "Double-types")
+        presenter.inputChanged(changed)
+        XCTAssertEqual(view.modal.last, true)
+        presenter.tapCancel(changed)
+        XCTAssertEqual(view.discardShown, 1)
+        XCTAssertEqual(router.dismissed, 0)
+    }
+
+    func testEditSaveUpdatesAndDismissesWithoutMoment() {
+        let (presenter, view, interactor, router) = makeEditing()
+        presenter.tapSave(AddWantInput(name: " Keyboard 2 ", price: "199", reason: "Double-types"))
+        XCTAssertEqual(interactor.saved.count, 1)
+        XCTAssertEqual(interactor.saved.first?.0, "Keyboard 2")
+        XCTAssertEqual(interactor.saved.first?.1, 199)
+        XCTAssertTrue(interactor.added.isEmpty)
+        XCTAssertNil(view.momentLine)
+        XCTAssertEqual(router.dismissed, 1)
+    }
+
+    func testEditStillValidatesFields() {
+        let (presenter, view, interactor, _) = makeEditing()
+        presenter.tapSave(AddWantInput(name: "", price: "199", reason: ""))
+        presenter.tapSave(AddWantInput(name: "Keyboard", price: "0", reason: ""))
+        XCTAssertEqual(view.errors.count, 2)
+        XCTAssertTrue(interactor.saved.isEmpty)
     }
 }
