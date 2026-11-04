@@ -15,9 +15,11 @@ nonisolated struct Want: Identifiable, Equatable, Codable, Sendable {
     var progress: Double
     var status: Status
     var thawsAt: Date
+    var decidedOn: Date?
 
     init(id: UUID, name: String, price: Decimal, reason: String, frozenOn: Date,
-         progress: Double, status: Status, thawsAt: Date? = nil) {
+         progress: Double, status: Status, thawsAt: Date? = nil, decidedOn: Date? = nil) {
+        self.decidedOn = decidedOn
         self.id = id
         self.name = name
         self.price = price

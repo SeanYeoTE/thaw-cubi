@@ -9,13 +9,18 @@ nonisolated final class WantStore: @unchecked Sendable {
     private struct Persisted: Codable {
         var wants: [Want]
         var settings: PaydaySettings?
+        var goals: [Goal]?
+        var lastGoalMonth: Date?
+        var monthEndSummary: MonthEndSummary?
+        var goalInviteHiddenUntil: Date?
     }
 
     private(set) var wants: [Want]
     private(set) var settings: PaydaySettings?
+    var goalState = GoalState()
     private let fileURL: URL?
     private let legacyPayday: PaydaySchedule?
-    private let calendar = Calendar.current
+    let calendar = Calendar.current
 
     /// Legacy in-memory store with a fixed payday.
     init(wants: [Want] = WantStore.fixtureWants(), payday: PaydaySchedule = WantStore.fixturePayday()) {
@@ -39,6 +44,8 @@ nonisolated final class WantStore: @unchecked Sendable {
         }
         self.wants = loaded.wants
         self.settings = loaded.settings
+        self.goalState = GoalState(goals: loaded.goals ?? [], lastMonth: loaded.lastGoalMonth,
+                                   summary: loaded.monthEndSummary, inviteHiddenUntil: loaded.goalInviteHiddenUntil)
     }
 
     static var defaultFileURL: URL? {
@@ -86,18 +93,22 @@ nonisolated final class WantStore: @unchecked Sendable {
         guard let index = wants.firstIndex(where: { $0.id == id }) else { return }
         if keep {
             wants[index].status = .bought
+            wants[index].decidedOn = now
         } else {
             wants[index].thawsAt = effectiveSettings.paydayAfter(max(wants[index].thawsAt, now), calendar: calendar)
         }
         persist()
     }
 
-    private func persist() {
+    func persist() {
         guard let fileURL else { return }
         do {
             try FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(),
                                                     withIntermediateDirectories: true)
-            let data = try JSONEncoder().encode(Persisted(wants: wants, settings: settings))
+            let data = try JSONEncoder().encode(Persisted(wants: wants, settings: settings, goals: goalState.goals,
+                                                             lastGoalMonth: goalState.lastMonth,
+                                                             monthEndSummary: goalState.summary,
+                                                             goalInviteHiddenUntil: goalState.inviteHiddenUntil))
             try data.write(to: fileURL, options: .atomic)
         } catch {
             Self.logger.error("Could not save state: \(error.localizedDescription, privacy: .public)")
@@ -123,6 +134,7 @@ nonisolated final class WantStore: @unchecked Sendable {
     func update(_ id: UUID, status: Want.Status) {
         guard let index = wants.firstIndex(where: { $0.id == id }) else { return }
         wants[index].status = status
+        if status != .cooling { wants[index].decidedOn = .now }
         persist()
     }
 
