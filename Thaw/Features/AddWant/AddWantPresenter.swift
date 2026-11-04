@@ -24,8 +24,8 @@ final class AddWantPresenter: AddWantPresenterProtocol {
             initial = input
             view?.configure(AddWantScreen(title: "Edit want", actionTitle: "Save", discardTitle: "Discard changes?",
                                           discardMessage: "Your edits won't be saved.", initial: input))
-            view?.render(note: "You can change the name, price and reason. Editing can only extend the wait, "
-                + "never shorten it. Under \(Formatting.sgd(settings.timerThreshold)) uses a \(settings.timerDays)-day timer; the rest thaw on payday.")
+            view?.render(note: "You can change the name, price and reason. Moving the price across \(Formatting.sgd(settings.timerThreshold)) "
+                + "restarts the wait from today: \(settings.timerDays)-day timer below it, payday above it.")
             return
         }
         view?.configure(AddWantScreen(title: "Add to Thaw", actionTitle: "Add to Thaw", discardTitle: "Discard this want?",

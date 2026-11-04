@@ -178,19 +178,43 @@ final class BackendStateTests: XCTestCase {
         XCTAssertGreaterThan(store.want(id: future.id)?.thawsAt ?? .distantPast, date(2026, 11, 25, 9))
     }
 
-    func testEditChangesFieldsButNeverShortensTheWait() {
-        let frozen = date(2026, 10, 1, 9)
-        let payday = date(2026, 10, 25, 9)
-        var want = Want(id: UUID(), name: "Grinder", price: 420, reason: "r", frozenOn: frozen, progress: 0.2,
-                        status: .cooling, thawsAt: payday)
-        let store = WantStore(wants: [want], payday: WantStore.fixturePayday())
-        store.edit(want.id, name: "Grinder Pro", price: 20, reason: "new reason")
-        want = store.want(id: want.id)!
-        XCTAssertEqual(want.name, "Grinder Pro")
-        XCTAssertEqual(want.price, 20)
-        XCTAssertEqual(want.reason, "new reason")
-        XCTAssertEqual(want.thawsAt, payday)
-        XCTAssertEqual(want.frozenOn, frozen)
+    private func editStore(price: Decimal, thawsAt: Date) -> (WantStore, Want) {
+        let want = Want(id: UUID(), name: "Grinder", price: price, reason: "r", frozenOn: date(2026, 10, 1, 9),
+                        progress: 0.2, status: .cooling, thawsAt: thawsAt)
+        return (WantStore(wants: [want], payday: WantStore.fixturePayday()), want)
+    }
+
+    func testEditUpdatesFieldsAndKeepsDateOnSameSideOfThreshold() {
+        let payday = date(2026, 11, 25, 9)
+        let (store, want) = editStore(price: 420, thawsAt: payday)
+        store.edit(want.id, name: "Grinder Pro", price: 300, reason: "new reason", now: date(2026, 11, 2, 10))
+        let edited = store.want(id: want.id)!
+        XCTAssertEqual(edited.name, "Grinder Pro")
+        XCTAssertEqual(edited.price, 300)
+        XCTAssertEqual(edited.reason, "new reason")
+        XCTAssertEqual(edited.thawsAt, payday)
+        XCTAssertEqual(edited.frozenOn, date(2026, 10, 1, 9))
+    }
+
+    func testEditBelowThresholdRestartsTimerFromEditTime() {
+        let now = date(2026, 11, 2, 10)
+        let (store, want) = editStore(price: 420, thawsAt: date(2026, 11, 25, 9))
+        store.edit(want.id, name: "Grinder", price: 20, reason: "r", now: now)
+        XCTAssertEqual(store.want(id: want.id)?.thawsAt, calendar.date(byAdding: .day, value: 2, to: now))
+    }
+
+    func testEditAboveThresholdMovesToNextPaydayAfterEditTime() {
+        let now = date(2026, 11, 2, 10)
+        let (store, want) = editStore(price: 20, thawsAt: date(2026, 11, 3, 10))
+        store.edit(want.id, name: "Grinder", price: 200, reason: "r", now: now)
+        XCTAssertEqual(store.want(id: want.id)?.thawsAt, date(2026, 11, 25, 9))
+    }
+
+    func testEditWithinTimerRangeKeepsRunningTimer() {
+        let thaws = date(2026, 11, 3, 10)
+        let (store, want) = editStore(price: 20, thawsAt: thaws)
+        store.edit(want.id, name: "Grinder", price: 25, reason: "r", now: date(2026, 11, 2, 12))
+        XCTAssertEqual(store.want(id: want.id)?.thawsAt, thaws)
     }
 
     func testEditCannotTouchDecidedWants() {

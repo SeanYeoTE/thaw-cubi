@@ -135,20 +135,23 @@ nonisolated final class WantStore: @unchecked Sendable {
         persist()
     }
 
-    /// Edits a cooling want's name, price and reason. The wait can only get longer: the thaw date is
-    /// recomputed from the original freeze date but never moves earlier, so a price edit can't skip the cooldown.
-    func edit(_ id: UUID, name: String, price: Decimal, reason: String) {
+    /// Edits a cooling want's name, price and reason. The thaw date only changes when the price crosses the
+    /// timer threshold, and is then counted from the edit time: down means a fresh timer, up means the next
+    /// payday after now. Staying on the same side keeps the date, including any Wait already applied.
+    func edit(_ id: UUID, name: String, price: Decimal, reason: String, now: Date = .now) {
         guard let index = wants.firstIndex(where: { $0.id == id }), wants[index].status == .cooling else { return }
         let current = effectiveSettings
         let rounded = Self.rounded(price)
-        let frozenOn = wants[index].frozenOn
-        let recomputed = rounded < current.timerThreshold
-            ? calendar.date(byAdding: .day, value: current.timerDays, to: frozenOn) ?? frozenOn
-            : current.nextPayday(after: frozenOn, calendar: calendar)
+        let wasTimer = wants[index].price < current.timerThreshold
+        let isTimer = rounded < current.timerThreshold
+        if wasTimer != isTimer {
+            wants[index].thawsAt = isTimer
+                ? calendar.date(byAdding: .day, value: current.timerDays, to: now) ?? now
+                : current.nextPayday(after: now, calendar: calendar)
+        }
         wants[index].name = name
         wants[index].price = rounded
         wants[index].reason = reason
-        wants[index].thawsAt = max(wants[index].thawsAt, recomputed)
         persist()
     }
 
