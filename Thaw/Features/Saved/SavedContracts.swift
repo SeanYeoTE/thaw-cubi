@@ -1,13 +1,18 @@
 import Foundation
 
+struct SavedHistoryRow: Equatable {
+    let name: String
+    let priceText: String
+    let outcome: String
+    let dateText: String
+    let isSkipped: Bool
+}
+
 struct SavedViewModel {
-    let keptText: String
-    let goalTitle: String
-    let goalFraction: Double
-    let goalCaption: String
+    let savedText: String
     let skippedText: String
     let pattern: String
-    let skippedLines: [String]
+    let history: [SavedHistoryRow]
 }
 
 protocol SavedViewProtocol: AnyObject {
