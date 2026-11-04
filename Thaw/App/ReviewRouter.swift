@@ -34,7 +34,7 @@ final class ReviewRouter {
                 tabs.selectedIndex = 0
                 (tabs.selectedViewController as? UINavigationController)?.popToRootViewController(animated: false)
             }
-            let review = PaydayReviewViewController(store: store, reminders: reminders, wants: wants) { [weak root] in
+            let review = PaydayReviewRouter.createModule(store: store, reminders: reminders, wants: wants) { [weak root] in
                 root?.dismiss(animated: true)
             }
             root.present(ReviewSheet.wrap(review), animated: true)

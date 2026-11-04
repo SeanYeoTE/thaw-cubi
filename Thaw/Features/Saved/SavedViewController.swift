@@ -1,10 +1,9 @@
 import UIKit
 
-final class SavedViewController: ScrollStackViewController {
-    private let store: WantStore
+final class SavedViewController: ScrollStackViewController, SavedViewProtocol {
+    var presenter: SavedPresenterProtocol?
 
-    init(store: WantStore) {
-        self.store = store
+    init() {
         super.init(nibName: nil, bundle: nil)
         title = "Saved"
     }
@@ -19,25 +18,20 @@ final class SavedViewController: ScrollStackViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        render()
+        presenter?.viewWillAppear()
     }
 
-    private func render() {
+    func render(_ model: SavedViewModel) {
         clearContent()
-        let skipped = store.wants.filter { $0.status == .skipped }
-        let decided = store.wants.filter { $0.status != .cooling }
-        let kept = skipped.reduce(Decimal(0)) { $0 + $1.price }
-        let goal = Decimal(2000)
-
         let heading = makeLabel("Kept since you started", font: ThawFont.body(15), color: Theme.inkSecondary)
-        let amount = makeLabel(Formatting.sgd(kept), font: ThawFont.display(40))
+        let amount = makeLabel(model.keptText, font: ThawFont.display(40))
         stack.addArrangedSubview(heading)
         stack.addArrangedSubview(amount)
 
         let goalCard = CardView()
-        let goalText = makeLabel("Goal: Japan trip", font: ThawFont.body(15, weight: .semibold))
-        let progress = ProgressBarView(fraction: CGFloat(truncating: (kept / goal) as NSNumber), color: Theme.accent)
-        let goalCaption = makeLabel("\(Formatting.sgd(kept)) of \(Formatting.sgd(goal))", font: ThawFont.body(13), color: Theme.inkSecondary)
+        let goalText = makeLabel(model.goalTitle, font: ThawFont.body(15, weight: .semibold))
+        let progress = ProgressBarView(fraction: CGFloat(model.goalFraction), color: Theme.accent)
+        let goalCaption = makeLabel(model.goalCaption, font: ThawFont.body(13), color: Theme.inkSecondary)
         let goalStack = UIStackView(arrangedSubviews: [goalText, progress, goalCaption])
         goalStack.axis = .vertical
         goalStack.spacing = 10
@@ -53,7 +47,7 @@ final class SavedViewController: ScrollStackViewController {
 
         let countCard = CardView()
         let skippedLabel = makeLabel("Skipped", font: ThawFont.body(15), color: Theme.inkSecondary)
-        let countValue = makeLabel("\(skipped.count) of \(decided.count)", font: ThawFont.display(22))
+        let countValue = makeLabel(model.skippedText, font: ThawFont.display(22))
         let countStack = UIStackView(arrangedSubviews: [skippedLabel, countValue])
         countStack.axis = .vertical
         countStack.spacing = 4
@@ -67,14 +61,11 @@ final class SavedViewController: ScrollStackViewController {
         ])
         stack.addArrangedSubview(countCard)
 
-        let pattern = decided.isEmpty
-            ? "Decide on a few wants at payday and your pattern will show up here."
-            : "By payday, you've let go of \(skipped.count) in \(decided.count) wants."
         stack.addArrangedSubview(makeLabel("Payday pattern", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
-        stack.addArrangedSubview(makeLabel(pattern, font: ThawFont.body(16)))
+        stack.addArrangedSubview(makeLabel(model.pattern, font: ThawFont.body(16)))
 
-        for want in skipped {
-            stack.addArrangedSubview(makeLabel("\(want.name) · \(Formatting.sgd(want.price))", font: ThawFont.body(15)))
+        for line in model.skippedLines {
+            stack.addArrangedSubview(makeLabel(line, font: ThawFont.body(15)))
         }
     }
 }

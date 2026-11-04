@@ -1,7 +1,7 @@
 import UIKit
 
 final class WantCardView: UIControl {
-    init(want: Want, settings: PaydaySettings) {
+    init(model: HomeCardViewModel) {
         super.init(frame: .zero)
         let card = CardView()
         card.isUserInteractionEnabled = false
@@ -9,14 +9,14 @@ final class WantCardView: UIControl {
         addSubview(card)
 
         let name = UILabel()
-        name.text = want.name
+        name.text = model.name
         name.font = ThawFont.body(16, weight: .semibold)
         name.textColor = Theme.ink
         name.numberOfLines = 0
         name.adjustsFontForContentSizeCategory = true
 
         let price = UILabel()
-        price.text = Formatting.sgd(want.price)
+        price.text = model.priceText
         price.font = ThawFont.money(16)
         price.textColor = Theme.ink
         price.adjustsFontForContentSizeCategory = true
@@ -27,17 +27,15 @@ final class WantCardView: UIControl {
         header.compactAlignment = .firstBaseline
         header.spacing = 8
 
-        let isTimer = want.price < settings.timerThreshold
-        let bar = ProgressBarView(fraction: CGFloat(want.progress), color: isTimer ? Theme.warm : Theme.accent)
+        let isTimer = model.isTimer
+        let bar = ProgressBarView(fraction: CGFloat(model.progress), color: isTimer ? Theme.warm : Theme.accent)
 
         let status = UILabel()
         status.font = ThawFont.body(13)
         status.textColor = Theme.inkSecondary
         status.numberOfLines = 0
         status.adjustsFontForContentSizeCategory = true
-        status.text = isTimer
-            ? "Under \(Formatting.sgd(settings.timerThreshold)) · \(settings.timerDays)-day timer · thaws \(Formatting.paydayDate(want.thawsAt))"
-            : "Thaws on payday · \(Formatting.paydayDate(want.thawsAt))"
+        status.text = model.statusText
 
         let stack = UIStackView(arrangedSubviews: [header, bar, status])
         stack.axis = .vertical
