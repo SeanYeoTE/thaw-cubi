@@ -30,6 +30,11 @@ nonisolated extension WantStore {
         goalState.goals[index].name = trimmed
         goalState.goals[index].target = Self.rounded(target)
         goalState.goals[index].deadline = deadline
+        if goalState.goals[index].status == .active, goalState.goals[index].isFunded {
+            goalState.goals[index].status = .completed
+            goalState.goals[index].completedOn = .now
+            goalState.goals[index].history.append(GoalEvent(date: .now, kind: .completed))
+        }
         commitGoalChange()
     }
 

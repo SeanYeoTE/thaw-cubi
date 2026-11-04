@@ -174,6 +174,16 @@ final class BackendGoalTests: XCTestCase {
         XCTAssertTrue(store.goals.isEmpty)
     }
 
+    func testLoweringTargetBelowSavedCompletesGoal() throws {
+        let store = WantStore(wants: [])
+        let g = try store.addGoal(name: "Bike", target: 1000, deadline: nil, now: .now)
+        store.goalState.goals[0].saved = 400
+        try store.updateGoal(id: g.id, name: "Bike", target: 350, deadline: nil)
+        XCTAssertEqual(store.goal(id: g.id)?.status, .completed)
+        XCTAssertNotNil(store.goal(id: g.id)?.completedOn)
+        XCTAssertEqual(store.goal(id: g.id)?.history.last?.kind, .completed)
+    }
+
     func testDecidedOnSet() {
         let want = Want(id: UUID(), name: "a", price: 100, reason: "", frozenOn: .now, progress: 0, status: .cooling)
         let store = WantStore(wants: [want, Want(id: UUID(), name: "b", price: 100, reason: "", frozenOn: .now,
