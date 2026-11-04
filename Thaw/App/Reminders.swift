@@ -34,4 +34,19 @@ final class Reminders {
             }
         }
     }
+
+    /// "Remind me tonight": schedules the payday notification again for this evening (sprint-3 D2).
+    func remindTonight(completion: @escaping () -> Void) {
+        let store = store
+        let scheduler = makeScheduler(store.effectiveSettings.funMoney)
+        Task {
+            if await scheduler.requestAuthorizationIfNeeded() {
+                let queue = store.reviewQueue
+                let total = queue.reduce(Decimal(0)) { $0 + $1.price }
+                let date = NotificationReminder.tonightDate(now: .now, calendar: .current)
+                await scheduler.scheduleReminder(at: date, thawingCount: queue.count, total: total)
+            }
+            completion()
+        }
+    }
 }

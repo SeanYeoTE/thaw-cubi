@@ -1,29 +1,15 @@
 import UIKit
 
 /// Payday review: pick which thawed wants fit the fun money, Keep or Wait on each.
-final class PaydayReviewViewController: ScrollStackViewController {
-    private let store: WantStore
-    private let reminders: Reminders
-    private let wants: [Want]
-    private var keeping: Set<UUID>
+final class PaydayReviewViewController: ScrollStackViewController, PaydayReviewViewProtocol {
+    var presenter: PaydayReviewPresenterProtocol?
 
     private let amountLabel = UILabel()
     private let statusLabel = UILabel()
     private let meter = FunMoneyMeterView(fraction: 0, isOver: false)
     private let cta = PillButton(title: "Wait on all", style: .primary)
 
-    private var budget: Decimal { store.effectiveSettings.funMoney }
-
-    init(store: WantStore, reminders: Reminders, wants: [Want]) {
-        self.store = store
-        self.reminders = reminders
-        self.wants = wants
-        let budget = store.effectiveSettings.funMoney
-        if let first = wants.first, first.price <= budget {
-            keeping = [first.id]
-        } else {
-            keeping = []
-        }
+    init() {
         super.init(nibName: nil, bundle: nil)
         title = "Payday review"
     }
@@ -34,31 +20,33 @@ final class PaydayReviewViewController: ScrollStackViewController {
         navigationItem.largeTitleDisplayMode = .never
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeTapped))
         stack.spacing = 16
+        presenter?.viewDidLoad()
+    }
 
+    func render(_ content: PaydayReviewContent) {
         stack.addArrangedSubview(CubiHeaderView(mood: .thawed, line: "Cubi: \u{201C}Pick what fits your fun money.\u{201D}",
                                               spoken: "Pick what fits your fun money."))
-        stack.addArrangedSubview(makeMeterCard())
+        stack.addArrangedSubview(makeMeterCard(budgetText: content.budgetText))
 
-        for want in wants {
-            stack.addArrangedSubview(makeRow(for: want))
+        for row in content.rows {
+            stack.addArrangedSubview(makeRow(for: row))
         }
 
         stack.addArrangedSubview(makeLabel(
             "Anything you don't keep waits one more payday. Let go of it anytime from its page.",
             font: ThawFont.body(13), color: Theme.inkSecondary))
 
-        cta.addAction(UIAction { [weak self] _ in self?.commit() }, for: .touchUpInside)
+        cta.addAction(UIAction { [weak self] _ in self?.presenter?.tapCTA() }, for: .touchUpInside)
         stack.addArrangedSubview(cta)
-        refresh(animated: false)
     }
 
-    private func makeMeterCard() -> UIView {
+    private func makeMeterCard(budgetText: String) -> UIView {
         let card = UIView()
         card.backgroundColor = Theme.paydayCard
         card.layer.cornerRadius = 20
 
         let caption = makeLabel("Fun money this payday", font: ThawFont.body(14), color: Theme.paydayLabel)
-        amountLabel.text = Formatting.sgd(budget)
+        amountLabel.text = budgetText
         amountLabel.font = ThawFont.money(24, weight: .heavy)
         amountLabel.textColor = .white
         amountLabel.numberOfLines = 0
@@ -85,22 +73,21 @@ final class PaydayReviewViewController: ScrollStackViewController {
         return card
     }
 
-    private func makeRow(for want: Want) -> UIView {
+    private func makeRow(for model: ReviewRowViewModel) -> UIView {
         let card = CardView()
-        let name = makeLabel(want.name, font: ThawFont.body(16, weight: .semibold))
-        let reason = makeLabel(want.reason.isEmpty ? "No reason written." : "\u{201C}\(want.reason)\u{201D}",
+        let name = makeLabel(model.name, font: ThawFont.body(16, weight: .semibold))
+        let reason = makeLabel(model.reasonText,
                                font: ThawFont.body(13), color: Theme.inkSecondary)
         reason.numberOfLines = 0
-        let price = makeLabel(Formatting.sgd(want.price), font: ThawFont.money(16))
+        let price = makeLabel(model.priceText, font: ThawFont.money(16))
         price.setContentHuggingPriority(.required, for: .horizontal)
         price.setContentCompressionResistancePriority(.required, for: .horizontal)
 
-        let toggle = KeepToggleButton(isKeeping: keeping.contains(want.id))
-        toggle.name = want.name
+        let toggle = KeepToggleButton(isKeeping: model.isKeeping)
+        toggle.name = model.name
         toggle.addAction(UIAction { [weak self, weak toggle] _ in
             guard let self, let toggle else { return }
-            if toggle.isKeeping { self.keeping.insert(want.id) } else { self.keeping.remove(want.id) }
-            self.refresh(animated: true)
+            self.presenter?.setKeeping(id: model.id, keeping: toggle.isKeeping)
         }, for: .valueChanged)
 
         let text = UIStackView(arrangedSubviews: [name, reason])
@@ -120,30 +107,34 @@ final class PaydayReviewViewController: ScrollStackViewController {
         return card
     }
 
-    private var keptWants: [Want] { wants.filter { keeping.contains($0.id) } }
-
-    private func refresh(animated: Bool) {
-        let kept = keptWants
-        let summary = FunMoneySummary.make(keptPrices: kept.map(\.price), budget: budget)
-        let isOver = summary.overBy > 0
-        meter.update(fraction: summary.fraction, isOver: isOver, animated: animated)
-        statusLabel.textColor = isOver ? Theme.paydaySubtext : Theme.cubeFill
-        statusLabel.text = isOver
-            ? "\(Formatting.sgd(summary.kept)) kept · \(Formatting.sgd(summary.overBy)) over your fun money"
-            : "\(Formatting.sgd(summary.kept)) kept · \(Formatting.sgd(summary.remaining)) left"
-        cta.configuration?.title = kept.isEmpty ? "Wait on all" : "Keep \(kept.count) · \(Formatting.sgd(summary.kept))"
+    func update(_ summary: PaydayReviewSummary, animated: Bool) {
+        meter.update(fraction: summary.fraction, isOver: summary.isOver, animated: animated)
+        statusLabel.textColor = summary.isOver ? Theme.paydaySubtext : Theme.cubeFill
+        statusLabel.text = summary.statusText
+        cta.configuration?.title = summary.ctaTitle
     }
 
-    private func commit() {
-        for want in wants {
-            store.decide(id: want.id, keep: keeping.contains(want.id))
-        }
-        reminders.refresh(requestingPermission: false)
+    func playSuccessFeedback() {
         UINotificationFeedbackGenerator().notificationOccurred(.success)
-        view.window?.rootViewController?.dismiss(animated: true)
+    }
+
+    func showDiscardConfirmation() {
+        let sheet = UIAlertController(title: "Discard choices?", message: "Your Keep and Wait picks won't be applied.",
+                                      preferredStyle: .actionSheet)
+        sheet.addAction(UIAlertAction(title: "Discard", style: .destructive) { [weak self] _ in
+            self?.presenter?.confirmDiscard()
+        })
+        sheet.addAction(UIAlertAction(title: "Keep choosing", style: .cancel))
+        sheet.popoverPresentationController?.sourceItem = navigationItem.leftBarButtonItem
+        present(sheet, animated: true)
     }
 
     @objc private func closeTapped() {
-        view.window?.rootViewController?.dismiss(animated: true)
+        presenter?.tapClose()
+    }
+
+    override func accessibilityPerformEscape() -> Bool {
+        closeTapped()
+        return true
     }
 }

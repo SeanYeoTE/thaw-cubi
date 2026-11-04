@@ -1,18 +1,14 @@
 import UIKit
 
-final class AddWantViewController: ScrollStackViewController {
-    private let store: WantStore
-    private let reminders: Reminders
-    private let onSave: () -> Void
+final class AddWantViewController: ScrollStackViewController, AddWantViewProtocol, UITextViewDelegate, UIAdaptivePresentationControllerDelegate {
+    var presenter: AddWantPresenterProtocol?
     private let nameField = UITextField()
     private let priceField = UITextField()
     private let reasonView = UITextView()
     private let errorLabel = UILabel()
+    private let noteLabel = UILabel()
 
-    init(store: WantStore, reminders: Reminders, onSave: @escaping () -> Void) {
-        self.store = store
-        self.reminders = reminders
-        self.onSave = onSave
+    init() {
         super.init(nibName: nil, bundle: nil)
         title = "Add to Thaw"
     }
@@ -20,8 +16,9 @@ final class AddWantViewController: ScrollStackViewController {
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
 
     override func buildContent() {
-        let settings = store.effectiveSettings
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelTapped))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(systemItem: .cancel, primaryAction: UIAction { [weak self] _ in
+            self?.cancelTapped()
+        })
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add to Thaw", style: .done, target: self, action: #selector(saveTapped))
 
         stack.addArrangedSubview(makeLabel("What do you want?", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
@@ -34,6 +31,7 @@ final class AddWantViewController: ScrollStackViewController {
         stack.addArrangedSubview(priceField)
 
         stack.addArrangedSubview(makeLabel("Why do you want it? In your words.", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
+        reasonView.delegate = self
         reasonView.font = ThawFont.body(16)
         reasonView.textColor = Theme.ink
         reasonView.backgroundColor = Theme.surface
@@ -45,12 +43,11 @@ final class AddWantViewController: ScrollStackViewController {
         reasonView.adjustsFontForContentSizeCategory = true
         stack.addArrangedSubview(reasonView)
 
-        let note = makeLabel(
-            "Thaw will read this back to you when it thaws. Items under \(Formatting.sgd(settings.timerThreshold)) use a \(settings.timerDays)-day timer; the rest thaw on payday.",
-            font: ThawFont.body(13),
-            color: Theme.inkSecondary
-        )
-        stack.addArrangedSubview(note)
+        noteLabel.font = ThawFont.body(13)
+        noteLabel.textColor = Theme.inkSecondary
+        noteLabel.numberOfLines = 0
+        noteLabel.adjustsFontForContentSizeCategory = true
+        stack.addArrangedSubview(noteLabel)
 
         errorLabel.font = ThawFont.body(13)
         errorLabel.textColor = .systemRed
@@ -58,10 +55,15 @@ final class AddWantViewController: ScrollStackViewController {
         errorLabel.adjustsFontForContentSizeCategory = true
         errorLabel.isHidden = true
         stack.addArrangedSubview(errorLabel)
+        presenter?.viewDidLoad()
     }
 
     private func configure(_ field: UITextField, placeholder: String) {
         field.placeholder = placeholder
+        field.addAction(UIAction { [weak self, weak field] _ in
+            if let field { self?.scrollToVisible(field) }
+        }, for: .editingDidBegin)
+        field.addAction(UIAction { [weak self] _ in self?.inputDidChange() }, for: .editingChanged)
         field.font = ThawFont.body(16)
         field.textColor = Theme.ink
         field.backgroundColor = Theme.surface
@@ -74,29 +76,75 @@ final class AddWantViewController: ScrollStackViewController {
         field.adjustsFontForContentSizeCategory = true
     }
 
-    @objc private func cancelTapped() {
-        dismiss(animated: true)
+    private var input: AddWantInput {
+        AddWantInput(name: nameField.text ?? "", price: priceField.text ?? "", reason: reasonView.text ?? "")
+    }
+
+    private func inputDidChange() {
+        presenter?.inputChanged(input)
+    }
+
+    func setModalInPresentation(_ isModal: Bool) {
+        isModalInPresentation = isModal
+        navigationController?.isModalInPresentation = isModal
+    }
+
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        scrollToVisible(textView)
+    }
+
+    func textViewDidChange(_ textView: UITextView) {
+        inputDidChange()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.presentationController?.delegate = self
+    }
+
+    func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
+        presenter?.didAttemptDismiss(input)
+    }
+
+    private func cancelTapped() {
+        presenter?.tapCancel(input)
+    }
+
+    func showDiscardConfirmation() {
+        guard presentedViewController == nil else { return }
+        let sheet = UIAlertController(title: "Discard this want?", message: "What you typed won't be saved.",
+                                      preferredStyle: .actionSheet)
+        sheet.addAction(UIAlertAction(title: "Discard", style: .destructive) { [weak self] _ in
+            self?.presenter?.confirmDiscard()
+        })
+        sheet.addAction(UIAlertAction(title: "Keep editing", style: .cancel))
+        sheet.popoverPresentationController?.sourceItem = navigationItem.leftBarButtonItem
+        present(sheet, animated: true)
+    }
+
+    override func accessibilityPerformEscape() -> Bool {
+        cancelTapped()
+        return true
     }
 
     @objc private func saveTapped() {
-        let name = nameField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        guard !name.isEmpty else { return showError("Add a name for the item.") }
-        guard let price = Decimal(string: priceField.text ?? ""), price > 0 else {
-            return showError("Enter a price above S$0.")
-        }
-        store.add(name: name, price: price, reason: reasonView.text ?? "")
-        reminders.refresh(requestingPermission: true)
-        onSave()
+        presenter?.tapSave(input)
+    }
+
+    func render(note: String) {
+        noteLabel.text = note
+    }
+
+    func showSavedMoment(line: String, completion: @escaping () -> Void) {
         view.endEditing(true)
         navigationItem.leftBarButtonItem?.isEnabled = false
         navigationItem.rightBarButtonItem?.isEnabled = false
-        MomentView.present(on: view, mood: .frozen, line: CubiMood.frozen.line) { [weak self] in
-            self?.dismiss(animated: true)
-        }
+        MomentView.present(on: view, mood: .frozen, line: line, completion: completion)
     }
 
-    private func showError(_ message: String) {
+    func showError(_ message: String) {
         errorLabel.text = message
         errorLabel.isHidden = false
+        scrollToVisible(errorLabel)
     }
 }

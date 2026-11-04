@@ -5,13 +5,13 @@ final class RootTabBarController: UITabBarController {
         super.init(nibName: nil, bundle: nil)
         tabBar.tintColor = Theme.accent
 
-        let cooling = UINavigationController(rootViewController: HomeViewController(store: store, reminders: reminders))
+        let cooling = UINavigationController(rootViewController: HomeRouter.createModule(store: store, reminders: reminders))
         cooling.tabBarItem = UITabBarItem(title: "Cooling", image: UIImage(systemName: "snowflake"), tag: 0)
 
-        let saved = UINavigationController(rootViewController: SavedViewController(store: store))
+        let saved = UINavigationController(rootViewController: SavedRouter.createModule(store: store))
         saved.tabBarItem = UITabBarItem(title: "Saved", image: UIImage(systemName: "chart.bar"), tag: 1)
 
-        let settings = UINavigationController(rootViewController: PaydaySetupViewController(store: store, reminders: reminders))
+        let settings = UINavigationController(rootViewController: PaydaySetupRouter.createModule(store: store, reminders: reminders))
         settings.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gearshape"), tag: 2)
 
         viewControllers = [cooling, saved, settings]

@@ -1,22 +1,24 @@
 import UIKit
 
-final class PaydayNotificationViewController: ScrollStackViewController {
-    private let store: WantStore
-    private let reminders: Reminders
+final class PaydayPreviewViewController: ScrollStackViewController, PaydayPreviewViewProtocol {
+    var presenter: PaydayPreviewPresenterProtocol?
+    private let titleLabel = UILabel()
+    private let bodyLabel = UILabel()
+    private let remindButton = PillButton(title: "Remind me tonight", style: .quiet)
 
-    init(store: WantStore, reminders: Reminders) {
-        self.store = store
-        self.reminders = reminders
+    init() {
         super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
 
     override func buildContent() {
+        title = "Payday preview"
+        navigationItem.largeTitleDisplayMode = .never
+        navigationItem.rightBarButtonItem = UIBarButtonItem(systemItem: .close, primaryAction: UIAction { [weak self] _ in
+            self?.closeTapped()
+        })
         stack.spacing = 12
-
-        let thawing = store.reviewQueue
-        let total = thawing.reduce(Decimal(0)) { $0 + $1.price }
 
         let card = CardView()
         let icon = AppIconBadgeView()
@@ -25,14 +27,12 @@ final class PaydayNotificationViewController: ScrollStackViewController {
         app.font = ThawFont.body(13, weight: .medium)
         app.textColor = Theme.inkSecondary
         app.adjustsFontForContentSizeCategory = true
-        let title = UILabel()
-        title.text = ThawNotification.paydayTitle(count: thawing.count)
+        let title = titleLabel
         title.font = ThawFont.display(24)
         title.textColor = Theme.ink
         title.numberOfLines = 0
         title.adjustsFontForContentSizeCategory = true
-        let body = UILabel()
-        body.text = ThawNotification.paydayBody(total: total, funMoney: store.effectiveSettings.funMoney)
+        let body = bodyLabel
         body.font = ThawFont.body(15)
         body.textColor = Theme.inkSecondary
         body.numberOfLines = 0
@@ -54,20 +54,33 @@ final class PaydayNotificationViewController: ScrollStackViewController {
         ])
 
         let review = PillButton(title: "Review now", style: .primary)
-        review.addAction(UIAction { [weak self] _ in self?.startReview() }, for: .touchUpInside)
-        let later = PillButton(title: "Remind me tonight", style: .quiet)
-        later.addAction(UIAction { [weak self] _ in self?.dismiss(animated: true) }, for: .touchUpInside)
+        review.addAction(UIAction { [weak self] _ in self?.presenter?.tapReview() }, for: .touchUpInside)
+        remindButton.addAction(UIAction { [weak self] _ in self?.presenter?.tapRemindTonight() }, for: .touchUpInside)
 
-        [card, review, later].forEach(stack.addArrangedSubview)
+        [card, review, remindButton].forEach(stack.addArrangedSubview)
+        presenter?.viewDidLoad()
     }
 
-    private func startReview() {
-        let thawing = store.reviewQueue
-        guard !thawing.isEmpty else { return dismiss(animated: true) }
-        let review = PaydayReviewViewController(store: store, reminders: reminders, wants: thawing)
-        let nav = UINavigationController(rootViewController: review)
-        nav.modalPresentationStyle = .fullScreen
-        present(nav, animated: true)
+    func render(_ model: PaydayPreviewViewModel) {
+        titleLabel.text = model.title
+        bodyLabel.text = model.body
+    }
+
+    func setReminderBusy() {
+        remindButton.isEnabled = false
+    }
+
+    func playSuccessFeedback() {
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+    }
+
+    private func closeTapped() {
+        presenter?.tapClose()
+    }
+
+    override func accessibilityPerformEscape() -> Bool {
+        closeTapped()
+        return true
     }
 }
 
