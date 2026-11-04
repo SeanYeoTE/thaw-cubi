@@ -217,6 +217,19 @@ final class BackendStateTests: XCTestCase {
         XCTAssertEqual(store.want(id: want.id)?.thawsAt, thaws)
     }
 
+    func testEditUsesTheUserSetThresholdAndTimerDays() {
+        let now = date(2026, 11, 2, 10)
+        let (store, want) = editStore(price: 80, thawsAt: date(2026, 11, 3, 10))
+        var custom = PaydaySettings.default
+        custom.timerThreshold = 100
+        custom.timerDays = 4
+        store.save(settings: custom)
+        store.edit(want.id, name: "Grinder", price: 150, reason: "r", now: now)
+        XCTAssertEqual(store.want(id: want.id)?.thawsAt, date(2026, 11, 25, 9))
+        store.edit(want.id, name: "Grinder", price: 90, reason: "r", now: now)
+        XCTAssertEqual(store.want(id: want.id)?.thawsAt, calendar.date(byAdding: .day, value: 4, to: now))
+    }
+
     func testEditCannotTouchDecidedWants() {
         let want = Want(id: UUID(), name: "Done", price: 50, reason: "r", frozenOn: .now, progress: 1,
                         status: .skipped, thawsAt: .now)
