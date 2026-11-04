@@ -70,7 +70,8 @@ final class StillWantItPresenter: StillWantItPresenterProtocol {
             priceText: Formatting.sgd(want.price),
             quote: "On \(Formatting.paydayDate(want.frozenOn)), you said\n\u{201C}\(reason)\u{201D}",
             funText: "Fun money if you buy: \(Formatting.sgd(ifBuy)) of \(Formatting.sgd(budget)) left",
-            keepTitle: "Skip and keep \(Formatting.sgd(want.price))"
+            keepTitle: "Skip and keep \(Formatting.sgd(want.price))",
+            skipHint: interactor.hasActiveGoals ? "Skipping adds \(Formatting.sgd(want.price)) to this month's pool" : nil
         ))
     }
 }

@@ -17,6 +17,7 @@ final class PresenterStillWantItTests: XCTestCase {
     private final class FakeInteractor: StillWantItInteractorProtocol {
         var wants: [Want]
         var budget: Decimal = 300
+        var hasActiveGoals = false
         var log: [String] = []
         init(wants: [Want]) { self.wants = wants }
         func skip(_ want: Want) { log.append("skip \(want.name)") }
@@ -81,5 +82,14 @@ final class PresenterStillWantItTests: XCTestCase {
         presenter.tapClose()
         XCTAssertEqual(router.dismissed, 1)
         XCTAssertEqual(finished, 0)
+    }
+
+    func testSkipHintOnlyWithActiveGoals() {
+        let (presenter, view, interactor, _) = make()
+        presenter.viewDidLoad()
+        XCTAssertNil(view.models.last?.skipHint)
+        interactor.hasActiveGoals = true
+        presenter.viewDidLoad()
+        XCTAssertEqual(view.models.last?.skipHint, "Skipping adds S$189 to this month's pool")
     }
 }

@@ -13,6 +13,8 @@ final class StillWantItInteractor: StillWantItInteractorProtocol {
 
     var budget: Decimal { store.effectiveSettings.funMoney }
 
+    var hasActiveGoals: Bool { !store.activeGoals.isEmpty }
+
     func skip(_ want: Want) {
         store.update(want.id, status: .skipped)
         reminders.refresh(requestingPermission: false)

@@ -9,6 +9,12 @@ struct HomeCardViewModel: Equatable {
     let statusText: String
 }
 
+struct HomeNoticeViewModel: Equatable {
+    let title: String
+    let lines: [String]
+    let completesGoal: Bool
+}
+
 struct HomeViewModel {
     let daysLeft: Int
     let nextPaydayText: String
@@ -16,6 +22,7 @@ struct HomeViewModel {
     let hasReview: Bool
     let cards: [HomeCardViewModel]
     let emptyText: String?
+    let notice: HomeNoticeViewModel?
 }
 
 struct HomeSnapshot {
@@ -23,6 +30,7 @@ struct HomeSnapshot {
     let reviewQueue: [Want]
     let payday: PaydaySchedule
     let settings: PaydaySettings
+    var monthEnd: MonthEndSummary?
 }
 
 protocol HomeViewProtocol: AnyObject {
@@ -34,11 +42,14 @@ protocol HomePresenterProtocol: AnyObject {
     func tapAdd()
     func tapPayday()
     func tapWant(id: UUID)
+    func tapNotice()
+    func dismissNotice()
 }
 
 protocol HomeInteractorProtocol: AnyObject {
     var output: HomeInteractorOutput? { get set }
     func snapshot() -> HomeSnapshot
+    func dismissMonthEndSummary()
 }
 
 protocol HomeInteractorOutput: AnyObject {
@@ -49,4 +60,6 @@ protocol HomeRouterProtocol: AnyObject {
     func showAddWant()
     func showPaydayPreview()
     func showItemDetail(id: UUID)
+    /// Opens Saved, then the goal-complete moment when `completedGoalId` is set.
+    func showSaved(completedGoalId: UUID?)
 }

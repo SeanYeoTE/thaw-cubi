@@ -11,6 +11,7 @@ final class StillWantItViewController: ScrollStackViewController, StillWantItVie
     private let funLabel = UILabel()
     private let keep = PillButton(title: "", style: .secondary)
     private let buy = PillButton(title: "Yes, I'll buy it", style: .primary)
+    private let skipHint = UILabel()
     private let unsure = PillButton(title: "Not sure? Wait one more payday", style: .quiet)
 
     init() {
@@ -55,7 +56,14 @@ final class StillWantItViewController: ScrollStackViewController, StillWantItVie
         buy.addAction(UIAction { [weak self] _ in self?.presenter?.tapBuy() }, for: .touchUpInside)
         unsure.addAction(UIAction { [weak self] _ in self?.presenter?.tapWait() }, for: .touchUpInside)
 
-        [card, funLabel, keep, buy, unsure].forEach(stack.addArrangedSubview)
+        skipHint.font = ThawFont.body(13)
+        skipHint.textColor = Theme.frostText
+        skipHint.textAlignment = .center
+        skipHint.numberOfLines = 0
+        skipHint.adjustsFontForContentSizeCategory = true
+        skipHint.isHidden = true
+
+        [card, funLabel, keep, skipHint, buy, unsure].forEach(stack.addArrangedSubview)
         stack.setCustomSpacing(18, after: funLabel)
         presenter?.viewDidLoad()
     }
@@ -67,6 +75,8 @@ final class StillWantItViewController: ScrollStackViewController, StillWantItVie
         quote.text = model.quote
         funLabel.text = model.funText
         keep.configuration?.title = model.keepTitle
+        skipHint.text = model.skipHint
+        skipHint.isHidden = model.skipHint == nil
     }
 
     func showSkipMoment(line: String, completion: @escaping () -> Void) {

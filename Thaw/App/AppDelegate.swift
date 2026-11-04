@@ -10,6 +10,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        _ = store.runMonthEndIfNeeded(now: Date())
         let router = router
         let handler = NotificationActionHandler(
             scheduler: UserNotificationScheduler(funMoney: store.effectiveSettings.funMoney),

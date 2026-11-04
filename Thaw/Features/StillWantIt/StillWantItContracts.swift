@@ -7,6 +7,8 @@ struct StillWantItViewModel {
     let quote: String
     let funText: String
     let keepTitle: String
+    /// Set only when the user has active goals.
+    let skipHint: String?
 }
 
 protocol StillWantItViewProtocol: AnyObject {
@@ -26,6 +28,7 @@ protocol StillWantItPresenterProtocol: AnyObject {
 protocol StillWantItInteractorProtocol: AnyObject {
     var wants: [Want] { get }
     var budget: Decimal { get }
+    var hasActiveGoals: Bool { get }
     func skip(_ want: Want)
     func buy(_ want: Want)
     func wait(_ want: Want)

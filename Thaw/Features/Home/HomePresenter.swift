@@ -28,6 +28,18 @@ final class HomePresenter: HomePresenterProtocol, HomeInteractorOutput {
 
     func tapWant(id: UUID) { router.showItemDetail(id: id) }
 
+    func tapNotice() {
+        guard let summary = interactor.snapshot().monthEnd else { return }
+        let completed = summary.applied.first { $0.completed }?.goalId
+        interactor.dismissMonthEndSummary()
+        router.showSaved(completedGoalId: completed)
+    }
+
+    func dismissNotice() {
+        interactor.dismissMonthEndSummary()
+        refresh()
+    }
+
     private func refresh() {
         let snapshot = interactor.snapshot()
         let thawing = snapshot.reviewQueue
@@ -41,8 +53,28 @@ final class HomePresenter: HomePresenterProtocol, HomeInteractorOutput {
             paydaySubtitle: subtitle,
             hasReview: !thawing.isEmpty,
             cards: cards,
-            emptyText: cards.isEmpty ? "Nothing cooling. Add a want to start the wait." : nil
+            emptyText: cards.isEmpty ? "Nothing cooling. Add a want to start the wait." : nil,
+            notice: snapshot.monthEnd.map(notice(for:))
         ))
+    }
+
+    private func notice(for summary: MonthEndSummary) -> HomeNoticeViewModel {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_SG")
+        formatter.dateFormat = "MMMM"
+        let month = formatter.string(from: summary.month)
+        var lines = ["\(Formatting.sgd(summary.skipped)) skipped + \(Formatting.sgd(summary.unspent)) unspent fun money"]
+        for item in summary.applied {
+            lines.append("+\(Formatting.sgd(item.amount)) to \(item.goalName)" + (item.completed ? " · goal reached" : ""))
+        }
+        if summary.keptRemainder > 0 {
+            lines.append("\(Formatting.sgd(summary.keptRemainder)) stayed in Kept")
+        }
+        return HomeNoticeViewModel(
+            title: "\(month) ended: \(Formatting.sgd(summary.pool)) landed",
+            lines: lines,
+            completesGoal: summary.applied.contains { $0.completed }
+        )
     }
 
     private func card(for want: Want, settings: PaydaySettings) -> HomeCardViewModel {

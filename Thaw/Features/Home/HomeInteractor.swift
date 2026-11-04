@@ -15,6 +15,9 @@ final class HomeInteractor: HomeInteractorProtocol {
 
     func snapshot() -> HomeSnapshot {
         HomeSnapshot(cooling: store.cooling, reviewQueue: store.reviewQueue,
-                     payday: store.payday, settings: store.effectiveSettings)
+                     payday: store.payday, settings: store.effectiveSettings,
+                     monthEnd: store.monthEndSummary)
     }
+
+    func dismissMonthEndSummary() { store.dismissMonthEndSummary() }
 }

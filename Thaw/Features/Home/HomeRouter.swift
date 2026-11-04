@@ -33,6 +33,16 @@ final class HomeRouter: HomeRouterProtocol {
         viewController?.present(UINavigationController(rootViewController: module), animated: true)
     }
 
+    func showSaved(completedGoalId: UUID?) {
+        guard let tabs = viewController?.tabBarController else { return }
+        tabs.selectedIndex = 1
+        guard let goalId = completedGoalId else { return }
+        let module = GoalCompleteRouter.createModule(store: store, goalId: goalId, onFinish: {})
+        let nav = UINavigationController(rootViewController: module)
+        nav.modalPresentationStyle = .fullScreen
+        tabs.present(nav, animated: true)
+    }
+
     func showItemDetail(id: UUID) {
         guard let module = ItemDetailRouter.createModule(store: store, reminders: reminders, wantID: id) else { return }
         viewController?.navigationController?.pushViewController(module, animated: true)
