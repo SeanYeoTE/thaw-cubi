@@ -11,7 +11,7 @@ iOS UIKit app (VIPER per screen) for the "Wishlist Cooldown" design. Sprint 1 bu
 | Item detail | `Thaw/Features/ItemDetail/ItemDetailViewController.swift` |
 | Payday notification (sheet) | `Thaw/Features/PaydayPreview/PaydayPreviewViewController.swift` |
 | Still want it? (payday review) | `Thaw/Features/StillWantIt/StillWantItViewController.swift` |
-| Saved dashboard | `Thaw/Features/Saved/SavedViewController.swift` |
+| Saved total + history | `Thaw/Features/Saved/SavedViewController.swift` |
 
 | Payday setup (onboarding + Settings tab) | `Thaw/Features/PaydaySetup/PaydaySetupViewController.swift` |
 | Payday review (Keep/Wait vs fun money) | `Thaw/Features/PaydayReview/PaydayReviewViewController.swift` |

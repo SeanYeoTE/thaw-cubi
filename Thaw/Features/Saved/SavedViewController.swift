@@ -23,27 +23,10 @@ final class SavedViewController: ScrollStackViewController, SavedViewProtocol {
 
     func render(_ model: SavedViewModel) {
         clearContent()
-        let heading = makeLabel("Kept since you started", font: ThawFont.body(15), color: Theme.inkSecondary)
-        let amount = makeLabel(model.keptText, font: ThawFont.display(40))
+        let heading = makeLabel("Saved since you started", font: ThawFont.body(15), color: Theme.inkSecondary)
+        let amount = makeLabel(model.savedText, font: ThawFont.display(40))
         stack.addArrangedSubview(heading)
         stack.addArrangedSubview(amount)
-
-        let goalCard = CardView()
-        let goalText = makeLabel(model.goalTitle, font: ThawFont.body(15, weight: .semibold))
-        let progress = ProgressBarView(fraction: CGFloat(model.goalFraction), color: Theme.accent)
-        let goalCaption = makeLabel(model.goalCaption, font: ThawFont.body(13), color: Theme.inkSecondary)
-        let goalStack = UIStackView(arrangedSubviews: [goalText, progress, goalCaption])
-        goalStack.axis = .vertical
-        goalStack.spacing = 10
-        goalStack.translatesAutoresizingMaskIntoConstraints = false
-        goalCard.addSubview(goalStack)
-        NSLayoutConstraint.activate([
-            goalStack.leadingAnchor.constraint(equalTo: goalCard.leadingAnchor, constant: 16),
-            goalStack.trailingAnchor.constraint(equalTo: goalCard.trailingAnchor, constant: -16),
-            goalStack.topAnchor.constraint(equalTo: goalCard.topAnchor, constant: 16),
-            goalStack.bottomAnchor.constraint(equalTo: goalCard.bottomAnchor, constant: -16),
-        ])
-        stack.addArrangedSubview(goalCard)
 
         let countCard = CardView()
         let skippedLabel = makeLabel("Skipped", font: ThawFont.body(15), color: Theme.inkSecondary)
@@ -64,8 +47,35 @@ final class SavedViewController: ScrollStackViewController, SavedViewProtocol {
         stack.addArrangedSubview(makeLabel("Payday pattern", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
         stack.addArrangedSubview(makeLabel(model.pattern, font: ThawFont.body(16)))
 
-        for line in model.skippedLines {
-            stack.addArrangedSubview(makeLabel(line, font: ThawFont.body(15)))
+        guard !model.history.isEmpty else { return }
+        stack.addArrangedSubview(makeLabel("History", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
+        for row in model.history {
+            stack.addArrangedSubview(historyRow(row))
         }
+    }
+
+    private func historyRow(_ row: SavedHistoryRow) -> UIView {
+        let card = CardView()
+        let name = makeLabel(row.name, font: ThawFont.body(16, weight: .semibold))
+        let detail = makeLabel("\(row.outcome) · \(row.dateText)", font: ThawFont.body(13),
+                               color: row.isSkipped ? Theme.accent : Theme.inkSecondary)
+        let price = makeLabel(row.priceText, font: ThawFont.money(16))
+        price.setContentHuggingPriority(.required, for: .horizontal)
+        let texts = UIStackView(arrangedSubviews: [name, detail])
+        texts.axis = .vertical
+        texts.spacing = 2
+        let line = UIStackView(arrangedSubviews: [texts, price])
+        line.axis = .horizontal
+        line.alignment = .center
+        line.spacing = 12
+        line.translatesAutoresizingMaskIntoConstraints = false
+        card.addSubview(line)
+        NSLayoutConstraint.activate([
+            line.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 16),
+            line.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -16),
+            line.topAnchor.constraint(equalTo: card.topAnchor, constant: 14),
+            line.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -14),
+        ])
+        return card
     }
 }
