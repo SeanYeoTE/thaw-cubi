@@ -23,6 +23,12 @@ enum Theme {
     static let toggleBorder = UIColor(hex: 0xC3D0D7)
     static let toggleText = UIColor(hex: 0x2F4653)
     static let divider = UIColor(hex: 0xEDF2F5)
+    static let frost = UIColor(hex: 0xD9EEF5)
+    static let frostText = UIColor(hex: 0x08506A)
+    static let frostBorder = UIColor(hex: 0xBFE3EF)
+    static let extendedText = UIColor(hex: 0x7A3407)
+    static let neutralTagText = UIColor(hex: 0x3D525F)
+    static let destructive = UIColor(hex: 0xB3261E)
 
     enum Radius {
         static let card: CGFloat = 16
