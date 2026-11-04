@@ -28,30 +28,44 @@ final class SavedViewController: ScrollStackViewController, SavedViewProtocol {
         stack.addArrangedSubview(heading)
         stack.addArrangedSubview(amount)
 
-        let countCard = CardView()
-        let skippedLabel = makeLabel("Skipped", font: ThawFont.body(15), color: Theme.inkSecondary)
-        let countValue = makeLabel(model.skippedText, font: ThawFont.display(22))
-        let countStack = UIStackView(arrangedSubviews: [skippedLabel, countValue])
-        countStack.axis = .vertical
-        countStack.spacing = 4
-        countStack.translatesAutoresizingMaskIntoConstraints = false
-        countCard.addSubview(countStack)
-        NSLayoutConstraint.activate([
-            countStack.leadingAnchor.constraint(equalTo: countCard.leadingAnchor, constant: 16),
-            countStack.trailingAnchor.constraint(equalTo: countCard.trailingAnchor, constant: -16),
-            countStack.topAnchor.constraint(equalTo: countCard.topAnchor, constant: 16),
-            countStack.bottomAnchor.constraint(equalTo: countCard.bottomAnchor, constant: -16),
-        ])
-        stack.addArrangedSubview(countCard)
-
-        stack.addArrangedSubview(makeLabel("Payday pattern", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
-        stack.addArrangedSubview(makeLabel(model.pattern, font: ThawFont.body(16)))
+        if let progress = model.progress {
+            stack.addArrangedSubview(makeLabel("Your progress", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
+            stack.addArrangedSubview(progressCard(progress))
+        } else if let emptyText = model.emptyText {
+            stack.addArrangedSubview(makeLabel(emptyText, font: ThawFont.body(16)))
+        }
 
         guard !model.history.isEmpty else { return }
         stack.addArrangedSubview(makeLabel("History", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
         for row in model.history {
             stack.addArrangedSubview(historyRow(row))
         }
+    }
+
+    private func progressCard(_ model: SavedProgressViewModel) -> UIView {
+        let card = CardView()
+        let column = UIStackView()
+        column.axis = .vertical
+        column.spacing = 14
+        for stat in model.stats {
+            let value = makeLabel(stat.value, font: ThawFont.display(20))
+            let caption = makeLabel(stat.caption, font: ThawFont.body(13), color: Theme.inkSecondary)
+            let item = UIStackView(arrangedSubviews: [value, caption])
+            item.axis = .vertical
+            item.spacing = 2
+            item.isAccessibilityElement = true
+            item.accessibilityLabel = "\(stat.value). \(stat.caption)"
+            column.addArrangedSubview(item)
+        }
+        column.translatesAutoresizingMaskIntoConstraints = false
+        card.addSubview(column)
+        NSLayoutConstraint.activate([
+            column.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 16),
+            column.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -16),
+            column.topAnchor.constraint(equalTo: card.topAnchor, constant: 16),
+            column.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -16),
+        ])
+        return card
     }
 
     private func historyRow(_ row: SavedHistoryRow) -> UIView {

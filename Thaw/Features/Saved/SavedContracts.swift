@@ -8,10 +8,18 @@ struct SavedHistoryRow: Equatable {
     let isSkipped: Bool
 }
 
+struct SavedProgressViewModel: Equatable {
+    struct Stat: Equatable {
+        let value: String
+        let caption: String
+    }
+    let stats: [Stat]
+}
+
 struct SavedViewModel {
     let savedText: String
-    let skippedText: String
-    let pattern: String
+    let progress: SavedProgressViewModel?
+    let emptyText: String?
     let history: [SavedHistoryRow]
 }
 
@@ -25,6 +33,7 @@ protocol SavedPresenterProtocol: AnyObject {
 
 protocol SavedInteractorProtocol: AnyObject {
     var wants: [Want] { get }
+    var funMoney: Decimal { get }
 }
 
 protocol SavedRouterProtocol: AnyObject {}

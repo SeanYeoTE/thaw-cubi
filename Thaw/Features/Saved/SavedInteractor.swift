@@ -8,4 +8,5 @@ final class SavedInteractor: SavedInteractorProtocol {
     }
 
     var wants: [Want] { store.wants }
+    var funMoney: Decimal { store.effectiveSettings.funMoney }
 }

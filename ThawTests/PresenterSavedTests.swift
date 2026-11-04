@@ -10,6 +10,7 @@ final class PresenterSavedTests: XCTestCase {
 
     private final class FakeInteractor: SavedInteractorProtocol {
         var wants: [Want] = []
+        var funMoney: Decimal = 300
     }
 
     private final class FakeRouter: SavedRouterProtocol {}
@@ -28,17 +29,23 @@ final class PresenterSavedTests: XCTestCase {
              progress: 1, status: status, thawsAt: .now)
     }
 
-    func testNothingDecidedShowsEmptyHistory() {
+    func testNothingDecidedShowsEmptyState() {
         let model = render([want("Case", 24, .cooling)])
         XCTAssertEqual(model?.savedText, Formatting.sgd(0))
-        XCTAssertEqual(model?.skippedText, "0 of 0")
+        XCTAssertNil(model?.progress)
+        XCTAssertNotNil(model?.emptyText)
         XCTAssertEqual(model?.history, [])
     }
 
-    func testSavedIsSumOfSkippedPrices() {
+    func testProgressCardShowsThreeStats() {
         let model = render([want("Shirt", 69, .skipped), want("Grinder", 420, .skipped), want("Keyboard", 189, .bought)])
         XCTAssertEqual(model?.savedText, Formatting.sgd(489))
-        XCTAssertEqual(model?.skippedText, "2 of 3")
+        XCTAssertNil(model?.emptyText)
+        let stats = model?.progress?.stats
+        XCTAssertEqual(stats?.count, 3)
+        XCTAssertEqual(stats?[1].value, "1.6 months of fun money")
+        XCTAssertEqual(stats?[2].value, "67% let go")
+        XCTAssertEqual(stats?[2].caption, "You skipped 2 of 3 wants you froze.")
     }
 
     func testHistoryListsDecidedWantsNewestFirst() {
