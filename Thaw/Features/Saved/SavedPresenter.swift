@@ -28,11 +28,23 @@ final class SavedPresenter: SavedPresenterProtocol {
             )
         }
         view?.render(SavedViewModel(
+            cubi: cubi(decided: decided.count, stats: stats),
             savedText: Formatting.sgd(stats.saved),
             progress: decided.isEmpty ? nil : progress(for: stats),
             emptyText: decided.isEmpty ? "Decide on a few wants at payday and your progress will show up here." : nil,
             history: history
         ))
+    }
+
+    // Mood is a pure function of the stats, so Cubi only changes when the numbers do.
+    private func cubi(decided: Int, stats: ProgressStats) -> SavedCubiViewModel {
+        if decided == 0 {
+            return SavedCubiViewModel(mood: .frozen, line: "Brr. Decide on a few wants at payday and I'll keep score.")
+        }
+        if stats.streak >= 1 {
+            return SavedCubiViewModel(mood: .proud, line: CubiMood.proudLine(amount: Formatting.sgd(stats.saved)))
+        }
+        return SavedCubiViewModel(mood: .snoozing, line: "A fresh start. Let one go at payday and I'll cheer.")
     }
 
     private func progress(for stats: ProgressStats) -> SavedProgressViewModel {

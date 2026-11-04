@@ -16,7 +16,13 @@ struct SavedProgressViewModel: Equatable {
     let stats: [Stat]
 }
 
+struct SavedCubiViewModel: Equatable {
+    let mood: CubiMood
+    let line: String
+}
+
 struct SavedViewModel {
+    let cubi: SavedCubiViewModel
     let savedText: String
     let progress: SavedProgressViewModel?
     let emptyText: String?

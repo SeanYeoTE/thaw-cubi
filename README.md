@@ -42,13 +42,15 @@ Presenters are tested without UIKit by injecting fake view, router and interacto
 - Design tokens and components live in `Thaw/DesignSystem/`.
 - Display type uses Bricolage Grotesque ExtraBold (`Thaw/Resources/Fonts/`, SIL OFL 1.1, licence in `OFL.txt`). Body text uses the system font.
 - Payday rules, fun money and notification scheduling live in `Thaw/Models` and `Thaw/Services`. Notification permission is asked on first Add or first Save of settings, never at launch.
-- Cubi (`CubiView`) shows only at Home status, Add success, review header and Skip.
+- Cubi (`CubiView`) shows at Home status, Add success, review header, Skip and the top of Saved. On Saved the presenter picks the mood from the progress stats: frozen with nothing decided, proud during a payday streak, snoozing once the streak is broken.
 - Fonts scale with Dynamic Type; the app is light mode only.
 
 ## Launch arguments
 
 - `-thawReset` clears saved state (shows onboarding).
 - `-thawFixture sprint1` seeds the four sample wants.
+- `-thawFixture history` seeds decided wants across three months and default settings (skips onboarding).
+- Debug builds seed sample wants and default settings on the very first launch (no saved state file). Use `-thawReset` for a clean start.
 
 ## Setup
 
