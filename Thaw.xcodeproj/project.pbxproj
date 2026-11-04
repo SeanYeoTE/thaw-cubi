@@ -7,27 +7,36 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		020F02E624D2D0AA5A19416D /* BackendGoalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437E107F7C4999F657487665 /* BackendGoalTests.swift */; };
 		02454E0FCC9A7025F4635D28 /* PresenterPaydayReviewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E586F455E4F0D7ECC1D536C /* PresenterPaydayReviewTests.swift */; };
 		034D0F658E7D05D2D150F08C /* ItemDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A199DB16D8CA01565CA1D0 /* ItemDetailViewController.swift */; };
 		034F84539C8C2F04EE25E1D3 /* PaydayReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37036FE395D3487FC2A885BF /* PaydayReviewViewController.swift */; };
+		043D108C043E72271DF758F4 /* GoalEditorContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE3062BAD4671B496B33AE3 /* GoalEditorContracts.swift */; };
 		0AB802797C98D0682EFC8BB7 /* ReviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4EBA4161660F177F921754F /* ReviewSheet.swift */; };
 		0B8B78E10923BD0400D89BEB /* HomeContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34CE7FB8A2CE83004DFC9A4 /* HomeContracts.swift */; };
+		0EDE97984FDF50964A61B0A4 /* GoalDetailContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFE936EB741DEBF793B9AC5 /* GoalDetailContracts.swift */; };
 		0F0A09486FE65F3F6E9C2B03 /* HomeRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5925C0EFAFB2E123DF8BF9E3 /* HomeRouter.swift */; };
 		143C42978466B1B5EE8EAB15 /* ScrollStackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77B232B93745E1F8D0B2AD4 /* ScrollStackViewController.swift */; };
 		16275C32732610E31B21CDCD /* SavedInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 307E2E39C76493C1E0A39EB1 /* SavedInteractor.swift */; };
+		17C9C78FC4AEA576ED0B5186 /* PresenterGoalEditorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE38E4B9EB08EFDADA1DEF0F /* PresenterGoalEditorTests.swift */; };
 		184971E35FE837FF8B22816A /* AddWantInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111ACEB2F1EFC192098B5CFE /* AddWantInteractor.swift */; };
+		1B4802246E5A9BE604EA46D3 /* GoalCompleteInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA3D7A30C2886E5B568FFE8 /* GoalCompleteInteractor.swift */; };
 		1BED418734EE4CD5AC5FE304 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0893C400A63049F594E0D049 /* OFL.txt */; };
 		24FB9ABAB36DD30490273762 /* PaydayPreviewContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EF1FC55321B97CA81DBD2DF /* PaydayPreviewContracts.swift */; };
 		25B513D0270B2694D9F2D9FA /* HomeInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC4EB9D10490EC015CA5A0C1 /* HomeInteractor.swift */; };
+		261F2DF12B0860099EFA902A /* GoalEditorRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7DD58D9A04581E361AF394 /* GoalEditorRouter.swift */; };
 		28270FCCBAAC6E80CC0084F7 /* PresenterStillWantItTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDFAF7888B797FD36C49B63 /* PresenterStillWantItTests.swift */; };
 		2970DC4C05114D89257C6A22 /* PaydayReviewInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E624552AB9BFCA5178C03BD /* PaydayReviewInteractor.swift */; };
+		29C6F816323F14C7C6DDCFE3 /* GoalDetailRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894AE3FB75DBF427795D1572 /* GoalDetailRouter.swift */; };
 		2B92CBD7D929238DFA7D1317 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40459DC7F21FA527CDD4EDB /* HomeViewController.swift */; };
 		2DBF036DC27DF0212D46B130 /* ItemDetailPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19097D54A37AD4340BACB25F /* ItemDetailPresenter.swift */; };
 		2F6B3665AFC048309DBD9E53 /* PaydayPreviewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA6748AB03742058362694 /* PaydayPreviewPresenter.swift */; };
+		314A644020947C37A9A8F79A /* PresenterSavedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115E67F988ECDC1D95B88459 /* PresenterSavedTests.swift */; };
 		3A6C430A7F566B0DF1EB3618 /* Goal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465A18212398CB89D8D860CD /* Goal.swift */; };
 		3E05091ADA60413300AEE509 /* PaydaySetupContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE81E638F2A9EDA5221AD1A5 /* PaydaySetupContracts.swift */; };
 		40DC6FE7DA9F4E2D4992C2D1 /* PresenterPaydaySetupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33895ADF18C40EF814F7D450 /* PresenterPaydaySetupTests.swift */; };
 		41269E2C1BDB189CE71D8DE0 /* BackendStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 774410E8898607E96664E034 /* BackendStateTests.swift */; };
+		41E843BC2B3393ACCAB7548B /* GoalDetailPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FA5CC7A6C863D2B40135294 /* GoalDetailPresenter.swift */; };
 		45EA33C705A77737EDEBBD92 /* AddWantRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C4225A06CE72F31F7BA7B0 /* AddWantRouter.swift */; };
 		463B94ED4648C0695D874149 /* BackendNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A472570F75E9931EE7849ED5 /* BackendNotificationTests.swift */; };
 		48A8D48400D765A7D257BE10 /* PaydayPreviewInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70FE21CD13500F375F4B52D /* PaydayPreviewInteractor.swift */; };
@@ -40,9 +49,11 @@
 		5338520F971F0D94A908595C /* AdaptiveViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD5EDB6666C41A4E9A6D7A46 /* AdaptiveViews.swift */; };
 		53B60BCF546B08EFD8E5D17A /* PaydaySetupInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A257AE77FF4C4508CB0368AE /* PaydaySetupInteractor.swift */; };
 		54FDCD55A11D8D0AF5D8F567 /* ItemDetailInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AE404F032BB93BB8EA8CC42 /* ItemDetailInteractor.swift */; };
+		5555B9E3BD8B56604AF1036B /* GoalCompleteContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5DAA8D91364E459A1897F4 /* GoalCompleteContracts.swift */; };
 		55ABEDA9BA4FA4A661C12B84 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C6FD23F86B998D45F66CF5 /* Theme.swift */; };
 		5731B18B98459E850CF4E1C8 /* CubiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8070CCDDAC342DF0FAB276ED /* CubiView.swift */; };
 		59581CF85DC3577A9E6DAE1A /* PresenterTestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940971CBFA2F6DAC2CAF2E59 /* PresenterTestSupport.swift */; };
+		5A5D0F0966393C541EE7D776 /* PresenterGoalCompleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EECB8256D878720F46F443C /* PresenterGoalCompleteTests.swift */; };
 		5AA9AE7F5A6EF49DFF335D08 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A2D557655FBDFAA2CD42A2 /* Components.swift */; };
 		60C346AC8EFA1B3A93542E31 /* PaydaySetupPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2BC6DE142818862DBDE46A0 /* PaydaySetupPresenter.swift */; };
 		669601F9ECB2C750361AF8AA /* StillWantItInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D075AB4E1E93236E8E2A7DB4 /* StillWantItInteractor.swift */; };
@@ -50,6 +61,7 @@
 		677F55C5BE6EEBF0C42A1F9B /* PresenterAddWantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CF5EBF2543A4CBD35772C3 /* PresenterAddWantTests.swift */; };
 		69A55B2BA3306EE453F8667A /* PaydaySetupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C19EC35A2C5BBD2B0CCE5F /* PaydaySetupViewController.swift */; };
 		6D2FD02F297695334B4CEB15 /* HomePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3875C0C3237E2AC0D088414D /* HomePresenter.swift */; };
+		6ECA4CBE158F52A5B6DB8010 /* GoalCompleteRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074440282C39D8DD9A50E38E /* GoalCompleteRouter.swift */; };
 		6F4C0CE7DD236D5CE357724F /* PaydayReviewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58BDD9230954D66A5B20A4CC /* PaydayReviewRouter.swift */; };
 		7257CC23CCDB2CC790723511 /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A504E812CFA3EF891C88120E /* Formatting.swift */; };
 		7684A64D26A1EC970D9EA2A2 /* GoalComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A40DD5584753A3E5FF594A /* GoalComponents.swift */; };
@@ -58,12 +70,15 @@
 		7A1EAA326A34E3DF5A170F95 /* ReviewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3608794257CA9D2CD63855E5 /* ReviewRouter.swift */; };
 		7C8389049FDDD59051C306DB /* ItemDetailRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A7FCE28C930DA61B2A8546 /* ItemDetailRouter.swift */; };
 		7D84639939839902B993DE3F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CA6D24F6CB292754099B8D /* AppDelegate.swift */; };
+		8077F4910CED8B3C5027959C /* GoalDetailInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F614C3B91BEC429A1D6FFEF8 /* GoalDetailInteractor.swift */; };
+		8183A1F703FA55660BAA0C44 /* PresenterGoalDetailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E108943F9D456F85FA057149 /* PresenterGoalDetailTests.swift */; };
 		84DFE1CC1FCAA1E07D7E4A58 /* PaydayPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B10807EB04E8E7DD29BA541 /* PaydayPreviewViewController.swift */; };
 		8531ADEBABEBA4A636991227 /* PaydayPreviewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06392377E432237DEBBF81D4 /* PaydayPreviewRouter.swift */; };
 		8C11E1202EB5347C59B0E480 /* SavedPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7576D63D42336C1FF3C7A179 /* SavedPresenter.swift */; };
 		939AF696715FE7B5D51C3C59 /* StillWantItPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC2AED725E7911F3A85769B /* StillWantItPresenter.swift */; };
 		95CB4B0F39F73C632849D468 /* ThawTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CF9D5B08FBDC17107454B /* ThawTests.swift */; };
 		95D64A331CCD37A628E39597 /* PresenterHomeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C10947F3321B16679791C8B /* PresenterHomeTests.swift */; };
+		96772CC5AE8C0E8FEF6F58E4 /* GoalEditorInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F92BE93308F317C965864B /* GoalEditorInteractor.swift */; };
 		99F0B8ECD534804C44AD9586 /* MomentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5FDD6B49F220715E738273 /* MomentView.swift */; };
 		9BF415AF2DEB3CEE68DB1D8B /* Want.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10507C7F0C9C40E5DC492E0B /* Want.swift */; };
 		9C8B01191DBA08A3B9A70570 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0147AF4CE7EB91C9076C794A /* SceneDelegate.swift */; };
@@ -73,15 +88,20 @@
 		A77C71C06CA2CD2063A84A27 /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3B4E3149C88147A66F9AC8 /* NotificationScheduler.swift */; };
 		A810B5B80CED64D88C599EC8 /* AddWantViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8046A6BE40C36BFCD77BF1 /* AddWantViewController.swift */; };
 		B54116F3B5491FC469E3DC6A /* SavedContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C433979969F84CA17CC9145 /* SavedContracts.swift */; };
+		B92A94D698C0F2E358BA65A1 /* GoalEditorPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF54E4F4A2F789AC05A70C77 /* GoalEditorPresenter.swift */; };
 		BDE660BCD97598D36502AF21 /* PaydayReviewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05503896C996817AE258F1F7 /* PaydayReviewPresenter.swift */; };
 		BDF3C5346934F35A322E6649 /* RootTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66599F653BA988F281AB8C7 /* RootTabBarController.swift */; };
 		C5E91C3017C311ACB95CDDA6 /* PaydaySetupRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56354008977C4CFBFF11A002 /* PaydaySetupRouter.swift */; };
 		CAAF77C96FE413C0BF3978EA /* WantStore+Goals.swift in Sources */ = {isa = PBXBuildFile; fileRef = D882526989B8FEF99CFBB084 /* WantStore+Goals.swift */; };
+		D564741E2E67D185CF091A80 /* GoalEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4374794B07F0870AD057B61B /* GoalEditorViewController.swift */; };
+		D76302F7B23226955620226C /* GoalCompletePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9AA1B543F4C094A3C7DD259 /* GoalCompletePresenter.swift */; };
+		DF873A66C8077C8252253139 /* GoalCompleteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD9667C00BE1985E0EEDAE84 /* GoalCompleteViewController.swift */; };
 		E701353F0D25E7A89DE60E62 /* StillWantItRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC231751AC0B6D182D8F131 /* StillWantItRouter.swift */; };
 		F09731979A4A95E50A8022FD /* BricolageGrotesque-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 41F4D283A05F4F0E6E80572E /* BricolageGrotesque-ExtraBold.ttf */; };
 		F0E0924C7B85276C7528DB4C /* PaydayReviewContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = F962C043E602E57B6D392495 /* PaydayReviewContracts.swift */; };
 		FA0F59F3E2A8B1A98582BFF8 /* AddWantContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006600B4F7BC2D0D6420AD7F /* AddWantContracts.swift */; };
 		FA6896D273AFF5862011BBCF /* SavedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6666F05D171DC492048B8C /* SavedViewController.swift */; };
+		FB753B4AC8CD611523F3B732 /* GoalDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C88898328BF04C034E16A3B /* GoalDetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,10 +120,13 @@
 		01A199DB16D8CA01565CA1D0 /* ItemDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailViewController.swift; sourceTree = "<group>"; };
 		05503896C996817AE258F1F7 /* PaydayReviewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayReviewPresenter.swift; sourceTree = "<group>"; };
 		06392377E432237DEBBF81D4 /* PaydayPreviewRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayPreviewRouter.swift; sourceTree = "<group>"; };
+		074440282C39D8DD9A50E38E /* GoalCompleteRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalCompleteRouter.swift; sourceTree = "<group>"; };
 		0893C400A63049F594E0D049 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
+		0EECB8256D878720F46F443C /* PresenterGoalCompleteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterGoalCompleteTests.swift; sourceTree = "<group>"; };
 		0F8046A6BE40C36BFCD77BF1 /* AddWantViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWantViewController.swift; sourceTree = "<group>"; };
 		10507C7F0C9C40E5DC492E0B /* Want.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Want.swift; sourceTree = "<group>"; };
 		111ACEB2F1EFC192098B5CFE /* AddWantInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWantInteractor.swift; sourceTree = "<group>"; };
+		115E67F988ECDC1D95B88459 /* PresenterSavedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterSavedTests.swift; sourceTree = "<group>"; };
 		11CF9F0D8CE38238BDC664E3 /* Reminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminders.swift; sourceTree = "<group>"; };
 		1675D89853A74544E7BBD5AE /* WantStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WantStore.swift; sourceTree = "<group>"; };
 		16A7FCE28C930DA61B2A8546 /* ItemDetailRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailRouter.swift; sourceTree = "<group>"; };
@@ -111,6 +134,7 @@
 		1BB1CBBF1150D43B709CEC53 /* DataChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataChange.swift; sourceTree = "<group>"; };
 		1C433979969F84CA17CC9145 /* SavedContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedContracts.swift; sourceTree = "<group>"; };
 		295AF7CFCF3F362F41C48E78 /* ThawTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ThawTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2AFE936EB741DEBF793B9AC5 /* GoalDetailContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalDetailContracts.swift; sourceTree = "<group>"; };
 		2C10947F3321B16679791C8B /* PresenterHomeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterHomeTests.swift; sourceTree = "<group>"; };
 		2E586F455E4F0D7ECC1D536C /* PresenterPaydayReviewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterPaydayReviewTests.swift; sourceTree = "<group>"; };
 		307E2E39C76493C1E0A39EB1 /* SavedInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedInteractor.swift; sourceTree = "<group>"; };
@@ -124,7 +148,10 @@
 		3EF1FC55321B97CA81DBD2DF /* PaydayPreviewContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayPreviewContracts.swift; sourceTree = "<group>"; };
 		40A40DD5584753A3E5FF594A /* GoalComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalComponents.swift; sourceTree = "<group>"; };
 		41F4D283A05F4F0E6E80572E /* BricolageGrotesque-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "BricolageGrotesque-ExtraBold.ttf"; sourceTree = "<group>"; };
+		4374794B07F0870AD057B61B /* GoalEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalEditorViewController.swift; sourceTree = "<group>"; };
+		437E107F7C4999F657487665 /* BackendGoalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendGoalTests.swift; sourceTree = "<group>"; };
 		465A18212398CB89D8D860CD /* Goal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Goal.swift; sourceTree = "<group>"; };
+		49F92BE93308F317C965864B /* GoalEditorInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalEditorInteractor.swift; sourceTree = "<group>"; };
 		4A6666F05D171DC492048B8C /* SavedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedViewController.swift; sourceTree = "<group>"; };
 		50C6FD23F86B998D45F66CF5 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		56354008977C4CFBFF11A002 /* PaydaySetupRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydaySetupRouter.swift; sourceTree = "<group>"; };
@@ -143,24 +170,36 @@
 		8070CCDDAC342DF0FAB276ED /* CubiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubiView.swift; sourceTree = "<group>"; };
 		81CF5EBF2543A4CBD35772C3 /* PresenterAddWantTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterAddWantTests.swift; sourceTree = "<group>"; };
 		84D1EF4194B93EBF8CE52F1F /* StillWantItContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillWantItContracts.swift; sourceTree = "<group>"; };
+		894AE3FB75DBF427795D1572 /* GoalDetailRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalDetailRouter.swift; sourceTree = "<group>"; };
 		8DCADA6457FD2F82C40913C0 /* AddWantPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWantPresenter.swift; sourceTree = "<group>"; };
 		940971CBFA2F6DAC2CAF2E59 /* PresenterTestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterTestSupport.swift; sourceTree = "<group>"; };
 		9B10807EB04E8E7DD29BA541 /* PaydayPreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayPreviewViewController.swift; sourceTree = "<group>"; };
+		9C88898328BF04C034E16A3B /* GoalDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalDetailViewController.swift; sourceTree = "<group>"; };
+		9FA5CC7A6C863D2B40135294 /* GoalDetailPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalDetailPresenter.swift; sourceTree = "<group>"; };
 		A257AE77FF4C4508CB0368AE /* PaydaySetupInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydaySetupInteractor.swift; sourceTree = "<group>"; };
 		A472570F75E9931EE7849ED5 /* BackendNotificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendNotificationTests.swift; sourceTree = "<group>"; };
 		A504E812CFA3EF891C88120E /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
 		AC4EB9D10490EC015CA5A0C1 /* HomeInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeInteractor.swift; sourceTree = "<group>"; };
+		AE38E4B9EB08EFDADA1DEF0F /* PresenterGoalEditorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterGoalEditorTests.swift; sourceTree = "<group>"; };
 		AEF95F7FFB88503ED479D0C9 /* ItemDetailContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailContracts.swift; sourceTree = "<group>"; };
+		AF54E4F4A2F789AC05A70C77 /* GoalEditorPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalEditorPresenter.swift; sourceTree = "<group>"; };
 		B66599F653BA988F281AB8C7 /* RootTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabBarController.swift; sourceTree = "<group>"; };
+		B9AA1B543F4C094A3C7DD259 /* GoalCompletePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalCompletePresenter.swift; sourceTree = "<group>"; };
+		BFE3062BAD4671B496B33AE3 /* GoalEditorContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalEditorContracts.swift; sourceTree = "<group>"; };
 		BFEF9D1B7B8B61ADE3133457 /* StepperSettingRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepperSettingRow.swift; sourceTree = "<group>"; };
 		C2BC6DE142818862DBDE46A0 /* PaydaySetupPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydaySetupPresenter.swift; sourceTree = "<group>"; };
 		C34CE7FB8A2CE83004DFC9A4 /* HomeContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeContracts.swift; sourceTree = "<group>"; };
 		C8BA3E0A24AC227FF2D00B2A /* SavedRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedRouter.swift; sourceTree = "<group>"; };
+		CA5DAA8D91364E459A1897F4 /* GoalCompleteContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalCompleteContracts.swift; sourceTree = "<group>"; };
 		CC9B9F784C898762FCD1FDCB /* Thaw.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Thaw.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDA3D7A30C2886E5B568FFE8 /* GoalCompleteInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalCompleteInteractor.swift; sourceTree = "<group>"; };
+		CF7DD58D9A04581E361AF394 /* GoalEditorRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalEditorRouter.swift; sourceTree = "<group>"; };
 		D075AB4E1E93236E8E2A7DB4 /* StillWantItInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillWantItInteractor.swift; sourceTree = "<group>"; };
 		D7CA6D24F6CB292754099B8D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D882526989B8FEF99CFBB084 /* WantStore+Goals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WantStore+Goals.swift"; sourceTree = "<group>"; };
+		DD9667C00BE1985E0EEDAE84 /* GoalCompleteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalCompleteViewController.swift; sourceTree = "<group>"; };
 		DFC231751AC0B6D182D8F131 /* StillWantItRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillWantItRouter.swift; sourceTree = "<group>"; };
+		E108943F9D456F85FA057149 /* PresenterGoalDetailTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterGoalDetailTests.swift; sourceTree = "<group>"; };
 		E40459DC7F21FA527CDD4EDB /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		E4EBA4161660F177F921754F /* ReviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSheet.swift; sourceTree = "<group>"; };
 		E70FE21CD13500F375F4B52D /* PaydayPreviewInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayPreviewInteractor.swift; sourceTree = "<group>"; };
@@ -168,6 +207,7 @@
 		ECDFAF7888B797FD36C49B63 /* PresenterStillWantItTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterStillWantItTests.swift; sourceTree = "<group>"; };
 		ED3B4E3149C88147A66F9AC8 /* NotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScheduler.swift; sourceTree = "<group>"; };
 		EE81E638F2A9EDA5221AD1A5 /* PaydaySetupContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydaySetupContracts.swift; sourceTree = "<group>"; };
+		F614C3B91BEC429A1D6FFEF8 /* GoalDetailInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalDetailInteractor.swift; sourceTree = "<group>"; };
 		F643E9DC31DC1D8D2612A8C8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F77B232B93745E1F8D0B2AD4 /* ScrollStackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollStackViewController.swift; sourceTree = "<group>"; };
 		F962C043E602E57B6D392495 /* PaydayReviewContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayReviewContracts.swift; sourceTree = "<group>"; };
@@ -263,6 +303,16 @@
 			path = Thaw;
 			sourceTree = "<group>";
 		};
+		47F17CF1B68BF63E88D19F7E /* Goals */ = {
+			isa = PBXGroup;
+			children = (
+				53DB79328904B5DFD6EECB1E /* Complete */,
+				B5E0B3C5137658EDC5D03650 /* Detail */,
+				E5D050C4DE022D24F8CAD432 /* Editor */,
+			);
+			path = Goals;
+			sourceTree = "<group>";
+		};
 		506C0387C4AB4EB1F2CDCB71 /* AddWant */ = {
 			isa = PBXGroup;
 			children = (
@@ -273,6 +323,18 @@
 				0F8046A6BE40C36BFCD77BF1 /* AddWantViewController.swift */,
 			);
 			path = AddWant;
+			sourceTree = "<group>";
+		};
+		53DB79328904B5DFD6EECB1E /* Complete */ = {
+			isa = PBXGroup;
+			children = (
+				CA5DAA8D91364E459A1897F4 /* GoalCompleteContracts.swift */,
+				CDA3D7A30C2886E5B568FFE8 /* GoalCompleteInteractor.swift */,
+				B9AA1B543F4C094A3C7DD259 /* GoalCompletePresenter.swift */,
+				074440282C39D8DD9A50E38E /* GoalCompleteRouter.swift */,
+				DD9667C00BE1985E0EEDAE84 /* GoalCompleteViewController.swift */,
+			);
+			path = Complete;
 			sourceTree = "<group>";
 		};
 		716AF558EC639751482DC48C /* StillWantIt */ = {
@@ -335,10 +397,23 @@
 			path = PaydayPreview;
 			sourceTree = "<group>";
 		};
+		B5E0B3C5137658EDC5D03650 /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				2AFE936EB741DEBF793B9AC5 /* GoalDetailContracts.swift */,
+				F614C3B91BEC429A1D6FFEF8 /* GoalDetailInteractor.swift */,
+				9FA5CC7A6C863D2B40135294 /* GoalDetailPresenter.swift */,
+				894AE3FB75DBF427795D1572 /* GoalDetailRouter.swift */,
+				9C88898328BF04C034E16A3B /* GoalDetailViewController.swift */,
+			);
+			path = Detail;
+			sourceTree = "<group>";
+		};
 		B62A4F14D5B9011C7BA3FC6F /* Features */ = {
 			isa = PBXGroup;
 			children = (
 				506C0387C4AB4EB1F2CDCB71 /* AddWant */,
+				47F17CF1B68BF63E88D19F7E /* Goals */,
 				BF93A78A142F58DDAD001B7F /* Home */,
 				3833DB7B9FDEF8725354C6B5 /* ItemDetail */,
 				A77E1E925DE3B82685D2C858 /* PaydayPreview */,
@@ -376,12 +451,17 @@
 		BFE57F8A872B42D3AD33AB18 /* ThawTests */ = {
 			isa = PBXGroup;
 			children = (
+				437E107F7C4999F657487665 /* BackendGoalTests.swift */,
 				A472570F75E9931EE7849ED5 /* BackendNotificationTests.swift */,
 				774410E8898607E96664E034 /* BackendStateTests.swift */,
 				81CF5EBF2543A4CBD35772C3 /* PresenterAddWantTests.swift */,
+				0EECB8256D878720F46F443C /* PresenterGoalCompleteTests.swift */,
+				E108943F9D456F85FA057149 /* PresenterGoalDetailTests.swift */,
+				AE38E4B9EB08EFDADA1DEF0F /* PresenterGoalEditorTests.swift */,
 				2C10947F3321B16679791C8B /* PresenterHomeTests.swift */,
 				2E586F455E4F0D7ECC1D536C /* PresenterPaydayReviewTests.swift */,
 				33895ADF18C40EF814F7D450 /* PresenterPaydaySetupTests.swift */,
+				115E67F988ECDC1D95B88459 /* PresenterSavedTests.swift */,
 				ECDFAF7888B797FD36C49B63 /* PresenterStillWantItTests.swift */,
 				940971CBFA2F6DAC2CAF2E59 /* PresenterTestSupport.swift */,
 				6E8CF9D5B08FBDC17107454B /* ThawTests.swift */,
@@ -408,6 +488,18 @@
 				0893C400A63049F594E0D049 /* OFL.txt */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		E5D050C4DE022D24F8CAD432 /* Editor */ = {
+			isa = PBXGroup;
+			children = (
+				BFE3062BAD4671B496B33AE3 /* GoalEditorContracts.swift */,
+				49F92BE93308F317C965864B /* GoalEditorInteractor.swift */,
+				AF54E4F4A2F789AC05A70C77 /* GoalEditorPresenter.swift */,
+				CF7DD58D9A04581E361AF394 /* GoalEditorRouter.swift */,
+				4374794B07F0870AD057B61B /* GoalEditorViewController.swift */,
+			);
+			path = Editor;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -516,7 +608,22 @@
 				4DB0F0102A5B37863A881027 /* DataChange.swift in Sources */,
 				7257CC23CCDB2CC790723511 /* Formatting.swift in Sources */,
 				3A6C430A7F566B0DF1EB3618 /* Goal.swift in Sources */,
+				5555B9E3BD8B56604AF1036B /* GoalCompleteContracts.swift in Sources */,
+				1B4802246E5A9BE604EA46D3 /* GoalCompleteInteractor.swift in Sources */,
+				D76302F7B23226955620226C /* GoalCompletePresenter.swift in Sources */,
+				6ECA4CBE158F52A5B6DB8010 /* GoalCompleteRouter.swift in Sources */,
+				DF873A66C8077C8252253139 /* GoalCompleteViewController.swift in Sources */,
 				7684A64D26A1EC970D9EA2A2 /* GoalComponents.swift in Sources */,
+				0EDE97984FDF50964A61B0A4 /* GoalDetailContracts.swift in Sources */,
+				8077F4910CED8B3C5027959C /* GoalDetailInteractor.swift in Sources */,
+				41E843BC2B3393ACCAB7548B /* GoalDetailPresenter.swift in Sources */,
+				29C6F816323F14C7C6DDCFE3 /* GoalDetailRouter.swift in Sources */,
+				FB753B4AC8CD611523F3B732 /* GoalDetailViewController.swift in Sources */,
+				043D108C043E72271DF758F4 /* GoalEditorContracts.swift in Sources */,
+				96772CC5AE8C0E8FEF6F58E4 /* GoalEditorInteractor.swift in Sources */,
+				B92A94D698C0F2E358BA65A1 /* GoalEditorPresenter.swift in Sources */,
+				261F2DF12B0860099EFA902A /* GoalEditorRouter.swift in Sources */,
+				D564741E2E67D185CF091A80 /* GoalEditorViewController.swift in Sources */,
 				0B8B78E10923BD0400D89BEB /* HomeContracts.swift in Sources */,
 				25B513D0270B2694D9F2D9FA /* HomeInteractor.swift in Sources */,
 				6D2FD02F297695334B4CEB15 /* HomePresenter.swift in Sources */,
@@ -574,12 +681,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				020F02E624D2D0AA5A19416D /* BackendGoalTests.swift in Sources */,
 				463B94ED4648C0695D874149 /* BackendNotificationTests.swift in Sources */,
 				41269E2C1BDB189CE71D8DE0 /* BackendStateTests.swift in Sources */,
 				677F55C5BE6EEBF0C42A1F9B /* PresenterAddWantTests.swift in Sources */,
+				5A5D0F0966393C541EE7D776 /* PresenterGoalCompleteTests.swift in Sources */,
+				8183A1F703FA55660BAA0C44 /* PresenterGoalDetailTests.swift in Sources */,
+				17C9C78FC4AEA576ED0B5186 /* PresenterGoalEditorTests.swift in Sources */,
 				95D64A331CCD37A628E39597 /* PresenterHomeTests.swift in Sources */,
 				02454E0FCC9A7025F4635D28 /* PresenterPaydayReviewTests.swift in Sources */,
 				40DC6FE7DA9F4E2D4992C2D1 /* PresenterPaydaySetupTests.swift in Sources */,
+				314A644020947C37A9A8F79A /* PresenterSavedTests.swift in Sources */,
 				28270FCCBAAC6E80CC0084F7 /* PresenterStillWantItTests.swift in Sources */,
 				59581CF85DC3577A9E6DAE1A /* PresenterTestSupport.swift in Sources */,
 				95CB4B0F39F73C632849D468 /* ThawTests.swift in Sources */,
