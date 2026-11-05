@@ -35,12 +35,6 @@ nonisolated struct Want: Identifiable, Equatable, Codable, Sendable {
         }
     }
 
-    var isUnderTimerThreshold: Bool { price < CoolingRule.timerThreshold }
-}
-
-nonisolated enum CoolingRule {
-    static let timerThreshold: Decimal = 30
-    static let shortTimerDays = 2
 }
 
 nonisolated struct PaydaySchedule {
