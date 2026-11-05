@@ -16,6 +16,16 @@ targets:
     platform: iOS
     sources:
       - path: Thaw
+        excludes:
+          - Thaw.entitlements
+    dependencies:
+      - target: ThawShare
+        embed: true
+    entitlements:
+      path: Thaw/Thaw.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.tinkercademy.thaw
     info:
       path: Thaw-Info.plist
       properties:
@@ -43,6 +53,46 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.tinkercademy.thaw
         INFOPLIST_FILE: Thaw-Info.plist
         GENERATE_INFOPLIST_FILE: NO
+  ThawShare:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: ThawShare
+        excludes:
+          - ThawShare.entitlements
+      - path: Thaw/DesignSystem
+      - path: Thaw/Models
+      - path: Thaw/Services/ShareInbox.swift
+      - path: Thaw/Services/Formatting.swift
+      - path: Thaw/Features/AddWant/AddWantContracts.swift
+      - path: Thaw/Features/AddWant/AddWantPresenter.swift
+      - path: Thaw/Features/AddWant/AddWantViewController.swift
+      - path: Thaw/Features/Shared/MomentView.swift
+      - path: Thaw/Features/Shared/ShareItemParser.swift
+      - path: Thaw/Resources/Fonts/BricolageGrotesque-ExtraBold.ttf
+    entitlements:
+      path: ThawShare/ThawShare.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.tinkercademy.thaw
+    info:
+      path: ThawShare/Info.plist
+      properties:
+        CFBundleDisplayName: Thaw
+        UIAppFonts:
+          - BricolageGrotesque-ExtraBold.ttf
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.share-services
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShareViewController
+          NSExtensionAttributes:
+            NSExtensionActivationRule:
+              NSExtensionActivationSupportsWebURLWithMaxCount: 1
+              NSExtensionActivationSupportsText: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tinkercademy.thaw.share
+        GENERATE_INFOPLIST_FILE: NO
+        APPLICATION_EXTENSION_API_ONLY: YES
   ThawTests:
     type: bundle.unit-test
     platform: iOS
