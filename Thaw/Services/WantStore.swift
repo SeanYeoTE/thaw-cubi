@@ -58,6 +58,12 @@ nonisolated final class WantStore: @unchecked Sendable {
             store.wants = fixtureWants(settings: store.effectiveSettings)
             store.persist()
         }
+        if let index = arguments.firstIndex(of: "-thawFixture"),
+           arguments.indices.contains(index + 1), arguments[index + 1] == "history" {
+            store.settings = .default
+            store.wants = fixtureHistory()
+            store.persist()
+        }
         return store
     }
 
@@ -151,6 +157,22 @@ nonisolated final class WantStore: @unchecked Sendable {
                  daysAgo: 2, progress: 0.59),
             make("Linen overshirt", 69, "Good for the hot weather.", daysAgo: 4, progress: 0.4),
             make("Espresso grinder", 420, "Pre-ground tastes flat.", daysAgo: 6, progress: 0.2),
+        ]
+    }
+
+    static func fixtureHistory(now: Date = .now, calendar: Calendar = .current) -> [Want] {
+        func decided(_ name: String, _ price: Decimal, _ status: Want.Status, monthsAgo: Int) -> Want {
+            let thawsAt = calendar.date(byAdding: .month, value: -monthsAgo, to: now) ?? now
+            let frozenOn = thawsAt.addingTimeInterval(-86_400 * 20)
+            return Want(id: UUID(), name: name, price: price, reason: "Fixture", frozenOn: frozenOn,
+                        progress: 1, status: status, thawsAt: thawsAt)
+        }
+        return [
+            decided("Linen overshirt", 69, .skipped, monthsAgo: 0),
+            decided("Mechanical keyboard", 189, .bought, monthsAgo: 0),
+            decided("Espresso grinder", 420, .skipped, monthsAgo: 1),
+            decided("Wireless earbuds", 159, .skipped, monthsAgo: 2),
+            decided("Desk lamp", 45, .bought, monthsAgo: 2),
         ]
     }
 
