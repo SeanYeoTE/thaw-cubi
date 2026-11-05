@@ -138,7 +138,12 @@ final class BackendStateTests: XCTestCase {
         XCTAssertTrue(reset.wants.isEmpty)
         XCTAssertNil(reset.settings)
         let fresh = WantStore.launch(arguments: [])
+#if DEBUG
+        XCTAssertFalse(fresh.wants.isEmpty)
+        XCTAssertNotNil(fresh.settings)
+#else
         XCTAssertTrue(fresh.wants.isEmpty)
+#endif
     }
 
     func testFixtureThawsAtIsNeverStale() {

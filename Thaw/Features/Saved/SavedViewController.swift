@@ -23,6 +23,7 @@ final class SavedViewController: ScrollStackViewController, SavedViewProtocol {
 
     func render(_ model: SavedViewModel) {
         clearContent()
+        stack.addArrangedSubview(CubiHeaderView(mood: model.cubi.mood, line: model.cubi.line, spoken: model.cubi.line))
         let heading = makeLabel("Saved since you started", font: ThawFont.body(15), color: Theme.inkSecondary)
         let amount = makeLabel(model.savedText, font: ThawFont.display(40))
         stack.addArrangedSubview(heading)

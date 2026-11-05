@@ -49,6 +49,7 @@ nonisolated final class WantStore: @unchecked Sendable {
 
     static func launch(arguments: [String] = ProcessInfo.processInfo.arguments) -> WantStore {
         let url = defaultFileURL
+        let isFirstLaunch = url.map { !FileManager.default.fileExists(atPath: $0.path) } ?? false
         if arguments.contains("-thawReset") || arguments.contains("-thawFixture"), let url {
             try? FileManager.default.removeItem(at: url)
         }
@@ -64,6 +65,14 @@ nonisolated final class WantStore: @unchecked Sendable {
             store.wants = fixtureHistory()
             store.persist()
         }
+#if DEBUG
+        // Debug builds start with sample wants so Home and Saved aren't empty while testing.
+        if isFirstLaunch, !arguments.contains("-thawReset"), !arguments.contains("-thawFixture") {
+            store.settings = .default
+            store.wants = fixtureWants(settings: store.effectiveSettings) + fixtureHistory()
+            store.persist()
+        }
+#endif
         return store
     }
 
