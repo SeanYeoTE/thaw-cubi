@@ -15,10 +15,12 @@ nonisolated struct Want: Identifiable, Equatable, Codable, Sendable {
     var progress: Double
     var status: Status
     var thawsAt: Date
+    var link: URL?
 
     init(id: UUID, name: String, price: Decimal, reason: String, frozenOn: Date,
-         progress: Double, status: Status, thawsAt: Date? = nil) {
+         progress: Double, status: Status, thawsAt: Date? = nil, link: URL? = nil) {
         self.id = id
+        self.link = link
         self.name = name
         self.price = price
         self.reason = reason
