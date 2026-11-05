@@ -4,6 +4,7 @@ final class ItemDetailRouter: ItemDetailRouterProtocol {
     weak var viewController: UIViewController?
     private let store: WantStore
     private let reminders: Reminders
+    var onEdited: (() -> Void)?
 
     // Explicit deinit: the synthesized one on a MainActor class with weak refs corrupts the heap in the test host.
     deinit {}
@@ -20,6 +21,7 @@ final class ItemDetailRouter: ItemDetailRouterProtocol {
         let interactor = ItemDetailInteractor(store: store, reminders: reminders, want: want)
         let presenter = ItemDetailPresenter(view: view, interactor: interactor, router: router)
         view.presenter = presenter
+        router.onEdited = { [weak presenter] in presenter?.didEdit() }
         router.viewController = view
         return view
     }
@@ -29,6 +31,13 @@ final class ItemDetailRouter: ItemDetailRouterProtocol {
             self?.pop()
         }
         viewController?.present(ReviewSheet.wrap(module), animated: true)
+    }
+
+    func showEdit(wantID: UUID) {
+        let module = AddWantRouter.createModule(store: store, reminders: reminders, editing: wantID) { [weak self] in
+            self?.onEdited?()
+        }
+        viewController?.present(UINavigationController(rootViewController: module), animated: true)
     }
 
     func pop() {

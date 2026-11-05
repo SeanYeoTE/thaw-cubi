@@ -32,6 +32,14 @@ final class ItemDetailPresenter: ItemDetailPresenterProtocol {
         ))
     }
 
+    func tapEdit() {
+        router.showEdit(wantID: interactor.want.id)
+    }
+
+    func didEdit() {
+        viewDidLoad()
+    }
+
     func tapWait() {
         interactor.waitOnePayday()
         router.pop()

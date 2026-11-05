@@ -22,6 +22,8 @@ protocol ItemDetailPresenterProtocol: AnyObject {
     func tapWait()
     func tapDecide()
     func tapSkip()
+    func tapEdit()
+    func didEdit()
 }
 
 protocol ItemDetailInteractorProtocol: AnyObject {
@@ -33,5 +35,6 @@ protocol ItemDetailInteractorProtocol: AnyObject {
 
 protocol ItemDetailRouterProtocol: AnyObject {
     func showDecideNow(want: Want)
+    func showEdit(wantID: UUID)
     func pop()
 }

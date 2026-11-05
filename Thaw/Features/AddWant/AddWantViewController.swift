@@ -7,6 +7,8 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
     private let reasonView = UITextView()
     private let errorLabel = UILabel()
     private let noteLabel = UILabel()
+    private var discardTitle = "Discard this want?"
+    private var discardMessage = "What you typed won't be saved."
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -112,7 +114,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
 
     func showDiscardConfirmation() {
         guard presentedViewController == nil else { return }
-        let sheet = UIAlertController(title: "Discard this want?", message: "What you typed won't be saved.",
+        let sheet = UIAlertController(title: discardTitle, message: discardMessage,
                                       preferredStyle: .actionSheet)
         sheet.addAction(UIAlertAction(title: "Discard", style: .destructive) { [weak self] _ in
             self?.presenter?.confirmDiscard()
@@ -129,6 +131,18 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
 
     @objc private func saveTapped() {
         presenter?.tapSave(input)
+    }
+
+    func configure(_ screen: AddWantScreen) {
+        title = screen.title
+        navigationItem.rightBarButtonItem?.title = screen.actionTitle
+        discardTitle = screen.discardTitle
+        discardMessage = screen.discardMessage
+        if let initial = screen.initial {
+            nameField.text = initial.name
+            priceField.text = initial.price
+            reasonView.text = initial.reason
+        }
     }
 
     func render(note: String) {

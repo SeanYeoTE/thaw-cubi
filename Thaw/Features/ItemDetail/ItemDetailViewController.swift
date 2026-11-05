@@ -13,11 +13,15 @@ final class ItemDetailViewController: ScrollStackViewController, ItemDetailViewP
 
     override func buildContent() {
         navigationItem.largeTitleDisplayMode = .never
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", primaryAction: UIAction { [weak self] _ in
+            self?.presenter?.tapEdit()
+        })
         stack.spacing = 18
         presenter?.viewDidLoad()
     }
 
     func render(_ model: ItemDetailViewModel) {
+        clearContent()
         stack.addArrangedSubview(makeLabel(model.name, font: ThawFont.display(34)))
         stack.addArrangedSubview(makeLabel(model.subtitle, font: ThawFont.body(15), color: Theme.inkSecondary))
 

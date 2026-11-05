@@ -80,6 +80,7 @@
 		E701353F0D25E7A89DE60E62 /* StillWantItRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC231751AC0B6D182D8F131 /* StillWantItRouter.swift */; };
 		F09731979A4A95E50A8022FD /* BricolageGrotesque-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 41F4D283A05F4F0E6E80572E /* BricolageGrotesque-ExtraBold.ttf */; };
 		F0E0924C7B85276C7528DB4C /* PaydayReviewContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = F962C043E602E57B6D392495 /* PaydayReviewContracts.swift */; };
+		F593CE7248FDCB28AE3DFE78 /* PresenterItemDetailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BC7F55C8A9DD05C0E17709 /* PresenterItemDetailTests.swift */; };
 		FA0F59F3E2A8B1A98582BFF8 /* AddWantContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006600B4F7BC2D0D6420AD7F /* AddWantContracts.swift */; };
 		FA6896D273AFF5862011BBCF /* SavedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6666F05D171DC492048B8C /* SavedViewController.swift */; };
 /* End PBXBuildFile section */
@@ -140,6 +141,7 @@
 		73DFBA44C4D21B9E45828A3D /* WantStore+Review.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WantStore+Review.swift"; sourceTree = "<group>"; };
 		7576D63D42336C1FF3C7A179 /* SavedPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPresenter.swift; sourceTree = "<group>"; };
 		774410E8898607E96664E034 /* BackendStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendStateTests.swift; sourceTree = "<group>"; };
+		77BC7F55C8A9DD05C0E17709 /* PresenterItemDetailTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterItemDetailTests.swift; sourceTree = "<group>"; };
 		8070CCDDAC342DF0FAB276ED /* CubiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubiView.swift; sourceTree = "<group>"; };
 		81CF5EBF2543A4CBD35772C3 /* PresenterAddWantTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterAddWantTests.swift; sourceTree = "<group>"; };
 		84D1EF4194B93EBF8CE52F1F /* StillWantItContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillWantItContracts.swift; sourceTree = "<group>"; };
@@ -379,6 +381,7 @@
 				774410E8898607E96664E034 /* BackendStateTests.swift */,
 				81CF5EBF2543A4CBD35772C3 /* PresenterAddWantTests.swift */,
 				2C10947F3321B16679791C8B /* PresenterHomeTests.swift */,
+				77BC7F55C8A9DD05C0E17709 /* PresenterItemDetailTests.swift */,
 				2E586F455E4F0D7ECC1D536C /* PresenterPaydayReviewTests.swift */,
 				33895ADF18C40EF814F7D450 /* PresenterPaydaySetupTests.swift */,
 				115E67F988ECDC1D95B88459 /* PresenterSavedTests.swift */,
@@ -579,6 +582,7 @@
 				41269E2C1BDB189CE71D8DE0 /* BackendStateTests.swift in Sources */,
 				677F55C5BE6EEBF0C42A1F9B /* PresenterAddWantTests.swift in Sources */,
 				95D64A331CCD37A628E39597 /* PresenterHomeTests.swift in Sources */,
+				F593CE7248FDCB28AE3DFE78 /* PresenterItemDetailTests.swift in Sources */,
 				02454E0FCC9A7025F4635D28 /* PresenterPaydayReviewTests.swift in Sources */,
 				40DC6FE7DA9F4E2D4992C2D1 /* PresenterPaydaySetupTests.swift in Sources */,
 				314A644020947C37A9A8F79A /* PresenterSavedTests.swift in Sources */,

@@ -6,7 +6,16 @@ struct AddWantInput: Equatable {
     var reason: String
 }
 
+struct AddWantScreen: Equatable {
+    let title: String
+    let actionTitle: String
+    let discardTitle: String
+    let discardMessage: String
+    let initial: AddWantInput?
+}
+
 protocol AddWantViewProtocol: AnyObject {
+    func configure(_ screen: AddWantScreen)
     func render(note: String)
     func setModalInPresentation(_ isModal: Bool)
     func showError(_ message: String)
@@ -26,7 +35,10 @@ protocol AddWantPresenterProtocol: AnyObject {
 
 protocol AddWantInteractorProtocol: AnyObject {
     var settings: PaydaySettings { get }
+    /// Non-nil when editing an existing want instead of adding one.
+    var editing: Want? { get }
     func add(name: String, price: Decimal, reason: String)
+    func save(name: String, price: Decimal, reason: String)
 }
 
 protocol AddWantRouterProtocol: AnyObject {
