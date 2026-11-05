@@ -16,16 +16,28 @@ final class AddWantPresenter: AddWantPresenterProtocol {
     }
 
     private var initial: AddWantInput?
+    private var isEditing = false
 
     func viewDidLoad() {
         let settings = interactor.settings
         if let want = interactor.editing {
             let input = AddWantInput(name: want.name, price: Self.priceText(want.price), reason: want.reason)
             initial = input
+            isEditing = true
             view?.configure(AddWantScreen(title: "Edit want", actionTitle: "Save", discardTitle: "Discard changes?",
                                           discardMessage: "Your edits won't be saved.", initial: input))
             view?.render(note: "You can change the name, price and reason. Moving the price across \(Formatting.sgd(settings.timerThreshold)) "
                 + "restarts the wait from today: \(settings.timerDays)-day timer below it, payday above it.")
+            return
+        }
+        if let draft = interactor.draft {
+            let input = AddWantInput(name: draft.name, price: "", reason: "")
+            initial = input
+            view?.configure(AddWantScreen(title: "Add to Thaw", actionTitle: "Add to Thaw", discardTitle: "Discard this want?",
+                                          discardMessage: "What you typed won't be saved.", initial: input,
+                                          caption: draft.link.map { "From \(ShareItemParser.displayHost($0))" }))
+            view?.render(note: "Thaw will read this back to you when it thaws. It joins your Cooling list "
+                + "the next time you open Thaw.")
             return
         }
         view?.configure(AddWantScreen(title: "Add to Thaw", actionTitle: "Add to Thaw", discardTitle: "Discard this want?",
@@ -52,7 +64,7 @@ final class AddWantPresenter: AddWantPresenterProtocol {
         }
         saving = true
         view?.setModalInPresentation(false)
-        if initial != nil {
+        if isEditing {
             interactor.save(name: name, price: price, reason: input.reason)
             return router.dismiss()
         }

@@ -58,6 +58,7 @@
 		66DC78546A58C9E96120FB40 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F643E9DC31DC1D8D2612A8C8 /* Assets.xcassets */; };
 		677F55C5BE6EEBF0C42A1F9B /* PresenterAddWantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CF5EBF2543A4CBD35772C3 /* PresenterAddWantTests.swift */; };
 		69A55B2BA3306EE453F8667A /* PaydaySetupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C19EC35A2C5BBD2B0CCE5F /* PaydaySetupViewController.swift */; };
+		6CBF12B7DF5EE4EEB82776E1 /* PresenterShareItemParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81CEC060D6607930FB009C2 /* PresenterShareItemParserTests.swift */; };
 		6D2FD02F297695334B4CEB15 /* HomePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3875C0C3237E2AC0D088414D /* HomePresenter.swift */; };
 		6F4C0CE7DD236D5CE357724F /* PaydayReviewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58BDD9230954D66A5B20A4CC /* PaydayReviewRouter.swift */; };
 		7257CC23CCDB2CC790723511 /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A504E812CFA3EF891C88120E /* Formatting.swift */; };
@@ -70,6 +71,7 @@
 		84DFE1CC1FCAA1E07D7E4A58 /* PaydayPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B10807EB04E8E7DD29BA541 /* PaydayPreviewViewController.swift */; };
 		8531ADEBABEBA4A636991227 /* PaydayPreviewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06392377E432237DEBBF81D4 /* PaydayPreviewRouter.swift */; };
 		864DE379ED9524C05385AEEA /* ThawShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A672BD8D7746579048622009 /* ThawShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		87A903DC83C7B44AD5B25749 /* ShareAddInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B4E663A4BD8686372AA45B /* ShareAddInteractor.swift */; };
 		8C11E1202EB5347C59B0E480 /* SavedPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7576D63D42336C1FF3C7A179 /* SavedPresenter.swift */; };
 		939AF696715FE7B5D51C3C59 /* StillWantItPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC2AED725E7911F3A85769B /* StillWantItPresenter.swift */; };
 		94121236A3E661CB2F630CA7 /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A504E812CFA3EF891C88120E /* Formatting.swift */; };
@@ -94,6 +96,7 @@
 		D694C9B7797EB55F1105AB22 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E56CBE5BFE460929920BB0 /* ShareViewController.swift */; };
 		E701353F0D25E7A89DE60E62 /* StillWantItRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC231751AC0B6D182D8F131 /* StillWantItRouter.swift */; };
 		E9D22A47CAADF0FA26112AB2 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A2D557655FBDFAA2CD42A2 /* Components.swift */; };
+		EAC5AA9276FAFC7EAF8CC628 /* ShareAddRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119F6EFF00D980089CC12ADD /* ShareAddRouter.swift */; };
 		F09731979A4A95E50A8022FD /* BricolageGrotesque-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 41F4D283A05F4F0E6E80572E /* BricolageGrotesque-ExtraBold.ttf */; };
 		F0E0924C7B85276C7528DB4C /* PaydayReviewContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = F962C043E602E57B6D392495 /* PaydayReviewContracts.swift */; };
 		F38182CC6855AD29037813DF /* Want.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10507C7F0C9C40E5DC492E0B /* Want.swift */; };
@@ -145,6 +148,7 @@
 		10507C7F0C9C40E5DC492E0B /* Want.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Want.swift; sourceTree = "<group>"; };
 		111ACEB2F1EFC192098B5CFE /* AddWantInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWantInteractor.swift; sourceTree = "<group>"; };
 		115E67F988ECDC1D95B88459 /* PresenterSavedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterSavedTests.swift; sourceTree = "<group>"; };
+		119F6EFF00D980089CC12ADD /* ShareAddRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareAddRouter.swift; sourceTree = "<group>"; };
 		11CF9F0D8CE38238BDC664E3 /* Reminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminders.swift; sourceTree = "<group>"; };
 		1675D89853A74544E7BBD5AE /* WantStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WantStore.swift; sourceTree = "<group>"; };
 		16A7FCE28C930DA61B2A8546 /* ItemDetailRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailRouter.swift; sourceTree = "<group>"; };
@@ -193,10 +197,12 @@
 		A472570F75E9931EE7849ED5 /* BackendNotificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendNotificationTests.swift; sourceTree = "<group>"; };
 		A504E812CFA3EF891C88120E /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
 		A672BD8D7746579048622009 /* ThawShare.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = ThawShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A81CEC060D6607930FB009C2 /* PresenterShareItemParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterShareItemParserTests.swift; sourceTree = "<group>"; };
 		AC4EB9D10490EC015CA5A0C1 /* HomeInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeInteractor.swift; sourceTree = "<group>"; };
 		AEF95F7FFB88503ED479D0C9 /* ItemDetailContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailContracts.swift; sourceTree = "<group>"; };
 		B294F9A9222E66BFD5707ADA /* ShareInbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareInbox.swift; sourceTree = "<group>"; };
 		B66599F653BA988F281AB8C7 /* RootTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabBarController.swift; sourceTree = "<group>"; };
+		B6B4E663A4BD8686372AA45B /* ShareAddInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareAddInteractor.swift; sourceTree = "<group>"; };
 		BFEF9D1B7B8B61ADE3133457 /* StepperSettingRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepperSettingRow.swift; sourceTree = "<group>"; };
 		C2BC6DE142818862DBDE46A0 /* PaydaySetupPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydaySetupPresenter.swift; sourceTree = "<group>"; };
 		C34CE7FB8A2CE83004DFC9A4 /* HomeContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeContracts.swift; sourceTree = "<group>"; };
@@ -364,6 +370,8 @@
 			isa = PBXGroup;
 			children = (
 				A030BBA85E401DCBD4B087A3 /* Info.plist */,
+				B6B4E663A4BD8686372AA45B /* ShareAddInteractor.swift */,
+				119F6EFF00D980089CC12ADD /* ShareAddRouter.swift */,
 				E8E56CBE5BFE460929920BB0 /* ShareViewController.swift */,
 			);
 			path = ThawShare;
@@ -442,6 +450,7 @@
 				2E586F455E4F0D7ECC1D536C /* PresenterPaydayReviewTests.swift */,
 				33895ADF18C40EF814F7D450 /* PresenterPaydaySetupTests.swift */,
 				115E67F988ECDC1D95B88459 /* PresenterSavedTests.swift */,
+				A81CEC060D6607930FB009C2 /* PresenterShareItemParserTests.swift */,
 				ECDFAF7888B797FD36C49B63 /* PresenterStillWantItTests.swift */,
 				940971CBFA2F6DAC2CAF2E59 /* PresenterTestSupport.swift */,
 				6E8CF9D5B08FBDC17107454B /* ThawTests.swift */,
@@ -678,6 +687,8 @@
 				4AEA4C8BBB4A7AE7E61BB7D0 /* MomentView.swift in Sources */,
 				FD8CE28BD9828C2307C3A078 /* ProgressStats.swift in Sources */,
 				0B32406BD99950B06B22C15D /* ScrollStackViewController.swift in Sources */,
+				87A903DC83C7B44AD5B25749 /* ShareAddInteractor.swift in Sources */,
+				EAC5AA9276FAFC7EAF8CC628 /* ShareAddRouter.swift in Sources */,
 				5FEC99ECB6C481D4B5E6088D /* ShareInbox.swift in Sources */,
 				5BAE43E152D6C942F5B7ACDE /* ShareItemParser.swift in Sources */,
 				D694C9B7797EB55F1105AB22 /* ShareViewController.swift in Sources */,
@@ -699,6 +710,7 @@
 				02454E0FCC9A7025F4635D28 /* PresenterPaydayReviewTests.swift in Sources */,
 				40DC6FE7DA9F4E2D4992C2D1 /* PresenterPaydaySetupTests.swift in Sources */,
 				314A644020947C37A9A8F79A /* PresenterSavedTests.swift in Sources */,
+				6CBF12B7DF5EE4EEB82776E1 /* PresenterShareItemParserTests.swift in Sources */,
 				28270FCCBAAC6E80CC0084F7 /* PresenterStillWantItTests.swift in Sources */,
 				59581CF85DC3577A9E6DAE1A /* PresenterTestSupport.swift in Sources */,
 				95CB4B0F39F73C632849D468 /* ThawTests.swift in Sources */,
