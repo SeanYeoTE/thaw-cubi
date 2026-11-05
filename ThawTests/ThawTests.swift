@@ -6,9 +6,10 @@ final class ThawTests: XCTestCase {
     func testFixtureCoolingSplitsTimerAndPayday() {
         let store = WantStore(wants: WantStore.fixtureWants(), payday: WantStore.fixturePayday())
         XCTAssertEqual(store.cooling.count, 4)
-        let timer = store.cooling.filter { $0.isUnderTimerThreshold }.map(\.name)
+        let threshold = store.effectiveSettings.timerThreshold
+        let timer = store.cooling.filter { $0.price < threshold }.map(\.name)
         XCTAssertEqual(timer, ["Phone case"])
-        let thawing = store.cooling.filter { !$0.isUnderTimerThreshold }
+        let thawing = store.cooling.filter { $0.price >= threshold }
         XCTAssertEqual(thawing.reduce(Decimal(0)) { $0 + $1.price }, 678)
     }
 
@@ -28,7 +29,7 @@ final class ThawTests: XCTestCase {
         store.add(name: "Desk lamp", price: Decimal(string: "29.999")!, reason: "Dim light")
         XCTAssertEqual(store.cooling.first?.name, "Desk lamp")
         XCTAssertEqual(store.cooling.first?.price, Decimal(string: "30.00"))
-        XCTAssertTrue(store.cooling.first?.isUnderTimerThreshold == false)
+        XCTAssertTrue((store.cooling.first?.price ?? 0) >= store.effectiveSettings.timerThreshold)
     }
 
     @MainActor
