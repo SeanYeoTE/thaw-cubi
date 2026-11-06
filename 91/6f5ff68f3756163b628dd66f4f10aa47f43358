@@ -1,0 +1,51 @@
+Thaw/Features/Home/HomeContracts.swift
+  s_2d7d1998475fcf::t_2a88736ba64552 10,29-35,38-39,47-49,55,66
+Thaw/Features/Home/HomeInteractor.swift
+  s_2d7d1998475fcf::t_71faedf7f843e8 6,12,14,22-27
+Thaw/Features/Home/HomePresenter.swift
+  s_2d7d1998475fcf::t_f6aca8b9392cca 31-54,75-76,78-89
+Thaw/Features/Home/HomeRouter.swift
+  s_2d7d1998475fcf::t_72df5756aff2b9 19,31-35
+Thaw/Features/Home/HomeViewController.swift
+  s_2d7d1998475fcf::t_feb60045b6ff77 56-72,77-86
+Thaw/Features/Home/WantCardView.swift
+  s_2d7d1998475fcf::t_0a3ccd01cc1e6e 3,5-7,10-18,20-23,25-29,33-38
+Thaw/Features/ItemDetail/ItemDetailContracts.swift
+  s_2d7d1998475fcf::t_778a0510120eb6 34-35
+Thaw/Features/ItemDetail/ItemDetailInteractor.swift
+  s_2d7d1998475fcf::t_0e2d94d6f5c52b 16-17
+Thaw/Features/ItemDetail/ItemDetailPresenter.swift
+  s_2d7d1998475fcf::t_f525ad5116b3af 46
+README.md
+  s_2d7d1998475fcf::t_53b68e4e5f8b4a 54,56-62
+Thaw.xcodeproj/project.pbxproj
+  s_2d7d1998475fcf::t_bb1e906a018101 104,199,461,727
+Thaw/Features/AddWant/AddWantInteractor.swift
+  s_2d7d1998475fcf::t_b78eab7f6ac83d 8-10
+Thaw/Features/Saved/SavedViewController.swift
+  s_2d7d1998475fcf::t_e3877c9ca9a66e 169-174,180,208-211,213-214,223-224
+ThawTests/IntegrationEditTests.swift
+  s_2d7d1998475fcf::t_aeb6047eacf55c 1-129
+ThawTests/PresenterAddWantTests.swift
+  s_2d7d1998475fcf::t_4dac0b86e511fa 19-20,33-36,228-290
+ThawTests/PresenterHomeTests.swift
+  s_2d7d1998475fcf::t_925cf12c681f39 8,10,18-19,32,83-126
+ThawTests/PresenterItemDetailTests.swift
+  s_2d7d1998475fcf::t_7bdd163df1de6e 14,26-27,76-85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "916f5ff68f3756163b628dd66f4f10aa47f43358",
+  "prompts": {},
+  "sessions": {
+    "s_2d7d1998475fcf": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "04f8ce7d-4cf5-422e-9ff9-95c0d3acc7ee",
+        "model": "openrouter/OpenRouter/anthropic/claude-sonnet-5.5"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
