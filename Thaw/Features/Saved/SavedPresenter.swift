@@ -1,6 +1,6 @@
 import Foundation
 
-final class SavedPresenter: SavedPresenterProtocol {
+final class SavedPresenter: SavedPresenterProtocol, SavedInteractorOutput {
     private weak var view: SavedViewProtocol?
     private let interactor: SavedInteractorProtocol
     private let router: SavedRouterProtocol
@@ -12,14 +12,66 @@ final class SavedPresenter: SavedPresenterProtocol {
         self.view = view
         self.interactor = interactor
         self.router = router
+        interactor.output = self
     }
 
-    func viewWillAppear() {
+    func viewWillAppear() { refresh() }
+
+    func dataDidChange() { refresh() }
+
+    func tapEditDecision(id: UUID) {
+        guard let want = decidedWant(id) else { return }
+        let other: SavedDecisionChoice = want.status == .skipped
+            ? SavedDecisionChoice(option: .markBought, title: "Mark as bought")
+            : SavedDecisionChoice(option: .markSkipped, title: "Mark as skipped")
+        view?.showDecisionOptions(id: id, sheet: SavedDecisionSheet(
+            title: want.name,
+            message: "You \(want.status == .skipped ? "skipped" : "bought") this. Change your decision?",
+            choices: [SavedDecisionChoice(option: .moveBackToCooling, title: "Move back to cooling"), other],
+            cancelTitle: "Cancel"
+        ))
+    }
+
+    func chooseDecisionOption(id: UUID, option: SavedDecisionOption) {
+        guard let want = decidedWant(id) else { return }
+        switch option {
+        case .moveBackToCooling:
+            interactor.reopen(id)
+        case .markBought where want.status == .skipped:
+            interactor.setDecision(id, to: .bought)
+        case .markSkipped where want.status == .bought:
+            interactor.setDecision(id, to: .skipped)
+        case .markBought, .markSkipped:
+            break
+        }
+    }
+
+    func tapDelete(id: UUID) {
+        guard let want = decidedWant(id) else { return }
+        view?.showDeleteConfirmation(id: id, confirmation: SavedDeleteConfirmation(
+            title: "Delete \(want.name)?",
+            message: "It will be removed from Thaw, including your history and savings total.",
+            deleteTitle: "Delete",
+            cancelTitle: "Cancel"
+        ))
+    }
+
+    func confirmDelete(id: UUID) {
+        guard interactor.wants.contains(where: { $0.id == id }) else { return }
+        interactor.delete(id)
+    }
+
+    private func decidedWant(_ id: UUID) -> Want? {
+        interactor.wants.first { $0.id == id && $0.status != .cooling }
+    }
+
+    private func refresh() {
         let wants = interactor.wants
         let decided = wants.filter { $0.status != .cooling }
         let stats = ProgressStats.make(wants: wants, funMoney: interactor.funMoney)
         let history = decided.sorted { $0.frozenOn > $1.frozenOn }.map { want in
             SavedHistoryRow(
+                id: want.id,
                 name: want.name,
                 priceText: Formatting.sgd(want.price),
                 outcome: want.status == .skipped ? "Skipped" : "Bought",

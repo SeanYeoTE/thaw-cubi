@@ -28,12 +28,18 @@ final class ItemDetailPresenter: ItemDetailPresenterProtocol {
             progress: want.progress,
             isTimer: isTimer,
             quote: "\u{201C}\(reason)\u{201D}",
-            thawsText: "Thaws · \(isTimer ? "Timer" : "Payday") · \(Formatting.paydayDate(want.thawsAt)) · \(Self.timeText(want.thawsAt))"
+            thawsText: "Thaws · \(isTimer ? "Timer" : "Payday") · \(Formatting.paydayDate(want.thawsAt)) · \(Self.timeText(want.thawsAt))",
+            linkText: want.link.map { "Open link · \(Self.displayHost($0))" }
         ))
     }
 
     func tapEdit() {
         router.showEdit(wantID: interactor.want.id)
+    }
+
+    func tapLink() {
+        guard let link = interactor.want.link else { return }
+        router.openLink(link)
     }
 
     func didEdit() {
@@ -53,6 +59,11 @@ final class ItemDetailPresenter: ItemDetailPresenterProtocol {
         interactor.skip()
         let line = CubiMood.proudLine(amount: Formatting.sgd(interactor.want.price))
         view?.showSkipMoment(line: line) { [weak self] in self?.router.pop() }
+    }
+
+    static func displayHost(_ url: URL) -> String {
+        guard let host = url.host(), !host.isEmpty else { return url.absoluteString }
+        return host.hasPrefix("www.") ? String(host.dropFirst(4)) : host
     }
 
     private static func timeText(_ date: Date) -> String {

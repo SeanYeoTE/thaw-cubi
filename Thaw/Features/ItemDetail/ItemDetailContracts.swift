@@ -9,6 +9,8 @@ struct ItemDetailViewModel {
     let isTimer: Bool
     let quote: String
     let thawsText: String
+    /// "Open link · example.com" when the want has a link.
+    let linkText: String?
 }
 
 protocol ItemDetailViewProtocol: AnyObject {
@@ -23,6 +25,7 @@ protocol ItemDetailPresenterProtocol: AnyObject {
     func tapDecide()
     func tapSkip()
     func tapEdit()
+    func tapLink()
     func didEdit()
 }
 
@@ -37,4 +40,5 @@ protocol ItemDetailRouterProtocol: AnyObject {
     func showDecideNow(want: Want)
     func showEdit(wantID: UUID)
     func pop()
+    func openLink(_ url: URL)
 }

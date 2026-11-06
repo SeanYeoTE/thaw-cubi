@@ -16,6 +16,9 @@ enum DataChange {
 final class DataChangeObserver {
     private var token: NSObjectProtocol?
 
+    // Explicit deinit: the synthesized one on this MainActor class corrupts the heap in the test host.
+    deinit {}
+
     init(handler: @escaping @MainActor () -> Void) {
         token = NotificationCenter.default.addObserver(forName: .thawDataChanged, object: nil, queue: .main) { _ in
             MainActor.assumeIsolated { handler() }

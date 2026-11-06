@@ -18,6 +18,18 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         )
         actionHandler = handler
         UNUserNotificationCenter.current().delegate = handler
+        ingestSharedDrafts()
         return true
+    }
+
+    /// Moves wants saved from the share sheet into the store (at launch and on every foreground).
+    func ingestSharedDrafts(inbox: ShareInbox = .shared) {
+        let drafts = inbox.pending()
+        guard !drafts.isEmpty else { return }
+        let added = store.ingest(drafts)
+        inbox.remove(ids: Set(drafts.map(\.id)))
+        guard added > 0 else { return }
+        DataChange.post()
+        reminders.refresh(requestingPermission: false)
     }
 }

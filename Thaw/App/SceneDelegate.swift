@@ -20,6 +20,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         appDelegate?.router.presentIfPossible()
     }
 
+    func sceneWillEnterForeground(_ scene: UIScene) {
+        appDelegate?.ingestSharedDrafts()
+    }
+
     private func tabs() -> UIViewController {
         RootTabBarController(store: store, reminders: reminders)
     }

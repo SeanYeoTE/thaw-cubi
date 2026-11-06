@@ -43,4 +43,8 @@ final class ItemDetailRouter: ItemDetailRouterProtocol {
     func pop() {
         viewController?.navigationController?.popViewController(animated: true)
     }
+
+    func openLink(_ url: URL) {
+        UIApplication.shared.open(url)
+    }
 }
