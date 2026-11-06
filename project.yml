@@ -68,6 +68,7 @@ targets:
       - path: Thaw/Features/AddWant/AddWantPresenter.swift
       - path: Thaw/Features/AddWant/AddWantViewController.swift
       - path: Thaw/Features/Shared/MomentView.swift
+      - path: Thaw/Features/Shared/AdaptiveViews.swift
       - path: Thaw/Features/Shared/ShareItemParser.swift
       - path: Thaw/Resources/Fonts/BricolageGrotesque-ExtraBold.ttf
     entitlements:

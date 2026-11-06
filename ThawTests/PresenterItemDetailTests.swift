@@ -11,6 +11,7 @@ final class PresenterItemDetailTests: XCTestCase {
 
     private final class FakeInteractor: ItemDetailInteractorProtocol {
         var want = Fixture.want("Keyboard", 189)
+        var wantExists = true
         var settings = PaydaySettings.default
         func waitOnePayday() {}
         func skip() {}
@@ -22,7 +23,8 @@ final class PresenterItemDetailTests: XCTestCase {
         func openLink(_ url: URL) { opened.append(url) }
         func showDecideNow(want: Want) {}
         func showEdit(wantID: UUID) { edited.append(wantID) }
-        func pop() {}
+        var popped = 0
+        func pop() { popped += 1 }
     }
 
     func testTapEditOpensEditorForThisWant() {
@@ -70,5 +72,15 @@ final class PresenterItemDetailTests: XCTestCase {
         let presenter = ItemDetailPresenter(view: view, interactor: interactor, router: router)
         presenter.tapLink()
         XCTAssertTrue(router.opened.isEmpty)
+    }
+
+    func testDidEditPopsWhenTheWantWasDeleted() {
+        let view = FakeView(), interactor = FakeInteractor(), router = FakeRouter()
+        let presenter = ItemDetailPresenter(view: view, interactor: interactor, router: router)
+        presenter.viewDidLoad()
+        interactor.wantExists = false
+        presenter.didEdit()
+        XCTAssertEqual(router.popped, 1)
+        XCTAssertEqual(view.models.count, 1)
     }
 }

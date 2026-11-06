@@ -18,16 +18,6 @@ final class SavedInteractor: SavedInteractorProtocol {
     var wants: [Want] { store.wants }
     var funMoney: Decimal { store.effectiveSettings.funMoney }
 
-    func reopen(_ id: UUID) {
-        store.reopen(id)
-        didMutate()
-    }
-
-    func setDecision(_ id: UUID, to status: Want.Status) {
-        store.setDecision(id, to: status)
-        didMutate()
-    }
-
     func delete(_ id: UUID) {
         store.delete(id)
         didMutate()

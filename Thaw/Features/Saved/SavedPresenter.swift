@@ -19,31 +19,9 @@ final class SavedPresenter: SavedPresenterProtocol, SavedInteractorOutput {
 
     func dataDidChange() { refresh() }
 
-    func tapEditDecision(id: UUID) {
-        guard let want = decidedWant(id) else { return }
-        let other: SavedDecisionChoice = want.status == .skipped
-            ? SavedDecisionChoice(option: .markBought, title: "Mark as bought")
-            : SavedDecisionChoice(option: .markSkipped, title: "Mark as skipped")
-        view?.showDecisionOptions(id: id, sheet: SavedDecisionSheet(
-            title: want.name,
-            message: "You \(want.status == .skipped ? "skipped" : "bought") this. Change your decision?",
-            choices: [SavedDecisionChoice(option: .moveBackToCooling, title: "Move back to cooling"), other],
-            cancelTitle: "Cancel"
-        ))
-    }
-
-    func chooseDecisionOption(id: UUID, option: SavedDecisionOption) {
-        guard let want = decidedWant(id) else { return }
-        switch option {
-        case .moveBackToCooling:
-            interactor.reopen(id)
-        case .markBought where want.status == .skipped:
-            interactor.setDecision(id, to: .bought)
-        case .markSkipped where want.status == .bought:
-            interactor.setDecision(id, to: .skipped)
-        case .markBought, .markSkipped:
-            break
-        }
+    func tapEdit(id: UUID) {
+        guard decidedWant(id) != nil else { return }
+        router.showEdit(id: id)
     }
 
     func tapDelete(id: UUID) {
@@ -75,17 +53,30 @@ final class SavedPresenter: SavedPresenterProtocol, SavedInteractorOutput {
                 name: want.name,
                 priceText: Formatting.sgd(want.price),
                 outcome: want.status == .skipped ? "Skipped" : "Bought",
-                dateText: "Frozen " + want.frozenOn.formatted(.dateTime.day().month(.abbreviated).year()),
+                dateText: want.frozenOn.formatted(.dateTime.day().month(.abbreviated).year()),
                 isSkipped: want.status == .skipped
             )
         }
         view?.render(SavedViewModel(
             cubi: cubi(decided: decided.count, stats: stats),
             savedText: Formatting.sgd(stats.saved),
+            monthlySaved: monthlySaved(decided),
             progress: decided.isEmpty ? nil : progress(for: stats),
             emptyText: decided.isEmpty ? "Decide on a few wants at payday and your progress will show up here." : nil,
             history: history
         ))
+    }
+
+    /// Skipped prices grouped by the month they were frozen, oldest first.
+    private func monthlySaved(_ decided: [Want]) -> [SavedMonthlyAmount] {
+        let calendar = Calendar.current
+        let skipped = decided.filter { $0.status == .skipped }
+        let byMonth = Dictionary(grouping: skipped) {
+            calendar.date(from: calendar.dateComponents([.year, .month], from: $0.frozenOn)) ?? $0.frozenOn
+        }
+        return byMonth
+            .map { SavedMonthlyAmount(month: $0.key, amount: $0.value.reduce(0) { $0 + NSDecimalNumber(decimal: $1.price).doubleValue }) }
+            .sorted { $0.month < $1.month }
     }
 
     // Mood is a pure function of the stats, so Cubi only changes when the numbers do.
@@ -94,25 +85,30 @@ final class SavedPresenter: SavedPresenterProtocol, SavedInteractorOutput {
             return SavedCubiViewModel(mood: .frozen, line: "Brr. Decide on a few wants at payday and I'll keep score.")
         }
         if stats.streak >= 1 {
-            return SavedCubiViewModel(mood: .proud, line: CubiMood.proudLine(amount: Formatting.sgd(stats.saved)))
+            return SavedCubiViewModel(mood: .proud, line: CubiMood.proud.line)
         }
         return SavedCubiViewModel(mood: .snoozing, line: "A fresh start. Let one go at payday and I'll cheer.")
     }
 
     private func progress(for stats: ProgressStats) -> SavedProgressViewModel {
         let streak = SavedProgressViewModel.Stat(
-            value: stats.streak == 0 ? "No streak yet" : stats.streak == 1 ? "1 payday in a row" : "\(stats.streak) paydays in a row",
-            caption: stats.streak == 0 ? "Skip one want at payday to start a streak." : "You let a want go at each one."
+            value: "\(stats.streak)",
+            caption: stats.streak == 1 ? "payday streak" : "paydays in a row",
+            spoken: stats.streak == 0
+                ? "No streak yet. Skip one want at payday to start a streak."
+                : "\(stats.streak) \(stats.streak == 1 ? "payday" : "paydays") in a row. You let a want go at each one."
         )
+        let months = stats.funMoneyMonths
+        let comparisonValue = months >= 1 ? String(format: "%.1f", months) : "\(Int((months * 100).rounded()))%"
         let comparison = SavedProgressViewModel.Stat(
-            value: stats.funMoneyMonths >= 1
-                ? String(format: "%.1f months of fun money", stats.funMoneyMonths)
-                : "\(Int((stats.funMoneyMonths * 100).rounded()))% of a month's fun money",
-            caption: "That's what you chose not to spend."
+            value: comparisonValue,
+            caption: months >= 1 ? "months of fun money" : "of a month's fun money",
+            spoken: "\(comparisonValue) \(months >= 1 ? "months of fun money" : "of a month's fun money"). That's what you chose not to spend."
         )
         let winRate = SavedProgressViewModel.Stat(
-            value: "\(stats.winRatePercent)% let go",
-            caption: "You skipped \(stats.skippedCount) of \(stats.decidedCount) wants you froze."
+            value: "\(stats.winRatePercent)%",
+            caption: "let go · \(stats.skippedCount) of \(stats.decidedCount)",
+            spoken: "\(stats.winRatePercent) percent let go. You skipped \(stats.skippedCount) of \(stats.decidedCount) wants you froze."
         )
         return SavedProgressViewModel(stats: [streak, comparison, winRate])
     }

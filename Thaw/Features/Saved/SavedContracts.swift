@@ -13,6 +13,8 @@ struct SavedProgressViewModel: Equatable {
     struct Stat: Equatable {
         let value: String
         let caption: String
+        /// Full sentence for VoiceOver.
+        let spoken: String
     }
     let stats: [Stat]
 }
@@ -22,31 +24,19 @@ struct SavedCubiViewModel: Equatable {
     let line: String
 }
 
+struct SavedMonthlyAmount: Equatable, Identifiable {
+    let month: Date
+    let amount: Double
+    var id: Date { month }
+}
+
 struct SavedViewModel {
     let cubi: SavedCubiViewModel
     let savedText: String
+    let monthlySaved: [SavedMonthlyAmount]
     let progress: SavedProgressViewModel?
     let emptyText: String?
     let history: [SavedHistoryRow]
-}
-
-/// What the Edit action sheet on a History row can do.
-enum SavedDecisionOption: Equatable {
-    case moveBackToCooling
-    case markBought
-    case markSkipped
-}
-
-struct SavedDecisionChoice: Equatable {
-    let option: SavedDecisionOption
-    let title: String
-}
-
-struct SavedDecisionSheet: Equatable {
-    let title: String
-    let message: String?
-    let choices: [SavedDecisionChoice]
-    let cancelTitle: String
 }
 
 struct SavedDeleteConfirmation: Equatable {
@@ -58,16 +48,13 @@ struct SavedDeleteConfirmation: Equatable {
 
 protocol SavedViewProtocol: AnyObject {
     func render(_ model: SavedViewModel)
-    /// Shows an action sheet for the row; picking a choice calls `chooseDecisionOption(id:option:)`.
-    func showDecisionOptions(id: UUID, sheet: SavedDecisionSheet)
     /// Asks before deleting; confirming calls `confirmDelete(id:)`.
     func showDeleteConfirmation(id: UUID, confirmation: SavedDeleteConfirmation)
 }
 
 protocol SavedPresenterProtocol: AnyObject {
     func viewWillAppear()
-    func tapEditDecision(id: UUID)
-    func chooseDecisionOption(id: UUID, option: SavedDecisionOption)
+    func tapEdit(id: UUID)
     func tapDelete(id: UUID)
     func confirmDelete(id: UUID)
 }
@@ -76,8 +63,6 @@ protocol SavedInteractorProtocol: AnyObject {
     var output: SavedInteractorOutput? { get set }
     var wants: [Want] { get }
     var funMoney: Decimal { get }
-    func reopen(_ id: UUID)
-    func setDecision(_ id: UUID, to status: Want.Status)
     func delete(_ id: UUID)
 }
 
@@ -85,4 +70,7 @@ protocol SavedInteractorOutput: AnyObject {
     func dataDidChange()
 }
 
-protocol SavedRouterProtocol: AnyObject {}
+protocol SavedRouterProtocol: AnyObject {
+    /// Opens the edit screen for a decided want.
+    func showEdit(id: UUID)
+}

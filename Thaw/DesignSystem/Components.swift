@@ -39,7 +39,7 @@ final class CardView: UIView {
 }
 
 final class PillButton: UIButton {
-    enum Style { case primary, secondary, quiet }
+    enum Style { case primary, secondary, quiet, destructive }
 
     init(title: String, style: Style) {
         super.init(frame: .zero)
@@ -58,6 +58,12 @@ final class PillButton: UIButton {
         case .quiet:
             config = .plain()
             config.baseForegroundColor = Theme.inkSecondary
+        case .destructive:
+            config = .filled()
+            config.baseBackgroundColor = Theme.surface
+            config.baseForegroundColor = Theme.destructive
+            config.background.strokeColor = Theme.border
+            config.background.strokeWidth = 1
         }
         config.title = title
         config.cornerStyle = .capsule

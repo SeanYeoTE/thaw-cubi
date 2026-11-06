@@ -31,6 +31,8 @@ protocol ItemDetailPresenterProtocol: AnyObject {
 
 protocol ItemDetailInteractorProtocol: AnyObject {
     var want: Want { get }
+    /// False once the want was deleted (from the edit screen).
+    var wantExists: Bool { get }
     var settings: PaydaySettings { get }
     func waitOnePayday()
     func skip()

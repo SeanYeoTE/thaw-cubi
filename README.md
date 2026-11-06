@@ -51,9 +51,15 @@ Presenters are tested without UIKit by injecting fake view, router and interacto
 
 The extension compiles a subset of app files (see `ThawShare` in `project.yml`); anything added to that list must be extension-safe (no `UIApplication`). A device build needs the app group registered once (build from Xcode, or `xcodebuild -allowProvisioningUpdates`).
 
-## Undoing a decision
+## Editing, undoing and deleting
 
-On Saved, swipe a History row: **Edit** offers "Move back to cooling" (keeps the original thaw date) or switching between Bought and Skipped; **Delete** removes the want after a confirmation. Saved, Home and the progress card refresh through `DataChange` whenever a want changes. Accessibility: both actions are exposed as custom actions on the row.
+One edit screen (the Add form in edit mode, `AddWantRouter.createModule(editing:)`) serves every list:
+
+- **Cooling:** long-press a row for Edit or Delete (Delete asks first). Tapping a row opens its detail, which has an Edit button.
+- **Stats (History):** swipe a row, then Edit or Delete.
+- The edit screen shows Name and Price side by side, the reason, and buttons under the form: **Delete** for any want, plus **Move back to cooling** (keeps the original thaw date) and **Mark as bought/skipped** for decided wants. Details typed before pressing an action are saved first if valid. Deleting from a detail screen pops back to the list.
+
+Cooling and History rows share one component (`WantRowView` / `WantRowModel` in `Thaw/Features/Shared`): title and price on the first line, status and time on the second, progress as a thin strip on the card's bottom edge. Lists refresh through `DataChange`. Actions are also exposed as VoiceOver custom actions.
 
 ## Launch arguments
 

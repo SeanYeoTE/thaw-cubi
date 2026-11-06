@@ -6,6 +6,21 @@ struct AddWantInput: Equatable {
     var reason: String
 }
 
+struct AddWantAction: Equatable {
+    enum Kind: Equatable {
+        case moveBackToCooling, markBought, markSkipped, delete
+    }
+    let kind: Kind
+    let title: String
+}
+
+struct AddWantDeleteConfirmation: Equatable {
+    let title: String
+    let message: String
+    let deleteTitle: String
+    let cancelTitle: String
+}
+
 struct AddWantScreen: Equatable {
     let title: String
     let actionTitle: String
@@ -14,6 +29,8 @@ struct AddWantScreen: Equatable {
     let initial: AddWantInput?
     /// Read-only line above the form, e.g. "From example.com" for a shared page.
     var caption: String? = nil
+    /// Extra buttons under the form when editing (move back to cooling, mark bought/skipped, delete).
+    var actions: [AddWantAction] = []
 }
 
 /// Prefill for a want captured outside the app (the share sheet). The link is kept but not editable.
@@ -28,6 +45,8 @@ protocol AddWantViewProtocol: AnyObject {
     func setModalInPresentation(_ isModal: Bool)
     func showError(_ message: String)
     func showDiscardConfirmation()
+    /// Asks before deleting; confirming calls `confirmDelete()`.
+    func showDeleteConfirmation(_ confirmation: AddWantDeleteConfirmation)
     /// Ends editing, locks the bar buttons, shows the Cubi moment, then calls `completion` once.
     func showSavedMoment(line: String, completion: @escaping () -> Void)
 }
@@ -39,6 +58,8 @@ protocol AddWantPresenterProtocol: AnyObject {
     func didAttemptDismiss(_ input: AddWantInput)
     func confirmDiscard()
     func tapSave(_ input: AddWantInput)
+    func tapAction(_ kind: AddWantAction.Kind, input: AddWantInput)
+    func confirmDelete()
 }
 
 protocol AddWantInteractorProtocol: AnyObject {
@@ -49,6 +70,17 @@ protocol AddWantInteractorProtocol: AnyObject {
     var draft: AddWantDraft? { get }
     func add(name: String, price: Decimal, reason: String)
     func save(name: String, price: Decimal, reason: String)
+    func moveBackToCooling()
+    func setDecision(_ status: Want.Status)
+    func deleteWant()
+}
+
+/// Only the app edits existing wants; the share extension adds, so these default to no-ops.
+extension AddWantInteractorProtocol {
+    func save(name: String, price: Decimal, reason: String) {}
+    func moveBackToCooling() {}
+    func setDecision(_ status: Want.Status) {}
+    func deleteWant() {}
 }
 
 protocol AddWantRouterProtocol: AnyObject {

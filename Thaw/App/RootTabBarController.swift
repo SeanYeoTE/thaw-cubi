@@ -9,7 +9,7 @@ final class RootTabBarController: UITabBarController {
         cooling.tabBarItem = UITabBarItem(title: "Cooling", image: UIImage(systemName: "snowflake"), tag: 0)
 
         let saved = UINavigationController(rootViewController: SavedRouter.createModule(store: store, reminders: reminders))
-        saved.tabBarItem = UITabBarItem(title: "Saved", image: UIImage(systemName: "chart.bar"), tag: 1)
+        saved.tabBarItem = UITabBarItem(title: "Stats", image: UIImage(systemName: "chart.bar"), tag: 1)
 
         let settings = UINavigationController(rootViewController: PaydaySetupRouter.createModule(store: store, reminders: reminders))
         settings.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gearshape"), tag: 2)
