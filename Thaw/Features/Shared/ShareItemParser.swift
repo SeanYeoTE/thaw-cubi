@@ -26,7 +26,7 @@ nonisolated enum ShareItemParser {
         var link: URL?
     }
 
-    static let maxNameLength = 100
+    static let maxNameLength = 40
 
     static func parse(_ input: Input) -> Result {
         let candidates = [input.title, input.contentText].compactMap { $0 } + input.texts
@@ -80,8 +80,18 @@ nonisolated enum ShareItemParser {
         text.split(whereSeparator: \.isWhitespace).joined(separator: " ")
     }
 
+    /// Shortens a title: drops marketing suffixes after " - ", " | " or ": ", then cuts at a word boundary.
     private static func truncated(_ text: String) -> String {
-        guard text.count > maxNameLength else { return text }
-        return String(text.prefix(maxNameLength - 1)).trimmingCharacters(in: .whitespaces) + "…"
+        var result = text
+        for separator in [" | ", " - ", " – ", " — ", ": ", ", "] {
+            if let range = result.range(of: separator), result[..<range.lowerBound].count >= 3 {
+                result = String(result[..<range.lowerBound])
+            }
+        }
+        guard result.count > maxNameLength else { return result }
+        let hardCut = String(result.prefix(maxNameLength - 1))
+        let wordCut = hardCut.lastIndex(of: " ").map { String(hardCut[..<$0]) }
+        let base = (wordCut?.count ?? 0) >= maxNameLength / 2 ? wordCut! : hardCut
+        return base.trimmingCharacters(in: .whitespaces) + "…"
     }
 }

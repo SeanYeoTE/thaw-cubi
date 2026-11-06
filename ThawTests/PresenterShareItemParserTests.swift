@@ -66,6 +66,13 @@ final class PresenterShareItemParserTests: XCTestCase {
         XCTAssertTrue(name.hasSuffix("…"))
     }
 
+    func testLongProductTitlesAreShortened() {
+        let title = "Sony WH-1000XM5 Wireless Noise Cancelling Headphones - 30hr Battery, Black | Amazon"
+        let name = ShareItemParser.parse(Input(title: title)).name
+        XCTAssertEqual(name, "Sony WH-1000XM5 Wireless Noise…")
+        XCTAssertLessThanOrEqual(name.count, ShareItemParser.maxNameLength)
+    }
+
     func testDisplayHostDropsWWW() {
         XCTAssertEqual(ShareItemParser.displayHost(URL(string: "https://www.example.com/x")!), "example.com")
         XCTAssertEqual(ShareItemParser.displayHost(URL(string: "https://shop.example.com")!), "shop.example.com")
