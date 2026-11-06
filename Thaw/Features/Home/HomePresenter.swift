@@ -28,6 +28,30 @@ final class HomePresenter: HomePresenterProtocol, HomeInteractorOutput {
 
     func tapWant(id: UUID) { router.showItemDetail(id: id) }
 
+    func tapEdit(id: UUID) {
+        guard coolingWant(id) != nil else { return }
+        router.showEdit(id: id)
+    }
+
+    func tapDelete(id: UUID) {
+        guard let want = coolingWant(id) else { return }
+        view?.showDeleteConfirmation(id: id, confirmation: HomeDeleteConfirmation(
+            title: "Delete \(want.name)?",
+            message: "It will be removed from Thaw and won't thaw or show up in your review.",
+            deleteTitle: "Delete",
+            cancelTitle: "Cancel"
+        ))
+    }
+
+    func confirmDelete(id: UUID) {
+        guard coolingWant(id) != nil else { return }
+        interactor.delete(id)
+    }
+
+    private func coolingWant(_ id: UUID) -> Want? {
+        interactor.snapshot().cooling.first { $0.id == id }
+    }
+
     private func refresh() {
         let snapshot = interactor.snapshot()
         let thawing = snapshot.reviewQueue
@@ -48,9 +72,20 @@ final class HomePresenter: HomePresenterProtocol, HomeInteractorOutput {
     private func card(for want: Want, settings: PaydaySettings) -> HomeCardViewModel {
         let isTimer = want.price < settings.timerThreshold
         let status = isTimer
-            ? "Under \(Formatting.sgd(settings.timerThreshold)) · \(settings.timerDays)-day timer · thaws \(Formatting.paydayDate(want.thawsAt))"
-            : "Thaws on payday · \(Formatting.paydayDate(want.thawsAt))"
+            ? "\(settings.timerDays)-day timer · \(Formatting.paydayDate(want.thawsAt))"
+            : "Payday · \(Formatting.paydayDate(want.thawsAt))"
         return HomeCardViewModel(id: want.id, name: want.name, priceText: Formatting.sgd(want.price),
-                                 progress: want.progress, isTimer: isTimer, statusText: status)
+                                 progress: want.progress, isTimer: isTimer, statusText: status,
+                                 trailingText: Self.daysText(until: want.thawsAt))
+    }
+
+    private static func daysText(until date: Date) -> String {
+        let calendar = Calendar.current
+        let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: .now), to: date).day ?? 0
+        switch days {
+        case ...0: return "Today"
+        case 1: return "1 day"
+        default: return "\(days) days"
+        }
     }
 }

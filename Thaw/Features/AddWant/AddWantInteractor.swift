@@ -5,6 +5,9 @@ final class AddWantInteractor: AddWantInteractorProtocol {
     private let reminders: Reminders
     private let editingID: UUID?
 
+    // Explicit deinit: the synthesized one on a MainActor class corrupts the heap in the test host.
+    deinit {}
+
     init(store: WantStore, reminders: Reminders, editingID: UUID? = nil) {
         self.store = store
         self.reminders = reminders

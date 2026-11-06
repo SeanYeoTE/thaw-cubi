@@ -43,6 +43,7 @@ final class ItemDetailPresenter: ItemDetailPresenterProtocol {
     }
 
     func didEdit() {
+        guard interactor.wantExists else { return router.pop() }
         viewDidLoad()
     }
 

@@ -16,7 +16,8 @@ final class PresenterAddWantTests: XCTestCase {
         func setModalInPresentation(_ isModal: Bool) { modal.append(isModal) }
         func showError(_ message: String) { errors.append(message) }
         func showDiscardConfirmation() { discardShown += 1 }
-        func showDeleteConfirmation(_ confirmation: AddWantDeleteConfirmation) {}
+        var deleteConfirmation: AddWantDeleteConfirmation?
+        func showDeleteConfirmation(_ confirmation: AddWantDeleteConfirmation) { deleteConfirmation = confirmation }
         func showSavedMoment(line: String, completion: @escaping () -> Void) {
             momentLine = line
             momentCompletion = completion
@@ -29,6 +30,10 @@ final class PresenterAddWantTests: XCTestCase {
         var draft: AddWantDraft?
         var added: [(String, Decimal, String)] = []
         var saved: [(String, Decimal, String)] = []
+        var ops: [String] = []
+        func moveBackToCooling() { ops.append("reopen") }
+        func setDecision(_ status: Want.Status) { ops.append("set-\(status)") }
+        func deleteWant() { ops.append("delete") }
         func add(name: String, price: Decimal, reason: String) { added.append((name, price, reason)) }
         func save(name: String, price: Decimal, reason: String) { saved.append((name, price, reason)) }
     }
@@ -219,5 +224,68 @@ final class PresenterAddWantTests: XCTestCase {
         presenter.tapSave(AddWantInput(name: "Brass desk lamp", price: "", reason: ""))
         XCTAssertEqual(view.errors, ["Enter a price above S$0."])
         XCTAssertTrue(interactor.added.isEmpty)
+    }
+
+    private func makeEditing(status: Want.Status) -> (AddWantPresenter, FakeView, FakeInteractor, FakeRouter) {
+        let made = make()
+        var want = Fixture.want("Keyboard", 189, reason: "Double-types")
+        want.status = status
+        made.2.editing = want
+        made.0.viewDidLoad()
+        return made
+    }
+
+    private let keyboard = AddWantInput(name: "Keyboard", price: "189", reason: "Double-types")
+
+    func testActionsDependOnTheWantsStatus() {
+        XCTAssertEqual(makeEditing(status: .cooling).1.screen?.actions.map(\.kind), [.delete])
+        XCTAssertEqual(makeEditing(status: .skipped).1.screen?.actions.map(\.kind), [.moveBackToCooling, .markBought, .delete])
+        XCTAssertEqual(makeEditing(status: .bought).1.screen?.actions.map(\.kind), [.moveBackToCooling, .markSkipped, .delete])
+        XCTAssertEqual(make().1.screen?.actions ?? [], [])
+    }
+
+    func testMoveBackToCoolingAndSwitchDecisionDismiss() {
+        let (presenter, _, interactor, router) = makeEditing(status: .skipped)
+        presenter.tapAction(.moveBackToCooling, input: keyboard)
+        presenter.tapAction(.markBought, input: keyboard)
+        XCTAssertEqual(interactor.ops, ["reopen", "set-bought"])
+        XCTAssertEqual(router.dismissed, 2)
+        XCTAssertTrue(interactor.saved.isEmpty)
+    }
+
+    func testActionKeepsValidEditsTypedBeforeIt() {
+        let (presenter, _, interactor, router) = makeEditing(status: .bought)
+        presenter.tapAction(.markSkipped, input: AddWantInput(name: "Keyboard Pro", price: "199", reason: "Double-types"))
+        XCTAssertEqual(interactor.saved.first?.0, "Keyboard Pro")
+        XCTAssertEqual(interactor.ops, ["set-skipped"])
+        XCTAssertEqual(router.dismissed, 1)
+    }
+
+    func testActionWithInvalidEditsShowsErrorAndChangesNothing() {
+        let (presenter, view, interactor, router) = makeEditing(status: .skipped)
+        presenter.tapAction(.moveBackToCooling, input: AddWantInput(name: "", price: "189", reason: ""))
+        XCTAssertEqual(view.errors.count, 1)
+        XCTAssertTrue(interactor.ops.isEmpty)
+        XCTAssertEqual(router.dismissed, 0)
+    }
+
+    func testDeleteAsksThenDeletesAndDismisses() {
+        let (presenter, view, interactor, router) = makeEditing(status: .cooling)
+        presenter.tapAction(.delete, input: keyboard)
+        XCTAssertEqual(view.deleteConfirmation?.title, "Delete Keyboard?")
+        XCTAssertTrue(interactor.ops.isEmpty)
+        XCTAssertEqual(router.dismissed, 0)
+        presenter.confirmDelete()
+        XCTAssertEqual(interactor.ops, ["delete"])
+        XCTAssertEqual(router.dismissed, 1)
+    }
+
+    func testActionsAreIgnoredOutsideEditMode() {
+        let (presenter, _, interactor, router) = make()
+        presenter.viewDidLoad()
+        presenter.tapAction(.delete, input: keyboard)
+        presenter.confirmDelete()
+        XCTAssertTrue(interactor.ops.isEmpty)
+        XCTAssertEqual(router.dismissed, 0)
     }
 }

@@ -16,7 +16,7 @@ final class HomeRouter: HomeRouterProtocol {
     static func createModule(store: WantStore, reminders: Reminders) -> UIViewController {
         let view = HomeViewController()
         let router = HomeRouter(store: store, reminders: reminders)
-        let interactor = HomeInteractor(store: store)
+        let interactor = HomeInteractor(store: store, reminders: reminders)
         let presenter = HomePresenter(view: view, interactor: interactor, router: router)
         view.presenter = presenter
         router.viewController = view
@@ -25,6 +25,11 @@ final class HomeRouter: HomeRouterProtocol {
 
     func showAddWant() {
         let module = AddWantRouter.createModule(store: store, reminders: reminders)
+        viewController?.present(UINavigationController(rootViewController: module), animated: true)
+    }
+
+    func showEdit(id: UUID) {
+        let module = AddWantRouter.createModule(store: store, reminders: reminders, editing: id)
         viewController?.present(UINavigationController(rootViewController: module), animated: true)
     }
 

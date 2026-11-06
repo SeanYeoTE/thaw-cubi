@@ -166,32 +166,18 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
 
     private func configureRow(_ cell: UICollectionViewListCell, row: SavedHistoryRow) {
         prepare(cell)
-        let card = CardView()
-        let name = makeLabel(row.name, font: ThawFont.body(16, weight: .semibold))
-        let detail = makeLabel("\(row.outcome) · \(row.dateText)", font: ThawFont.body(13),
-                               color: row.isSkipped ? Theme.accent : Theme.inkSecondary)
-        let price = makeLabel(row.priceText, font: ThawFont.money(16))
-        price.setContentHuggingPriority(.required, for: .horizontal)
-        let texts = UIStackView(arrangedSubviews: [name, detail])
-        texts.axis = .vertical
-        texts.spacing = 2
-        let line = AdaptiveStackView(arrangedSubviews: [texts, price])
-        line.compactAlignment = .center
-        line.spacing = 12
-        line.translatesAutoresizingMaskIntoConstraints = false
-        card.addSubview(line)
-        NSLayoutConstraint.activate([
-            line.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 16),
-            line.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -16),
-            line.topAnchor.constraint(equalTo: card.topAnchor, constant: 14),
-            line.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -14),
-        ])
+        let card = WantRowView(model: WantRowModel(
+            title: row.name, priceText: row.priceText, status: row.outcome,
+            statusTone: row.isSkipped ? .accent : .neutral, trailing: row.dateText,
+            progress: nil, progressTone: .neutral,
+            accessibilityLabel: "\(row.name), \(row.priceText)",
+            accessibilityValue: "\(row.outcome), frozen \(row.dateText)"))
         pin(card, in: cell.contentView, top: Self.rowGap / 2, bottom: Self.rowGap / 2)
 
         let id = row.id
         cell.isAccessibilityElement = true
         cell.accessibilityLabel = "\(row.name), \(row.priceText)"
-        cell.accessibilityValue = "\(row.outcome) · \(row.dateText)"
+        cell.accessibilityValue = "\(row.outcome), frozen \(row.dateText)"
         cell.accessibilityCustomActions = [
             UIAccessibilityCustomAction(name: "Edit") { [weak self] _ in
                 self?.presenter?.tapEdit(id: id)
@@ -219,12 +205,13 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         avatar.spokenLine = cubi.line
         avatar.setContentHuggingPriority(.required, for: .horizontal)
         avatar.setContentCompressionResistancePriority(.required, for: .horizontal)
-        let column = UIStackView()
-        column.axis = .vertical
-        column.spacing = 14
+        let column = AdaptiveStackView()
+        column.compactAlignment = .top
+        column.distribution = .fillEqually
+        column.spacing = 12
         for stat in model.stats {
-            let value = makeLabel(stat.value, font: ThawFont.display(20))
-            let caption = makeLabel(stat.caption, font: ThawFont.body(13), color: Theme.inkSecondary)
+            let value = makeLabel(stat.value, font: ThawFont.display(22))
+            let caption = makeLabel(stat.caption, font: ThawFont.body(12), color: Theme.inkSecondary)
             let item = UIStackView(arrangedSubviews: [value, caption])
             item.axis = .vertical
             item.spacing = 2
@@ -233,8 +220,8 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
             column.addArrangedSubview(item)
         }
         let row = AdaptiveStackView(arrangedSubviews: [avatar, column])
-        row.compactAlignment = .top
-        row.spacing = 16
+        row.compactAlignment = .center
+        row.spacing = 14
         return row
     }
 

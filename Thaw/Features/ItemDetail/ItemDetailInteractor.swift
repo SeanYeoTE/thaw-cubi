@@ -13,6 +13,8 @@ final class ItemDetailInteractor: ItemDetailInteractorProtocol {
 
     var want: Want { store.want(id: original.id) ?? original }
 
+    var wantExists: Bool { store.want(id: original.id) != nil }
+
     var settings: PaydaySettings { store.effectiveSettings }
 
     func waitOnePayday() {

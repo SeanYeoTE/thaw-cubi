@@ -53,8 +53,35 @@ final class HomeViewController: ScrollStackViewController, HomeViewProtocol {
         for item in model.cards {
             let card = WantCardView(model: item)
             card.addAction(UIAction { [weak self] _ in self?.presenter?.tapWant(id: item.id) }, for: .touchUpInside)
+            let edit = UIAction(title: "Edit", image: UIImage(systemName: "pencil")) { [weak self] _ in
+                self?.presenter?.tapEdit(id: item.id)
+            }
+            let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { [weak self] _ in
+                self?.presenter?.tapDelete(id: item.id)
+            }
+            card.contextMenu = UIMenu(children: [edit, delete])
+            card.accessibilityCustomActions = [
+                UIAccessibilityCustomAction(name: "Edit") { [weak self] _ in
+                    self?.presenter?.tapEdit(id: item.id)
+                    return true
+                },
+                UIAccessibilityCustomAction(name: "Delete") { [weak self] _ in
+                    self?.presenter?.tapDelete(id: item.id)
+                    return true
+                },
+            ]
             stack.addArrangedSubview(card)
         }
+    }
+
+    func showDeleteConfirmation(id: UUID, confirmation: HomeDeleteConfirmation) {
+        guard presentedViewController == nil else { return }
+        let alert = UIAlertController(title: confirmation.title, message: confirmation.message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: confirmation.cancelTitle, style: .cancel))
+        alert.addAction(UIAlertAction(title: confirmation.deleteTitle, style: .destructive) { [weak self] _ in
+            self?.presenter?.confirmDelete(id: id)
+        })
+        present(alert, animated: true)
     }
 
     @objc private func addTapped() {
