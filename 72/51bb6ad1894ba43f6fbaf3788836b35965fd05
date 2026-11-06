@@ -1,0 +1,21 @@
+ThawTests/PresenterShareItemParserTests.swift
+  s_086931c30ba9ae::t_70c54fc78fc746 69-75
+Thaw/Features/Shared/ShareItemParser.swift
+  s_086931c30ba9ae::t_70c54fc78fc746 29,83,85-95
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7251bb6ad1894ba43f6fbaf3788836b35965fd05",
+  "prompts": {},
+  "sessions": {
+    "s_086931c30ba9ae": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "467989e1-4538-417c-b804-b12a39fc0ea1",
+        "model": "openrouter/OpenRouter/anthropic/claude-sonnet-5.5"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
