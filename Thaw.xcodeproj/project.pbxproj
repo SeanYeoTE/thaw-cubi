@@ -51,6 +51,7 @@
 		55ABEDA9BA4FA4A661C12B84 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C6FD23F86B998D45F66CF5 /* Theme.swift */; };
 		5731B18B98459E850CF4E1C8 /* CubiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8070CCDDAC342DF0FAB276ED /* CubiView.swift */; };
 		57A0475A4868ED0C2536B1CA /* BricolageGrotesque-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 41F4D283A05F4F0E6E80572E /* BricolageGrotesque-ExtraBold.ttf */; };
+		5905C6DC431E837E3A83F5AA /* PersonaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2532136A0692F8F665B1FDE8 /* PersonaTests.swift */; };
 		59581CF85DC3577A9E6DAE1A /* PresenterTestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940971CBFA2F6DAC2CAF2E59 /* PresenterTestSupport.swift */; };
 		5AA9AE7F5A6EF49DFF335D08 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A2D557655FBDFAA2CD42A2 /* Components.swift */; };
 		5BAE43E152D6C942F5B7ACDE /* ShareItemParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAE0F7AB3622B54B79F59EE /* ShareItemParser.swift */; };
@@ -120,6 +121,13 @@
 			remoteGlobalIDString = B3876913302E1A2EC94F4C05;
 			remoteInfo = ThawShare;
 		};
+		531C289F4F0AC263268D33C1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C36C290AF97E22C7E10C36E9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 81F225E4126BB39C8BA919B8;
+			remoteInfo = Thaw;
+		};
 		91220C913C5BFA20DD986A94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C36C290AF97E22C7E10C36E9 /* Project object */;
@@ -162,10 +170,12 @@
 		1BB1CBBF1150D43B709CEC53 /* DataChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataChange.swift; sourceTree = "<group>"; };
 		1C433979969F84CA17CC9145 /* SavedContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedContracts.swift; sourceTree = "<group>"; };
 		24BBF77E9F24367797A7DEC2 /* BackendProgressStatsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendProgressStatsTests.swift; sourceTree = "<group>"; };
+		2532136A0692F8F665B1FDE8 /* PersonaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonaTests.swift; sourceTree = "<group>"; };
 		295AF7CFCF3F362F41C48E78 /* ThawTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ThawTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C10947F3321B16679791C8B /* PresenterHomeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterHomeTests.swift; sourceTree = "<group>"; };
 		2E586F455E4F0D7ECC1D536C /* PresenterPaydayReviewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterPaydayReviewTests.swift; sourceTree = "<group>"; };
 		307E2E39C76493C1E0A39EB1 /* SavedInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedInteractor.swift; sourceTree = "<group>"; };
+		32538DCAFF0E7B82BF5520A8 /* ThawUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ThawUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		331A91187A04BF215798912A /* BackendPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendPersistenceTests.swift; sourceTree = "<group>"; };
 		33895ADF18C40EF814F7D450 /* PresenterPaydaySetupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterPaydaySetupTests.swift; sourceTree = "<group>"; };
 		3608794257CA9D2CD63855E5 /* ReviewRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRouter.swift; sourceTree = "<group>"; };
@@ -275,6 +285,7 @@
 				CC9B9F784C898762FCD1FDCB /* Thaw.app */,
 				A672BD8D7746579048622009 /* ThawShare.appex */,
 				295AF7CFCF3F362F41C48E78 /* ThawTests.xctest */,
+				32538DCAFF0E7B82BF5520A8 /* ThawUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -285,6 +296,7 @@
 				4223677E0C4B9625DB2A79F8 /* Thaw */,
 				7F446C29B5F09B97E2D79868 /* ThawShare */,
 				BFE57F8A872B42D3AD33AB18 /* ThawTests */,
+				3A7D994BC4592D3C197C032A /* ThawUITests */,
 				11B85A4B01DB89817AA355AC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -314,6 +326,14 @@
 				01A199DB16D8CA01565CA1D0 /* ItemDetailViewController.swift */,
 			);
 			path = ItemDetail;
+			sourceTree = "<group>";
+		};
+		3A7D994BC4592D3C197C032A /* ThawUITests */ = {
+			isa = PBXGroup;
+			children = (
+				2532136A0692F8F665B1FDE8 /* PersonaTests.swift */,
+			);
+			path = ThawUITests;
 			sourceTree = "<group>";
 		};
 		4223677E0C4B9625DB2A79F8 /* Thaw */ = {
@@ -554,6 +574,24 @@
 			productReference = A672BD8D7746579048622009 /* ThawShare.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		C6209CA0D276BA350897E1DF /* ThawUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E66940F8704B3EB0CE226066 /* Build configuration list for PBXNativeTarget "ThawUITests" */;
+			buildPhases = (
+				5600BA68B2233F134DF45AE8 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				301A80C15D744CA9B6F25698 /* PBXTargetDependency */,
+			);
+			name = ThawUITests;
+			packageProductDependencies = (
+			);
+			productName = ThawUITests;
+			productReference = 32538DCAFF0E7B82BF5520A8 /* ThawUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -575,6 +613,11 @@
 						DevelopmentTeam = X8UMDPWY6A;
 						ProvisioningStyle = Automatic;
 					};
+					C6209CA0D276BA350897E1DF = {
+						DevelopmentTeam = X8UMDPWY6A;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 81F225E4126BB39C8BA919B8;
+					};
 				};
 			};
 			buildConfigurationList = 66ABBA5DB6C34A8F1370362E /* Build configuration list for PBXProject "Thaw" */;
@@ -594,6 +637,7 @@
 				81F225E4126BB39C8BA919B8 /* Thaw */,
 				B3876913302E1A2EC94F4C05 /* ThawShare */,
 				1318B80E8486903B1857608E /* ThawTests */,
+				C6209CA0D276BA350897E1DF /* ThawUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -692,6 +736,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5600BA68B2233F134DF45AE8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5905C6DC431E837E3A83F5AA /* PersonaTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DB4B284CEEC256ED94C23DB2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -742,6 +794,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		301A80C15D744CA9B6F25698 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 81F225E4126BB39C8BA919B8 /* Thaw */;
+			targetProxy = 531C289F4F0AC263268D33C1 /* PBXContainerItemProxy */;
+		};
 		5995A771966177467905D1CA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 81F225E4126BB39C8BA919B8 /* Thaw */;
@@ -770,6 +827,24 @@
 				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Thaw.app/Thaw";
+			};
+			name = Release;
+		};
+		2B48D688F34A7DB7FB5D7EC8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tinkercademy.ThawUITests;
+				SDKROOT = iphoneos;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Thaw;
 			};
 			name = Release;
 		};
@@ -930,6 +1005,24 @@
 			};
 			name = Debug;
 		};
+		F117587CF1D216293DBE3DA5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tinkercademy.ThawUITests;
+				SDKROOT = iphoneos;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Thaw;
+			};
+			name = Debug;
+		};
 		FD8F6251018868E4D814C47B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1025,6 +1118,15 @@
 			buildConfigurations = (
 				C4EA4FACC03506E187C7E374 /* Debug */,
 				FD8F6251018868E4D814C47B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E66940F8704B3EB0CE226066 /* Build configuration list for PBXNativeTarget "ThawUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F117587CF1D216293DBE3DA5 /* Debug */,
+				2B48D688F34A7DB7FB5D7EC8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

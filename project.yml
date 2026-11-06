@@ -105,6 +105,17 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: YES
         SWIFT_DEFAULT_ACTOR_ISOLATION: nonisolated
+  ThawUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: ThawUITests
+    dependencies:
+      - target: Thaw
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_DEFAULT_ACTOR_ISOLATION: nonisolated
 schemes:
   Thaw:
     build:
@@ -114,3 +125,4 @@ schemes:
     test:
       targets:
         - ThawTests
+        - ThawUITests

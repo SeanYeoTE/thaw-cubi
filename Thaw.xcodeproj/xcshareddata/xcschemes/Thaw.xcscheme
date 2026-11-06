@@ -64,6 +64,17 @@
                ReferencedContainer = "container:Thaw.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "C6209CA0D276BA350897E1DF"
+               BuildableName = "ThawUITests.xctest"
+               BlueprintName = "ThawUITests"
+               ReferencedContainer = "container:Thaw.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>

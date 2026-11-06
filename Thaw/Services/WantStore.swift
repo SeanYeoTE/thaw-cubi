@@ -70,6 +70,12 @@ nonisolated final class WantStore: @unchecked Sendable {
             store.wants = fixtureHistory()
             store.persist()
         }
+        if let index = arguments.firstIndex(of: "-thawFixture"),
+           arguments.indices.contains(index + 1), arguments[index + 1] == "thawed" {
+            store.settings = .default
+            store.wants = fixtureThawed()
+            store.persist()
+        }
 #if DEBUG
         // Debug builds start with sample wants so Home and Saved aren't empty while testing.
         if isFirstLaunch, !arguments.contains("-thawReset"), !arguments.contains("-thawFixture") {
@@ -237,6 +243,20 @@ nonisolated final class WantStore: @unchecked Sendable {
                  daysAgo: 2, progress: 0.59),
             make("Linen overshirt", 69, "Good for the hot weather.", daysAgo: 4, progress: 0.4),
             make("Espresso grinder", 420, "Pre-ground tastes flat.", daysAgo: 6, progress: 0.2),
+        ]
+    }
+
+    /// Wants whose wait is over, so the payday review has something to decide on.
+    static func fixtureThawed(now: Date = .now) -> [Want] {
+        func thawed(_ name: String, _ price: Decimal, _ reason: String, daysAgo: Int) -> Want {
+            Want(id: UUID(), name: name, price: price, reason: reason,
+                 frozenOn: now.addingTimeInterval(-86_400 * Double(daysAgo)), progress: 1, status: .cooling,
+                 thawsAt: now.addingTimeInterval(-3_600))
+        }
+        return [
+            thawed("Mechanical keyboard", 189, "My current one double-types. I type all day for work.", daysAgo: 20),
+            thawed("Linen overshirt", 69, "Good for the hot weather.", daysAgo: 22),
+            thawed("Espresso grinder", 420, "Pre-ground tastes flat.", daysAgo: 25),
         ]
     }
 
