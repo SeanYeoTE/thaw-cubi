@@ -1,0 +1,23 @@
+README.md
+  s_306edde90cfff9::t_55fa2db3a6416b 48-57,79
+Thaw/Features/Saved/SavedViewController.swift
+  s_306edde90cfff9::t_52ce65f49290a3 38-40,43,156-158
+docs/qa/sprint-10-report.md
+  s_306edde90cfff9::t_1d070a6c518c58 1-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d0f27fc0edf3f6ad2dbdf7d7f078ef0d4c77a76e",
+  "prompts": {},
+  "sessions": {
+    "s_306edde90cfff9": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "s_306edde90cfff9",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
