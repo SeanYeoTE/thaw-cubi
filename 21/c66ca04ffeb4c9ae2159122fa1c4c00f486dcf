@@ -1,0 +1,73 @@
+Thaw/Features/Saved/SavedViewController.swift
+  s_086931c30ba9ae::t_a6d6795e11d369 196-197,268
+  s_086931c30ba9ae::t_f7d4cbfa75073f 1-2,31,146,150-159,239-253
+  s_086931c30ba9ae::t_85669b58c847cf 232
+  s_086931c30ba9ae::t_ef42afe7685d38 216-221,235-238
+ThawTests/IntegrationSavedTests.swift
+  s_086931c30ba9ae::t_0d76317b52fc77 14-16,59-60,96-97
+Thaw.xcodeproj/project.pbxproj
+  s_086931c30ba9ae::t_303ed707128510 31,98,102,178,232,298-299,685
+  s_086931c30ba9ae::t_144031eaf34b32 686,696
+Thaw/Features/Saved/SavedPresenter.swift
+  s_086931c30ba9ae::t_f7d4cbfa75073f 63,70-79
+  s_086931c30ba9ae::t_d257cf0dc45fdc 22-24,56,80-81,88,95-99,101-102,104-106,109-111
+Thaw/Features/Saved/SavedContracts.swift
+  s_086931c30ba9ae::t_f7d4cbfa75073f 27-32,36,76
+  s_086931c30ba9ae::t_682ba95cceddf3 16-17,57,73-75
+ThawTests/BackendStateTests.swift
+  s_086931c30ba9ae::t_6a393b13b1f8a9 233,238-241
+ThawTests/PresenterAddWantTests.swift
+  s_086931c30ba9ae::t_0d76317b52fc77 19
+ThawTests/PresenterSavedTests.swift
+  s_086931c30ba9ae::t_0d76317b52fc77 26-29,106,108-112,117-122
+  s_086931c30ba9ae::t_6a393b13b1f8a9 59-63
+  s_086931c30ba9ae::t_08c540c4b60259 80
+Thaw/App/RootTabBarController.swift
+  s_90b41dda03d835::t_1f641dbd22bfba 12
+Thaw/DesignSystem/Components.swift
+  s_086931c30ba9ae::t_a1052a87130cd3 42,61-66
+Thaw/DesignSystem/Theme.swift
+  s_086931c30ba9ae::t_7ce4718f8db985 26
+Thaw/Features/AddWant/AddWantContracts.swift
+  s_90b41dda03d835::t_eeabcc78f29570 9-23,32-33,48-49,61-62,73-83
+Thaw/Features/AddWant/AddWantInteractor.swift
+  s_90b41dda03d835::t_d8b12888deb46c 32-54
+Thaw/Features/AddWant/AddWantPresenter.swift
+  s_90b41dda03d835::t_6d5d727524d801 28-33,63,74-136
+Thaw/Features/AddWant/AddWantViewController.swift
+  s_90b41dda03d835::t_35bfad93f538ef 10,38-45,72-76,80-88,157-166,183-192
+Thaw/Features/Saved/SavedRouter.swift
+  s_90b41dda03d835::t_b4e1be984c1fe7 5-11,18,25-29
+Thaw/Features/Shared/WantRowModel.swift
+  s_90b41dda03d835::t_5db0acb0421974 1-19
+Thaw/Features/Shared/WantRowView.swift
+  s_90b41dda03d835::t_0b753c24d2e3c7 1-100
+Thaw/Services/WantStore.swift
+  s_086931c30ba9ae::t_3bb41a6ce81757 188-191,193,198
+project.yml
+  s_90b41dda03d835::t_d3bf92f61e75d2 71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "21c66ca04ffeb4c9ae2159122fa1c4c00f486dcf",
+  "prompts": {},
+  "sessions": {
+    "s_086931c30ba9ae": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "467989e1-4538-417c-b804-b12a39fc0ea1",
+        "model": "openrouter/OpenRouter/anthropic/claude-sonnet-5.5"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    },
+    "s_90b41dda03d835": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "16f4df2e-d8c0-4924-9e54-35172ed2a2be",
+        "model": "openrouter/OpenRouter/anthropic/claude-sonnet-5.5"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
