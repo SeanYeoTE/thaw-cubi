@@ -1,0 +1,42 @@
+Thaw.xcodeproj/project.pbxproj
+  s_90b41dda03d835::t_39f6c6a4346d1f 120-126,174,281,292,322-324,326-329,567-584,606-610,630,727-730,732,734,783-787,819-830,832-836,994-1005,1007-1011,1111-1116,1119
+  s_90b41dda03d835::t_af96a4fa7ae276 831,1006
+  s_90b41dda03d835::t_10c8ac82dcaae7 53,169,325,731
+  s_90b41dda03d835::t_92b0f86161b0ca 733,1117-1118
+Thaw/Services/WantStore.swift
+  s_90b41dda03d835::t_16cbe007674f60 73-78,248-258
+  s_90b41dda03d835::t_55f052a18a3021 259-261
+project.yml
+  s_90b41dda03d835::t_57da8cb2dc6127 127
+  s_90b41dda03d835::t_39f6c6a4346d1f 107-116
+  s_90b41dda03d835::t_af96a4fa7ae276 117
+Thaw.xcodeproj/xcshareddata/xcschemes/Thaw.xcscheme
+  s_90b41dda03d835::t_57da8cb2dc6127 67-77
+ThawUITests/PersonaTests.swift
+  s_90b41dda03d835::t_5fa31f97e08282 104-105
+  s_90b41dda03d835::t_10c8ac82dcaae7 1-9,12-15,17-19,22-45,51-69,72-86,89-93,95-99,113-166,168,170-180
+  s_90b41dda03d835::t_29259e538e3ed1 16
+  s_90b41dda03d835::t_ca6d37b59a2680 10-11,20-21
+  s_90b41dda03d835::t_16cbe007674f60 46-50,88,94
+  s_90b41dda03d835::t_15e84fcbf7018e 100-103,111-112
+  s_90b41dda03d835::t_4f398b60bfbc0f 106-110
+  s_90b41dda03d835::t_51564fc839c144 70-71
+  s_90b41dda03d835::t_a50b84cb2fdbc4 87
+  s_90b41dda03d835::t_b05142834260c5 167,169
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ecf69505f58c994d4c388aa5215371046542af30",
+  "prompts": {},
+  "sessions": {
+    "s_90b41dda03d835": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "16f4df2e-d8c0-4924-9e54-35172ed2a2be",
+        "model": "openrouter/OpenRouter/anthropic/claude-sonnet-5.5"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
