@@ -9,10 +9,14 @@ nonisolated final class WantStore: @unchecked Sendable {
     private struct Persisted: Codable {
         var wants: [Want]
         var settings: PaydaySettings?
+        var ingestedDraftIDs: [UUID]?
     }
+
+    static let ingestedDraftIDLimit = 200
 
     private(set) var wants: [Want]
     private(set) var settings: PaydaySettings?
+    private(set) var ingestedDraftIDs: [UUID] = []
     private let fileURL: URL?
     private let legacyPayday: PaydaySchedule?
     private let calendar = Calendar.current
@@ -39,6 +43,7 @@ nonisolated final class WantStore: @unchecked Sendable {
         }
         self.wants = loaded.wants
         self.settings = loaded.settings
+        self.ingestedDraftIDs = loaded.ingestedDraftIDs ?? []
     }
 
     static var defaultFileURL: URL? {
@@ -112,7 +117,7 @@ nonisolated final class WantStore: @unchecked Sendable {
         do {
             try FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(),
                                                     withIntermediateDirectories: true)
-            let data = try JSONEncoder().encode(Persisted(wants: wants, settings: settings))
+            let data = try JSONEncoder().encode(Persisted(wants: wants, settings: settings, ingestedDraftIDs: ingestedDraftIDs))
             try data.write(to: fileURL, options: .atomic)
         } catch {
             Self.logger.error("Could not save state: \(error.localizedDescription, privacy: .public)")
@@ -122,17 +127,62 @@ nonisolated final class WantStore: @unchecked Sendable {
     var cooling: [Want] { wants.filter { $0.status == .cooling } }
     var saved: [Want] { wants.filter { $0.status != .cooling } }
 
-    func add(name: String, price: Decimal, reason: String) {
+    func add(name: String, price: Decimal, reason: String, link: URL? = nil, frozenOn: Date = .now) {
+        wants.insert(makeCoolingWant(name: name, price: price, reason: reason, link: link, frozenOn: frozenOn), at: 0)
+        persist()
+    }
+
+    private func makeCoolingWant(id: UUID = UUID(), name: String, price: Decimal, reason: String,
+                                 link: URL?, frozenOn: Date) -> Want {
         let current = effectiveSettings
-        let now = Date.now
         let rounded = Self.rounded(price)
         let thawsAt = rounded < current.timerThreshold
-            ? calendar.date(byAdding: .day, value: current.timerDays, to: now) ?? now
-            : current.nextPayday(after: now, calendar: calendar)
-        let want = Want(id: UUID(), name: name, price: rounded, reason: reason,
-                        frozenOn: now, progress: 0, status: .cooling, thawsAt: thawsAt)
-        wants.insert(want, at: 0)
+            ? calendar.date(byAdding: .day, value: current.timerDays, to: frozenOn) ?? frozenOn
+            : current.nextPayday(after: frozenOn, calendar: calendar)
+        return Want(id: id, name: name, price: rounded, reason: reason,
+                    frozenOn: frozenOn, progress: 0, status: .cooling, thawsAt: thawsAt, link: link)
+    }
+
+    /// Moves a decided (skipped or bought) want back to cooling, keeping its original thaw date.
+    func reopen(_ id: UUID) {
+        guard let index = wants.firstIndex(where: { $0.id == id }), wants[index].status != .cooling else { return }
+        wants[index].status = .cooling
         persist()
+    }
+
+    /// Switches a decided want between skipped and bought; anything else is a no-op.
+    func setDecision(_ id: UUID, to status: Want.Status) {
+        guard status != .cooling, let index = wants.firstIndex(where: { $0.id == id }),
+              wants[index].status != .cooling, wants[index].status != status else { return }
+        wants[index].status = status
+        persist()
+    }
+
+    func delete(_ id: UUID) {
+        guard let index = wants.firstIndex(where: { $0.id == id }) else { return }
+        wants.remove(at: index)
+        persist()
+    }
+
+    /// Adds share-sheet drafts as cooling wants frozen at each draft's `createdAt`, skipping drafts already
+    /// ingested. Returns how many were added.
+    @discardableResult
+    func ingest(_ drafts: [SharedDraft]) -> Int {
+        var seen = Set(ingestedDraftIDs)
+        var added = 0
+        for draft in drafts where !seen.contains(draft.id) {
+            seen.insert(draft.id)
+            ingestedDraftIDs.append(draft.id)
+            wants.insert(makeCoolingWant(name: draft.name, price: draft.price, reason: draft.reason,
+                                         link: draft.link, frozenOn: draft.createdAt), at: 0)
+            added += 1
+        }
+        guard added > 0 else { return 0 }
+        if ingestedDraftIDs.count > Self.ingestedDraftIDLimit {
+            ingestedDraftIDs.removeFirst(ingestedDraftIDs.count - Self.ingestedDraftIDLimit)
+        }
+        persist()
+        return added
     }
 
     /// Edits a cooling want's name, price and reason. The thaw date only changes when the price crosses the

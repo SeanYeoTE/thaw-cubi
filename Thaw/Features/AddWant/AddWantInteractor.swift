@@ -13,6 +13,8 @@ final class AddWantInteractor: AddWantInteractorProtocol {
 
     var editing: Want? { editingID.flatMap { store.want(id: $0) } }
 
+    var draft: AddWantDraft? { nil }
+
     var settings: PaydaySettings { store.effectiveSettings }
 
     func add(name: String, price: Decimal, reason: String) {

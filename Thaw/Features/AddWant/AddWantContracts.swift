@@ -12,6 +12,14 @@ struct AddWantScreen: Equatable {
     let discardTitle: String
     let discardMessage: String
     let initial: AddWantInput?
+    /// Read-only line above the form, e.g. "From example.com" for a shared page.
+    var caption: String? = nil
+}
+
+/// Prefill for a want captured outside the app (the share sheet). The link is kept but not editable.
+struct AddWantDraft: Equatable {
+    var name: String
+    var link: URL?
 }
 
 protocol AddWantViewProtocol: AnyObject {
@@ -37,6 +45,8 @@ protocol AddWantInteractorProtocol: AnyObject {
     var settings: PaydaySettings { get }
     /// Non-nil when editing an existing want instead of adding one.
     var editing: Want? { get }
+    /// Non-nil when adding a want prefilled from the share sheet; `add` attaches its link.
+    var draft: AddWantDraft? { get }
     func add(name: String, price: Decimal, reason: String)
     func save(name: String, price: Decimal, reason: String)
 }

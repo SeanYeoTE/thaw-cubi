@@ -45,6 +45,16 @@ Presenters are tested without UIKit by injecting fake view, router and interacto
 - Cubi (`CubiView`) shows at Home status, Add success, review header, Skip and the top of Saved. On Saved the presenter picks the mood from the progress stats: frozen with nothing decided, proud during a payday streak, snoozing once the streak is broken.
 - Fonts scale with Dynamic Type; the app is light mode only.
 
+## Share sheet capture
+
+`ThawShare` is a Share extension (bundle id `com.tinkercademy.thaw.share`). Sharing a page from Safari to Thaw opens the Add form with the name prefilled from the page title and a read-only "From <host>" caption; you type the price and reason. The extension never touches `WantStore`: it appends a `SharedDraft` to `inbox.json` in the app group `group.com.tinkercademy.thaw` (`ShareInbox`). The app drains the inbox at launch and on foreground (`AppDelegate.ingestSharedDrafts`); each draft keeps its own `createdAt` as the freeze date and is ingested once (`ingestedDraftIDs`). Item detail shows the saved link as a tappable row.
+
+The extension compiles a subset of app files (see `ThawShare` in `project.yml`); anything added to that list must be extension-safe (no `UIApplication`). A device build needs the app group registered once (build from Xcode, or `xcodebuild -allowProvisioningUpdates`).
+
+## Undoing a decision
+
+On Saved, swipe a History row: **Edit** offers "Move back to cooling" (keeps the original thaw date) or switching between Bought and Skipped; **Delete** removes the want after a confirmation. Saved, Home and the progress card refresh through `DataChange` whenever a want changes. Accessibility: both actions are exposed as custom actions on the row.
+
 ## Launch arguments
 
 - `-thawReset` clears saved state (shows onboarding).
@@ -66,4 +76,4 @@ xcodebuild -project Thaw.xcodeproj -scheme Thaw -sdk iphonesimulator -derivedDat
 xcodebuild -project Thaw.xcodeproj -scheme Thaw -destination 'platform=iOS Simulator,name=iPhone 17' -derivedDataPath .build/dd test
 ```
 
-Unit tests (21) cover payday rules, fun money, persistence, the store and formatting. Notification scheduling is compile-checked only.
+Unit tests (131) cover payday rules, fun money, the store, persistence round-trips (skip, buy, wait, reopen, delete, edit, link, settings, share inbox and ingest), presenters with fakes, and an integration test that Saved reflects store changes. Notification scheduling is compile-checked only.

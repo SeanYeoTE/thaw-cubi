@@ -7,6 +7,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
     private let reasonView = UITextView()
     private let errorLabel = UILabel()
     private let noteLabel = UILabel()
+    private let captionLabel = UILabel()
     private var discardTitle = "Discard this want?"
     private var discardMessage = "What you typed won't be saved."
 
@@ -22,6 +23,13 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
             self?.cancelTapped()
         })
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add to Thaw", style: .done, target: self, action: #selector(saveTapped))
+
+        captionLabel.font = ThawFont.body(13, weight: .medium)
+        captionLabel.textColor = Theme.inkSecondary
+        captionLabel.numberOfLines = 0
+        captionLabel.adjustsFontForContentSizeCategory = true
+        captionLabel.isHidden = true
+        stack.addArrangedSubview(captionLabel)
 
         stack.addArrangedSubview(makeLabel("What do you want?", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
         configure(nameField, placeholder: "Noise-cancelling headphones")
@@ -87,8 +95,12 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
     }
 
     func setModalInPresentation(_ isModal: Bool) {
-        isModalInPresentation = isModal
-        navigationController?.isModalInPresentation = isModal
+        // Walk up containers too: in the share extension the form sits inside a child navigation controller.
+        var controller: UIViewController? = self
+        while let current = controller {
+            current.isModalInPresentation = isModal
+            controller = current.parent
+        }
     }
 
     func textViewDidBeginEditing(_ textView: UITextView) {
@@ -138,6 +150,8 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         navigationItem.rightBarButtonItem?.title = screen.actionTitle
         discardTitle = screen.discardTitle
         discardMessage = screen.discardMessage
+        captionLabel.text = screen.caption
+        captionLabel.isHidden = screen.caption == nil
         if let initial = screen.initial {
             nameField.text = initial.name
             priceField.text = initial.price

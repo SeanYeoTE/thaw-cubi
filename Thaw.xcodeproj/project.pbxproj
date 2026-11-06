@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		023CDBDF3E950722B2BDC9CE /* AddWantPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCADA6457FD2F82C40913C0 /* AddWantPresenter.swift */; };
 		02454E0FCC9A7025F4635D28 /* PresenterPaydayReviewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E586F455E4F0D7ECC1D536C /* PresenterPaydayReviewTests.swift */; };
 		034D0F658E7D05D2D150F08C /* ItemDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A199DB16D8CA01565CA1D0 /* ItemDetailViewController.swift */; };
 		034F84539C8C2F04EE25E1D3 /* PaydayReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37036FE395D3487FC2A885BF /* PaydayReviewViewController.swift */; };
 		0AB802797C98D0682EFC8BB7 /* ReviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4EBA4161660F177F921754F /* ReviewSheet.swift */; };
+		0B32406BD99950B06B22C15D /* ScrollStackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77B232B93745E1F8D0B2AD4 /* ScrollStackViewController.swift */; };
 		0B8B78E10923BD0400D89BEB /* HomeContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34CE7FB8A2CE83004DFC9A4 /* HomeContracts.swift */; };
 		0F0A09486FE65F3F6E9C2B03 /* HomeRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5925C0EFAFB2E123DF8BF9E3 /* HomeRouter.swift */; };
 		143C42978466B1B5EE8EAB15 /* ScrollStackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77B232B93745E1F8D0B2AD4 /* ScrollStackViewController.swift */; };
@@ -24,7 +26,9 @@
 		2B92CBD7D929238DFA7D1317 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40459DC7F21FA527CDD4EDB /* HomeViewController.swift */; };
 		2DBF036DC27DF0212D46B130 /* ItemDetailPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19097D54A37AD4340BACB25F /* ItemDetailPresenter.swift */; };
 		2F6B3665AFC048309DBD9E53 /* PaydayPreviewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA6748AB03742058362694 /* PaydayPreviewPresenter.swift */; };
+		2F93D62C00351179632F3FC1 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C6FD23F86B998D45F66CF5 /* Theme.swift */; };
 		314A644020947C37A9A8F79A /* PresenterSavedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115E67F988ECDC1D95B88459 /* PresenterSavedTests.swift */; };
+		3D59B7262BF14428EFA318EC /* AddWantViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8046A6BE40C36BFCD77BF1 /* AddWantViewController.swift */; };
 		3E05091ADA60413300AEE509 /* PaydaySetupContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE81E638F2A9EDA5221AD1A5 /* PaydaySetupContracts.swift */; };
 		40DC6FE7DA9F4E2D4992C2D1 /* PresenterPaydaySetupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33895ADF18C40EF814F7D450 /* PresenterPaydaySetupTests.swift */; };
 		41269E2C1BDB189CE71D8DE0 /* BackendStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 774410E8898607E96664E034 /* BackendStateTests.swift */; };
@@ -32,6 +36,7 @@
 		463B94ED4648C0695D874149 /* BackendNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A472570F75E9931EE7849ED5 /* BackendNotificationTests.swift */; };
 		48A8D48400D765A7D257BE10 /* PaydayPreviewInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70FE21CD13500F375F4B52D /* PaydayPreviewInteractor.swift */; };
 		49F36EEFE058146C0CBC5DFB /* WantStore+Review.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DFBA44C4D21B9E45828A3D /* WantStore+Review.swift */; };
+		4AEA4C8BBB4A7AE7E61BB7D0 /* MomentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5FDD6B49F220715E738273 /* MomentView.swift */; };
 		4DB0F0102A5B37863A881027 /* DataChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB1CBBF1150D43B709CEC53 /* DataChange.swift */; };
 		4DE5BB630CA4C34D6B3F5CD2 /* SavedRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BA3E0A24AC227FF2D00B2A /* SavedRouter.swift */; };
 		4F93E1F90EB2002BF34696C6 /* StepperSettingRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEF9D1B7B8B61ADE3133457 /* StepperSettingRow.swift */; };
@@ -39,20 +44,26 @@
 		53044846F6BE79392A10D335 /* Reminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11CF9F0D8CE38238BDC664E3 /* Reminders.swift */; };
 		5338520F971F0D94A908595C /* AdaptiveViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD5EDB6666C41A4E9A6D7A46 /* AdaptiveViews.swift */; };
 		53B60BCF546B08EFD8E5D17A /* PaydaySetupInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A257AE77FF4C4508CB0368AE /* PaydaySetupInteractor.swift */; };
+		53DF1FFA50A8F1A7E9D67AFB /* IntegrationSavedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B2BCFCF1A33459661AD466 /* IntegrationSavedTests.swift */; };
 		54B7407E3A89062221A651EE /* ProgressStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54D29A74BA5C87FCB67B962 /* ProgressStats.swift */; };
 		54FDCD55A11D8D0AF5D8F567 /* ItemDetailInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AE404F032BB93BB8EA8CC42 /* ItemDetailInteractor.swift */; };
 		55ABEDA9BA4FA4A661C12B84 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C6FD23F86B998D45F66CF5 /* Theme.swift */; };
 		5731B18B98459E850CF4E1C8 /* CubiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8070CCDDAC342DF0FAB276ED /* CubiView.swift */; };
+		57A0475A4868ED0C2536B1CA /* BricolageGrotesque-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 41F4D283A05F4F0E6E80572E /* BricolageGrotesque-ExtraBold.ttf */; };
 		59581CF85DC3577A9E6DAE1A /* PresenterTestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940971CBFA2F6DAC2CAF2E59 /* PresenterTestSupport.swift */; };
 		5AA9AE7F5A6EF49DFF335D08 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A2D557655FBDFAA2CD42A2 /* Components.swift */; };
+		5BAE43E152D6C942F5B7ACDE /* ShareItemParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAE0F7AB3622B54B79F59EE /* ShareItemParser.swift */; };
+		5FEC99ECB6C481D4B5E6088D /* ShareInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294F9A9222E66BFD5707ADA /* ShareInbox.swift */; };
 		60C346AC8EFA1B3A93542E31 /* PaydaySetupPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2BC6DE142818862DBDE46A0 /* PaydaySetupPresenter.swift */; };
 		669601F9ECB2C750361AF8AA /* StillWantItInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D075AB4E1E93236E8E2A7DB4 /* StillWantItInteractor.swift */; };
 		66DC78546A58C9E96120FB40 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F643E9DC31DC1D8D2612A8C8 /* Assets.xcassets */; };
 		677F55C5BE6EEBF0C42A1F9B /* PresenterAddWantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CF5EBF2543A4CBD35772C3 /* PresenterAddWantTests.swift */; };
 		69A55B2BA3306EE453F8667A /* PaydaySetupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C19EC35A2C5BBD2B0CCE5F /* PaydaySetupViewController.swift */; };
+		6CBF12B7DF5EE4EEB82776E1 /* PresenterShareItemParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81CEC060D6607930FB009C2 /* PresenterShareItemParserTests.swift */; };
 		6D2FD02F297695334B4CEB15 /* HomePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3875C0C3237E2AC0D088414D /* HomePresenter.swift */; };
 		6F4C0CE7DD236D5CE357724F /* PaydayReviewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58BDD9230954D66A5B20A4CC /* PaydayReviewRouter.swift */; };
 		7257CC23CCDB2CC790723511 /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A504E812CFA3EF891C88120E /* Formatting.swift */; };
+		75D553904D96CE29B59C289D /* AddWantContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006600B4F7BC2D0D6420AD7F /* AddWantContracts.swift */; };
 		77446FE5744E1246A6A119B2 /* WantCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377D9BE27783B2F43FA60BAA /* WantCardView.swift */; };
 		792160079627C8620BDD6B5F /* ItemDetailContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEF95F7FFB88503ED479D0C9 /* ItemDetailContracts.swift */; };
 		7A1EAA326A34E3DF5A170F95 /* ReviewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3608794257CA9D2CD63855E5 /* ReviewRouter.swift */; };
@@ -60,8 +71,11 @@
 		7D84639939839902B993DE3F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CA6D24F6CB292754099B8D /* AppDelegate.swift */; };
 		84DFE1CC1FCAA1E07D7E4A58 /* PaydayPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B10807EB04E8E7DD29BA541 /* PaydayPreviewViewController.swift */; };
 		8531ADEBABEBA4A636991227 /* PaydayPreviewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06392377E432237DEBBF81D4 /* PaydayPreviewRouter.swift */; };
+		864DE379ED9524C05385AEEA /* ThawShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A672BD8D7746579048622009 /* ThawShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		87A903DC83C7B44AD5B25749 /* ShareAddInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B4E663A4BD8686372AA45B /* ShareAddInteractor.swift */; };
 		8C11E1202EB5347C59B0E480 /* SavedPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7576D63D42336C1FF3C7A179 /* SavedPresenter.swift */; };
 		939AF696715FE7B5D51C3C59 /* StillWantItPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC2AED725E7911F3A85769B /* StillWantItPresenter.swift */; };
+		94121236A3E661CB2F630CA7 /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A504E812CFA3EF891C88120E /* Formatting.swift */; };
 		95CB4B0F39F73C632849D468 /* ThawTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CF9D5B08FBDC17107454B /* ThawTests.swift */; };
 		95D64A331CCD37A628E39597 /* PresenterHomeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C10947F3321B16679791C8B /* PresenterHomeTests.swift */; };
 		99F0B8ECD534804C44AD9586 /* MomentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5FDD6B49F220715E738273 /* MomentView.swift */; };
@@ -73,19 +87,35 @@
 		A77C71C06CA2CD2063A84A27 /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3B4E3149C88147A66F9AC8 /* NotificationScheduler.swift */; };
 		A810B5B80CED64D88C599EC8 /* AddWantViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8046A6BE40C36BFCD77BF1 /* AddWantViewController.swift */; };
 		B54116F3B5491FC469E3DC6A /* SavedContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C433979969F84CA17CC9145 /* SavedContracts.swift */; };
+		B5C37C43C03D17A6CC4612F6 /* CubiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8070CCDDAC342DF0FAB276ED /* CubiView.swift */; };
 		B91DF53707BE76F6C2A9163A /* BackendProgressStatsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24BBF77E9F24367797A7DEC2 /* BackendProgressStatsTests.swift */; };
 		BDE660BCD97598D36502AF21 /* PaydayReviewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05503896C996817AE258F1F7 /* PaydayReviewPresenter.swift */; };
 		BDF3C5346934F35A322E6649 /* RootTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66599F653BA988F281AB8C7 /* RootTabBarController.swift */; };
+		C2DBA6256201AC682DC57202 /* ShareItemParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAE0F7AB3622B54B79F59EE /* ShareItemParser.swift */; };
+		C53E47186499AB0C1EB454C0 /* ShareInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294F9A9222E66BFD5707ADA /* ShareInbox.swift */; };
 		C5E91C3017C311ACB95CDDA6 /* PaydaySetupRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56354008977C4CFBFF11A002 /* PaydaySetupRouter.swift */; };
+		D694C9B7797EB55F1105AB22 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E56CBE5BFE460929920BB0 /* ShareViewController.swift */; };
+		DD9352CD77790C7BEA3611F2 /* BackendPersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331A91187A04BF215798912A /* BackendPersistenceTests.swift */; };
 		E701353F0D25E7A89DE60E62 /* StillWantItRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC231751AC0B6D182D8F131 /* StillWantItRouter.swift */; };
+		E9D22A47CAADF0FA26112AB2 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A2D557655FBDFAA2CD42A2 /* Components.swift */; };
+		EAC5AA9276FAFC7EAF8CC628 /* ShareAddRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119F6EFF00D980089CC12ADD /* ShareAddRouter.swift */; };
 		F09731979A4A95E50A8022FD /* BricolageGrotesque-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 41F4D283A05F4F0E6E80572E /* BricolageGrotesque-ExtraBold.ttf */; };
 		F0E0924C7B85276C7528DB4C /* PaydayReviewContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = F962C043E602E57B6D392495 /* PaydayReviewContracts.swift */; };
+		F38182CC6855AD29037813DF /* Want.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10507C7F0C9C40E5DC492E0B /* Want.swift */; };
 		F593CE7248FDCB28AE3DFE78 /* PresenterItemDetailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BC7F55C8A9DD05C0E17709 /* PresenterItemDetailTests.swift */; };
 		FA0F59F3E2A8B1A98582BFF8 /* AddWantContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006600B4F7BC2D0D6420AD7F /* AddWantContracts.swift */; };
 		FA6896D273AFF5862011BBCF /* SavedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6666F05D171DC492048B8C /* SavedViewController.swift */; };
+		FD8CE28BD9828C2307C3A078 /* ProgressStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54D29A74BA5C87FCB67B962 /* ProgressStats.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		052EF69AB4AEFC97843376C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C36C290AF97E22C7E10C36E9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3876913302E1A2EC94F4C05;
+			remoteInfo = ThawShare;
+		};
 		91220C913C5BFA20DD986A94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C36C290AF97E22C7E10C36E9 /* Project object */;
@@ -94,6 +124,20 @@
 			remoteInfo = Thaw;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6760BC4128138DDEF227E63E /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				864DE379ED9524C05385AEEA /* ThawShare.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		006600B4F7BC2D0D6420AD7F /* AddWantContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWantContracts.swift; sourceTree = "<group>"; };
@@ -106,6 +150,7 @@
 		10507C7F0C9C40E5DC492E0B /* Want.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Want.swift; sourceTree = "<group>"; };
 		111ACEB2F1EFC192098B5CFE /* AddWantInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWantInteractor.swift; sourceTree = "<group>"; };
 		115E67F988ECDC1D95B88459 /* PresenterSavedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterSavedTests.swift; sourceTree = "<group>"; };
+		119F6EFF00D980089CC12ADD /* ShareAddRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareAddRouter.swift; sourceTree = "<group>"; };
 		11CF9F0D8CE38238BDC664E3 /* Reminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminders.swift; sourceTree = "<group>"; };
 		1675D89853A74544E7BBD5AE /* WantStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WantStore.swift; sourceTree = "<group>"; };
 		16A7FCE28C930DA61B2A8546 /* ItemDetailRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailRouter.swift; sourceTree = "<group>"; };
@@ -117,6 +162,7 @@
 		2C10947F3321B16679791C8B /* PresenterHomeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterHomeTests.swift; sourceTree = "<group>"; };
 		2E586F455E4F0D7ECC1D536C /* PresenterPaydayReviewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterPaydayReviewTests.swift; sourceTree = "<group>"; };
 		307E2E39C76493C1E0A39EB1 /* SavedInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedInteractor.swift; sourceTree = "<group>"; };
+		331A91187A04BF215798912A /* BackendPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendPersistenceTests.swift; sourceTree = "<group>"; };
 		33895ADF18C40EF814F7D450 /* PresenterPaydaySetupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterPaydaySetupTests.swift; sourceTree = "<group>"; };
 		3608794257CA9D2CD63855E5 /* ReviewRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRouter.swift; sourceTree = "<group>"; };
 		37036FE395D3487FC2A885BF /* PaydayReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayReviewViewController.swift; sourceTree = "<group>"; };
@@ -145,15 +191,22 @@
 		8070CCDDAC342DF0FAB276ED /* CubiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubiView.swift; sourceTree = "<group>"; };
 		81CF5EBF2543A4CBD35772C3 /* PresenterAddWantTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterAddWantTests.swift; sourceTree = "<group>"; };
 		84D1EF4194B93EBF8CE52F1F /* StillWantItContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillWantItContracts.swift; sourceTree = "<group>"; };
+		8AAE0F7AB3622B54B79F59EE /* ShareItemParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareItemParser.swift; sourceTree = "<group>"; };
 		8DCADA6457FD2F82C40913C0 /* AddWantPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWantPresenter.swift; sourceTree = "<group>"; };
 		940971CBFA2F6DAC2CAF2E59 /* PresenterTestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterTestSupport.swift; sourceTree = "<group>"; };
 		9B10807EB04E8E7DD29BA541 /* PaydayPreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayPreviewViewController.swift; sourceTree = "<group>"; };
+		A030BBA85E401DCBD4B087A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A257AE77FF4C4508CB0368AE /* PaydaySetupInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydaySetupInteractor.swift; sourceTree = "<group>"; };
 		A472570F75E9931EE7849ED5 /* BackendNotificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendNotificationTests.swift; sourceTree = "<group>"; };
 		A504E812CFA3EF891C88120E /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
+		A672BD8D7746579048622009 /* ThawShare.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = ThawShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A81CEC060D6607930FB009C2 /* PresenterShareItemParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterShareItemParserTests.swift; sourceTree = "<group>"; };
 		AC4EB9D10490EC015CA5A0C1 /* HomeInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeInteractor.swift; sourceTree = "<group>"; };
 		AEF95F7FFB88503ED479D0C9 /* ItemDetailContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailContracts.swift; sourceTree = "<group>"; };
+		B294F9A9222E66BFD5707ADA /* ShareInbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareInbox.swift; sourceTree = "<group>"; };
 		B66599F653BA988F281AB8C7 /* RootTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabBarController.swift; sourceTree = "<group>"; };
+		B6B4E663A4BD8686372AA45B /* ShareAddInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareAddInteractor.swift; sourceTree = "<group>"; };
+		B7B2BCFCF1A33459661AD466 /* IntegrationSavedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationSavedTests.swift; sourceTree = "<group>"; };
 		BFEF9D1B7B8B61ADE3133457 /* StepperSettingRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepperSettingRow.swift; sourceTree = "<group>"; };
 		C2BC6DE142818862DBDE46A0 /* PaydaySetupPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydaySetupPresenter.swift; sourceTree = "<group>"; };
 		C34CE7FB8A2CE83004DFC9A4 /* HomeContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeContracts.swift; sourceTree = "<group>"; };
@@ -166,6 +219,7 @@
 		E40459DC7F21FA527CDD4EDB /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		E4EBA4161660F177F921754F /* ReviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSheet.swift; sourceTree = "<group>"; };
 		E70FE21CD13500F375F4B52D /* PaydayPreviewInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayPreviewInteractor.swift; sourceTree = "<group>"; };
+		E8E56CBE5BFE460929920BB0 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		E9DA6748AB03742058362694 /* PaydayPreviewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayPreviewPresenter.swift; sourceTree = "<group>"; };
 		ECDFAF7888B797FD36C49B63 /* PresenterStillWantItTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterStillWantItTests.swift; sourceTree = "<group>"; };
 		ED3B4E3149C88147A66F9AC8 /* NotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScheduler.swift; sourceTree = "<group>"; };
@@ -212,6 +266,7 @@
 			isa = PBXGroup;
 			children = (
 				CC9B9F784C898762FCD1FDCB /* Thaw.app */,
+				A672BD8D7746579048622009 /* ThawShare.appex */,
 				295AF7CFCF3F362F41C48E78 /* ThawTests.xctest */,
 			);
 			name = Products;
@@ -221,6 +276,7 @@
 			isa = PBXGroup;
 			children = (
 				4223677E0C4B9625DB2A79F8 /* Thaw */,
+				7F446C29B5F09B97E2D79868 /* ThawShare */,
 				BFE57F8A872B42D3AD33AB18 /* ThawTests */,
 				11B85A4B01DB89817AA355AC /* Products */,
 			);
@@ -233,6 +289,7 @@
 				1BB1CBBF1150D43B709CEC53 /* DataChange.swift */,
 				3D5FDD6B49F220715E738273 /* MomentView.swift */,
 				E4EBA4161660F177F921754F /* ReviewSheet.swift */,
+				8AAE0F7AB3622B54B79F59EE /* ShareItemParser.swift */,
 				73DFBA44C4D21B9E45828A3D /* WantStore+Review.swift */,
 			);
 			path = Shared;
@@ -313,11 +370,23 @@
 			path = App;
 			sourceTree = "<group>";
 		};
+		7F446C29B5F09B97E2D79868 /* ThawShare */ = {
+			isa = PBXGroup;
+			children = (
+				A030BBA85E401DCBD4B087A3 /* Info.plist */,
+				B6B4E663A4BD8686372AA45B /* ShareAddInteractor.swift */,
+				119F6EFF00D980089CC12ADD /* ShareAddRouter.swift */,
+				E8E56CBE5BFE460929920BB0 /* ShareViewController.swift */,
+			);
+			path = ThawShare;
+			sourceTree = "<group>";
+		};
 		99ED9CA97B0071935DD580D8 /* Services */ = {
 			isa = PBXGroup;
 			children = (
 				A504E812CFA3EF891C88120E /* Formatting.swift */,
 				ED3B4E3149C88147A66F9AC8 /* NotificationScheduler.swift */,
+				B294F9A9222E66BFD5707ADA /* ShareInbox.swift */,
 				1675D89853A74544E7BBD5AE /* WantStore.swift */,
 			);
 			path = Services;
@@ -377,14 +446,17 @@
 			isa = PBXGroup;
 			children = (
 				A472570F75E9931EE7849ED5 /* BackendNotificationTests.swift */,
+				331A91187A04BF215798912A /* BackendPersistenceTests.swift */,
 				24BBF77E9F24367797A7DEC2 /* BackendProgressStatsTests.swift */,
 				774410E8898607E96664E034 /* BackendStateTests.swift */,
+				B7B2BCFCF1A33459661AD466 /* IntegrationSavedTests.swift */,
 				81CF5EBF2543A4CBD35772C3 /* PresenterAddWantTests.swift */,
 				2C10947F3321B16679791C8B /* PresenterHomeTests.swift */,
 				77BC7F55C8A9DD05C0E17709 /* PresenterItemDetailTests.swift */,
 				2E586F455E4F0D7ECC1D536C /* PresenterPaydayReviewTests.swift */,
 				33895ADF18C40EF814F7D450 /* PresenterPaydaySetupTests.swift */,
 				115E67F988ECDC1D95B88459 /* PresenterSavedTests.swift */,
+				A81CEC060D6607930FB009C2 /* PresenterShareItemParserTests.swift */,
 				ECDFAF7888B797FD36C49B63 /* PresenterStillWantItTests.swift */,
 				940971CBFA2F6DAC2CAF2E59 /* PresenterTestSupport.swift */,
 				6E8CF9D5B08FBDC17107454B /* ThawTests.swift */,
@@ -440,10 +512,12 @@
 			buildPhases = (
 				06A73B8DA9F0B6770F5EEF32 /* Sources */,
 				6D43BCF20B6455B38A968961 /* Resources */,
+				6760BC4128138DDEF227E63E /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				CBB09A876AE70C26FE57B4AC /* PBXTargetDependency */,
 			);
 			name = Thaw;
 			packageProductDependencies = (
@@ -451,6 +525,24 @@
 			productName = Thaw;
 			productReference = CC9B9F784C898762FCD1FDCB /* Thaw.app */;
 			productType = "com.apple.product-type.application";
+		};
+		B3876913302E1A2EC94F4C05 /* ThawShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2C97975A880F42759A5FC054 /* Build configuration list for PBXNativeTarget "ThawShare" */;
+			buildPhases = (
+				DB4B284CEEC256ED94C23DB2 /* Sources */,
+				7FEB0068A829EAFB48FE8D40 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ThawShare;
+			packageProductDependencies = (
+			);
+			productName = ThawShare;
+			productReference = A672BD8D7746579048622009 /* ThawShare.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -466,6 +558,10 @@
 						ProvisioningStyle = Automatic;
 					};
 					81F225E4126BB39C8BA919B8 = {
+						DevelopmentTeam = X8UMDPWY6A;
+						ProvisioningStyle = Automatic;
+					};
+					B3876913302E1A2EC94F4C05 = {
 						DevelopmentTeam = X8UMDPWY6A;
 						ProvisioningStyle = Automatic;
 					};
@@ -486,6 +582,7 @@
 			projectRoot = "";
 			targets = (
 				81F225E4126BB39C8BA919B8 /* Thaw */,
+				B3876913302E1A2EC94F4C05 /* ThawShare */,
 				1318B80E8486903B1857608E /* ThawTests */,
 			);
 		};
@@ -499,6 +596,14 @@
 				66DC78546A58C9E96120FB40 /* Assets.xcassets in Resources */,
 				F09731979A4A95E50A8022FD /* BricolageGrotesque-ExtraBold.ttf in Resources */,
 				1BED418734EE4CD5AC5FE304 /* OFL.txt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7FEB0068A829EAFB48FE8D40 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57A0475A4868ED0C2536B1CA /* BricolageGrotesque-ExtraBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -559,6 +664,8 @@
 				FA6896D273AFF5862011BBCF /* SavedViewController.swift in Sources */,
 				9C8B01191DBA08A3B9A70570 /* SceneDelegate.swift in Sources */,
 				143C42978466B1B5EE8EAB15 /* ScrollStackViewController.swift in Sources */,
+				C53E47186499AB0C1EB454C0 /* ShareInbox.swift in Sources */,
+				C2DBA6256201AC682DC57202 /* ShareItemParser.swift in Sources */,
 				4F93E1F90EB2002BF34696C6 /* StepperSettingRow.swift in Sources */,
 				9DEF3540B59053FAFD9B5BD2 /* StillWantItContracts.swift in Sources */,
 				669601F9ECB2C750361AF8AA /* StillWantItInteractor.swift in Sources */,
@@ -573,19 +680,45 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DB4B284CEEC256ED94C23DB2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				75D553904D96CE29B59C289D /* AddWantContracts.swift in Sources */,
+				023CDBDF3E950722B2BDC9CE /* AddWantPresenter.swift in Sources */,
+				3D59B7262BF14428EFA318EC /* AddWantViewController.swift in Sources */,
+				E9D22A47CAADF0FA26112AB2 /* Components.swift in Sources */,
+				B5C37C43C03D17A6CC4612F6 /* CubiView.swift in Sources */,
+				94121236A3E661CB2F630CA7 /* Formatting.swift in Sources */,
+				4AEA4C8BBB4A7AE7E61BB7D0 /* MomentView.swift in Sources */,
+				FD8CE28BD9828C2307C3A078 /* ProgressStats.swift in Sources */,
+				0B32406BD99950B06B22C15D /* ScrollStackViewController.swift in Sources */,
+				87A903DC83C7B44AD5B25749 /* ShareAddInteractor.swift in Sources */,
+				EAC5AA9276FAFC7EAF8CC628 /* ShareAddRouter.swift in Sources */,
+				5FEC99ECB6C481D4B5E6088D /* ShareInbox.swift in Sources */,
+				5BAE43E152D6C942F5B7ACDE /* ShareItemParser.swift in Sources */,
+				D694C9B7797EB55F1105AB22 /* ShareViewController.swift in Sources */,
+				2F93D62C00351179632F3FC1 /* Theme.swift in Sources */,
+				F38182CC6855AD29037813DF /* Want.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FD51914930B12E49F9C3A5B4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				463B94ED4648C0695D874149 /* BackendNotificationTests.swift in Sources */,
+				DD9352CD77790C7BEA3611F2 /* BackendPersistenceTests.swift in Sources */,
 				B91DF53707BE76F6C2A9163A /* BackendProgressStatsTests.swift in Sources */,
 				41269E2C1BDB189CE71D8DE0 /* BackendStateTests.swift in Sources */,
+				53DF1FFA50A8F1A7E9D67AFB /* IntegrationSavedTests.swift in Sources */,
 				677F55C5BE6EEBF0C42A1F9B /* PresenterAddWantTests.swift in Sources */,
 				95D64A331CCD37A628E39597 /* PresenterHomeTests.swift in Sources */,
 				F593CE7248FDCB28AE3DFE78 /* PresenterItemDetailTests.swift in Sources */,
 				02454E0FCC9A7025F4635D28 /* PresenterPaydayReviewTests.swift in Sources */,
 				40DC6FE7DA9F4E2D4992C2D1 /* PresenterPaydaySetupTests.swift in Sources */,
 				314A644020947C37A9A8F79A /* PresenterSavedTests.swift in Sources */,
+				6CBF12B7DF5EE4EEB82776E1 /* PresenterShareItemParserTests.swift in Sources */,
 				28270FCCBAAC6E80CC0084F7 /* PresenterStillWantItTests.swift in Sources */,
 				59581CF85DC3577A9E6DAE1A /* PresenterTestSupport.swift in Sources */,
 				95CB4B0F39F73C632849D468 /* ThawTests.swift in Sources */,
@@ -599,6 +732,11 @@
 			isa = PBXTargetDependency;
 			target = 81F225E4126BB39C8BA919B8 /* Thaw */;
 			targetProxy = 91220C913C5BFA20DD986A94 /* PBXContainerItemProxy */;
+		};
+		CBB09A876AE70C26FE57B4AC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3876913302E1A2EC94F4C05 /* ThawShare */;
+			targetProxy = 052EF69AB4AEFC97843376C4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -639,10 +777,47 @@
 			};
 			name = Debug;
 		};
+		B29756FEB6E6FD3AE3234BD9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = ThawShare/ThawShare.entitlements;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ThawShare/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tinkercademy.thaw.share;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B77704105F4607894255572B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = ThawShare/ThawShare.entitlements;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ThawShare/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tinkercademy.thaw.share;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		C1544CB1CBA02FDC37391E6B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Thaw/Thaw.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "Thaw-Info.plist";
@@ -727,6 +902,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Thaw/Thaw.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "Thaw-Info.plist";
@@ -803,6 +979,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2C97975A880F42759A5FC054 /* Build configuration list for PBXNativeTarget "ThawShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B29756FEB6E6FD3AE3234BD9 /* Debug */,
+				B77704105F4607894255572B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		4F042B17D1EF69125509FA70 /* Build configuration list for PBXNativeTarget "ThawTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

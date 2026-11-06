@@ -8,7 +8,7 @@ final class RootTabBarController: UITabBarController {
         let cooling = UINavigationController(rootViewController: HomeRouter.createModule(store: store, reminders: reminders))
         cooling.tabBarItem = UITabBarItem(title: "Cooling", image: UIImage(systemName: "snowflake"), tag: 0)
 
-        let saved = UINavigationController(rootViewController: SavedRouter.createModule(store: store))
+        let saved = UINavigationController(rootViewController: SavedRouter.createModule(store: store, reminders: reminders))
         saved.tabBarItem = UITabBarItem(title: "Saved", image: UIImage(systemName: "chart.bar"), tag: 1)
 
         let settings = UINavigationController(rootViewController: PaydaySetupRouter.createModule(store: store, reminders: reminders))

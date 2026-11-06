@@ -44,6 +44,10 @@ final class ItemDetailViewController: ScrollStackViewController, ItemDetailViewP
         pin(reasonStack, in: reasonCard, inset: 18)
         stack.addArrangedSubview(reasonCard)
 
+        if let linkText = model.linkText {
+            stack.addArrangedSubview(linkRow(linkText))
+        }
+
         stack.addArrangedSubview(makeLabel(model.thawsText, font: ThawFont.body(14), color: Theme.inkSecondary))
 
         let wait = PillButton(title: "Wait one more payday", style: .secondary)
@@ -66,6 +70,29 @@ final class ItemDetailViewController: ScrollStackViewController, ItemDetailViewP
             self?.navigationController?.setNavigationBarHidden(false, animated: false)
             completion()
         }
+    }
+
+    private func linkRow(_ text: String) -> UIView {
+        var config = UIButton.Configuration.plain()
+        config.image = UIImage(systemName: "safari")
+        config.imagePadding = 8
+        config.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 0, bottom: 12, trailing: 0)
+        config.baseForegroundColor = Theme.accent
+        config.titleLineBreakMode = .byTruncatingMiddle
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attributes in
+            var attributes = attributes
+            attributes.font = ThawFont.body(16, weight: .medium)
+            return attributes
+        }
+        config.title = text
+        let button = UIButton(configuration: config, primaryAction: UIAction { [weak self] _ in
+            self?.presenter?.tapLink()
+        })
+        button.contentHorizontalAlignment = .leading
+        button.accessibilityTraits = .link
+        button.accessibilityHint = "Opens in Safari"
+        button.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
+        return button
     }
 
     private func pin(_ inner: UIView, in card: CardView, inset: CGFloat) {

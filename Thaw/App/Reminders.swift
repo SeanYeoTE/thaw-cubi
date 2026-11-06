@@ -5,6 +5,9 @@ final class Reminders {
     private let store: WantStore
     private let makeScheduler: (Decimal) -> any NotificationScheduling
 
+    // Explicit deinit: the synthesized one on this MainActor class corrupts the heap in the test host.
+    deinit {}
+
     /// The scheduler is rebuilt per refresh because its copy quotes the current fun money.
     init(store: WantStore,
          makeScheduler: @escaping (Decimal) -> any NotificationScheduling = { UserNotificationScheduler(funMoney: $0) }) {

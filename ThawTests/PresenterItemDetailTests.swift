@@ -18,6 +18,8 @@ final class PresenterItemDetailTests: XCTestCase {
 
     private final class FakeRouter: ItemDetailRouterProtocol {
         var edited: [UUID] = []
+        var opened: [URL] = []
+        func openLink(_ url: URL) { opened.append(url) }
         func showDecideNow(want: Want) {}
         func showEdit(wantID: UUID) { edited.append(wantID) }
         func pop() {}
@@ -37,5 +39,36 @@ final class PresenterItemDetailTests: XCTestCase {
         interactor.want.name = "Keyboard Pro"
         presenter.didEdit()
         XCTAssertEqual(view.models.map(\.name), ["Keyboard", "Keyboard Pro"])
+    }
+
+    func testNoLinkHidesLinkRow() {
+        let view = FakeView(), interactor = FakeInteractor()
+        let presenter = ItemDetailPresenter(view: view, interactor: interactor, router: FakeRouter())
+        presenter.viewDidLoad()
+        XCTAssertNil(view.models.last?.linkText)
+    }
+
+    func testLinkShowsHostWithoutWWW() {
+        let view = FakeView(), interactor = FakeInteractor()
+        interactor.want.link = URL(string: "https://www.example.com/products/keyboard?ref=1")
+        let presenter = ItemDetailPresenter(view: view, interactor: interactor, router: FakeRouter())
+        presenter.viewDidLoad()
+        XCTAssertEqual(view.models.last?.linkText, "Open link · example.com")
+    }
+
+    func testTapLinkOpensThroughRouter() {
+        let view = FakeView(), interactor = FakeInteractor(), router = FakeRouter()
+        let url = URL(string: "https://shop.example.com/item")!
+        interactor.want.link = url
+        let presenter = ItemDetailPresenter(view: view, interactor: interactor, router: router)
+        presenter.tapLink()
+        XCTAssertEqual(router.opened, [url])
+    }
+
+    func testTapLinkWithoutLinkDoesNothing() {
+        let view = FakeView(), interactor = FakeInteractor(), router = FakeRouter()
+        let presenter = ItemDetailPresenter(view: view, interactor: interactor, router: router)
+        presenter.tapLink()
+        XCTAssertTrue(router.opened.isEmpty)
     }
 }
