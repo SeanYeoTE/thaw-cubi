@@ -16,6 +16,7 @@ final class PresenterAddWantTests: XCTestCase {
         func setModalInPresentation(_ isModal: Bool) { modal.append(isModal) }
         func showError(_ message: String) { errors.append(message) }
         func showDiscardConfirmation() { discardShown += 1 }
+        func showDeleteConfirmation(_ confirmation: AddWantDeleteConfirmation) {}
         func showSavedMoment(line: String, completion: @escaping () -> Void) {
             momentLine = line
             momentCompletion = completion

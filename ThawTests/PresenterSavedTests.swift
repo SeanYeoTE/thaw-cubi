@@ -6,10 +6,8 @@ final class PresenterSavedTests: XCTestCase {
     private final class FakeView: SavedViewProtocol {
         var model: SavedViewModel?
         var renders = 0
-        var sheet: (id: UUID, sheet: SavedDecisionSheet)?
         var deleteConfirmation: (id: UUID, confirmation: SavedDeleteConfirmation)?
         func render(_ model: SavedViewModel) { self.model = model; renders += 1 }
-        func showDecisionOptions(id: UUID, sheet: SavedDecisionSheet) { self.sheet = (id, sheet) }
         func showDeleteConfirmation(id: UUID, confirmation: SavedDeleteConfirmation) {
             deleteConfirmation = (id, confirmation)
         }
@@ -21,15 +19,14 @@ final class PresenterSavedTests: XCTestCase {
         weak var output: SavedInteractorOutput?
         var wants: [Want] = []
         var funMoney: Decimal = 300
-        var reopened: [UUID] = []
-        var decisions: [(UUID, Want.Status)] = []
         var deleted: [UUID] = []
-        func reopen(_ id: UUID) { reopened.append(id) }
-        func setDecision(_ id: UUID, to status: Want.Status) { decisions.append((id, status)) }
         func delete(_ id: UUID) { deleted.append(id) }
     }
 
-    private final class FakeRouter: SavedRouterProtocol {}
+    private final class FakeRouter: SavedRouterProtocol {
+        var edited: [UUID] = []
+        func showEdit(id: UUID) { edited.append(id) }
+    }
 
     private func render(_ wants: [Want]) -> SavedViewModel? {
         let view = FakeView(), interactor = FakeInteractor()
@@ -59,9 +56,11 @@ final class PresenterSavedTests: XCTestCase {
         XCTAssertNil(model?.emptyText)
         let stats = model?.progress?.stats
         XCTAssertEqual(stats?.count, 3)
-        XCTAssertEqual(stats?[1].value, "1.6 months of fun money")
-        XCTAssertEqual(stats?[2].value, "67% let go")
-        XCTAssertEqual(stats?[2].caption, "You skipped 2 of 3 wants you froze.")
+        XCTAssertEqual(stats?[1].value, "1.6")
+        XCTAssertEqual(stats?[1].caption, "months of fun money")
+        XCTAssertEqual(stats?[2].value, "67%")
+        XCTAssertEqual(stats?[2].caption, "let go · 2 of 3")
+        XCTAssertEqual(stats?[2].spoken, "67 percent let go. You skipped 2 of 3 wants you froze.")
     }
 
     func testHistoryListsDecidedWantsNewestFirst() {
@@ -78,7 +77,7 @@ final class PresenterSavedTests: XCTestCase {
     func testCubiIsProudDuringAStreak() {
         let model = render([want("Shirt", 69, .skipped)])
         XCTAssertEqual(model?.cubi.mood, .proud)
-        XCTAssertEqual(model?.cubi.line, "S$69 stays with you.")
+        XCTAssertEqual(model?.cubi.line, CubiMood.proud.line)
     }
 
     private func make(_ wants: [Want]) -> (SavedPresenter, FakeView, FakeInteractor) {
@@ -104,57 +103,23 @@ final class PresenterSavedTests: XCTestCase {
         XCTAssertEqual(view.model?.history.map(\.name), ["Shirt"])
     }
 
-    func testEditOnSkippedOffersCoolingAndBought() {
+    func testEditOpensTheEditScreenForDecidedWants() {
         let shirt = want("Shirt", 69, .skipped)
-        let (presenter, view, _) = make([shirt])
-        presenter.tapEditDecision(id: shirt.id)
-        XCTAssertEqual(view.sheet?.id, shirt.id)
-        XCTAssertEqual(view.sheet?.sheet.title, "Shirt")
-        XCTAssertEqual(view.sheet?.sheet.choices, [
-            SavedDecisionChoice(option: .moveBackToCooling, title: "Move back to cooling"),
-            SavedDecisionChoice(option: .markBought, title: "Mark as bought"),
-        ])
-        XCTAssertEqual(view.sheet?.sheet.cancelTitle, "Cancel")
-    }
-
-    func testEditOnBoughtOffersCoolingAndSkipped() {
-        let keyboard = want("Keyboard", 189, .bought)
-        let (presenter, view, _) = make([keyboard])
-        presenter.tapEditDecision(id: keyboard.id)
-        XCTAssertEqual(view.sheet?.sheet.choices.map(\.title), ["Move back to cooling", "Mark as skipped"])
+        let view = FakeView(), interactor = FakeInteractor(), router = FakeRouter()
+        interactor.wants = [shirt]
+        let presenter = SavedPresenter(view: view, interactor: interactor, router: router)
+        presenter.tapEdit(id: shirt.id)
+        XCTAssertEqual(router.edited, [shirt.id])
     }
 
     func testEditIgnoresCoolingAndUnknownWants() {
         let cooling = want("Case", 24, .cooling)
-        let (presenter, view, _) = make([cooling])
-        presenter.tapEditDecision(id: cooling.id)
-        presenter.tapEditDecision(id: UUID())
-        XCTAssertNil(view.sheet)
-    }
-
-    func testMoveBackToCoolingReopens() {
-        let shirt = want("Shirt", 69, .skipped)
-        let (presenter, _, interactor) = make([shirt])
-        presenter.chooseDecisionOption(id: shirt.id, option: .moveBackToCooling)
-        XCTAssertEqual(interactor.reopened, [shirt.id])
-        XCTAssertTrue(interactor.decisions.isEmpty)
-    }
-
-    func testMarkAsBoughtAndSkippedSetDecision() {
-        let shirt = want("Shirt", 69, .skipped), keyboard = want("Keyboard", 189, .bought)
-        let (presenter, _, interactor) = make([shirt, keyboard])
-        presenter.chooseDecisionOption(id: shirt.id, option: .markBought)
-        presenter.chooseDecisionOption(id: keyboard.id, option: .markSkipped)
-        XCTAssertEqual(interactor.decisions.map(\.0), [shirt.id, keyboard.id])
-        XCTAssertEqual(interactor.decisions.map(\.1), [.bought, .skipped])
-        XCTAssertTrue(interactor.reopened.isEmpty)
-    }
-
-    func testChoosingTheCurrentDecisionDoesNothing() {
-        let shirt = want("Shirt", 69, .skipped)
-        let (presenter, _, interactor) = make([shirt])
-        presenter.chooseDecisionOption(id: shirt.id, option: .markSkipped)
-        XCTAssertTrue(interactor.decisions.isEmpty)
+        let view = FakeView(), interactor = FakeInteractor(), router = FakeRouter()
+        interactor.wants = [cooling]
+        let presenter = SavedPresenter(view: view, interactor: interactor, router: router)
+        presenter.tapEdit(id: cooling.id)
+        presenter.tapEdit(id: UUID())
+        XCTAssertTrue(router.edited.isEmpty)
     }
 
     func testDeleteAsksBeforeDeleting() {

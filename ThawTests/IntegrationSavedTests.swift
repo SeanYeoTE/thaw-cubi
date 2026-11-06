@@ -8,11 +8,12 @@ final class IntegrationSavedTests: XCTestCase {
         var models: [SavedViewModel] = []
         var model: SavedViewModel? { models.last }
         func render(_ model: SavedViewModel) { models.append(model) }
-        func showDecisionOptions(id: UUID, sheet: SavedDecisionSheet) {}
         func showDeleteConfirmation(id: UUID, confirmation: SavedDeleteConfirmation) {}
     }
 
-    private final class FakeRouter: SavedRouterProtocol {}
+    private final class FakeRouter: SavedRouterProtocol {
+        func showEdit(id: UUID) {}
+    }
 
     private struct SilentScheduler: NotificationScheduling {
         func requestAuthorizationIfNeeded() async -> Bool { false }
@@ -55,7 +56,8 @@ final class IntegrationSavedTests: XCTestCase {
         XCTAssertEqual(view.model?.history.first?.outcome, "Skipped")
 
         // Undo from Saved: it leaves History and the total.
-        presenter.chooseDecisionOption(id: grinder.id, option: .moveBackToCooling)
+        store.reopen(grinder.id)
+        DataChange.post()
         XCTAssertEqual(view.model?.history, [])
         XCTAssertEqual(view.model?.savedText, Formatting.sgd(0))
         XCTAssertEqual(store.want(id: grinder.id)?.status, .cooling)
@@ -91,7 +93,8 @@ final class IntegrationSavedTests: XCTestCase {
         presenter.viewWillAppear()
         XCTAssertEqual(view.model?.savedText, Formatting.sgd(69))
 
-        presenter.chooseDecisionOption(id: shirt.id, option: .markBought)
+        store.setDecision(shirt.id, to: .bought)
+        DataChange.post()
         XCTAssertEqual(view.model?.history.first?.outcome, "Bought")
         XCTAssertEqual(view.model?.savedText, Formatting.sgd(0))
 

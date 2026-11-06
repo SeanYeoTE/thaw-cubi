@@ -1,3 +1,5 @@
+import Charts
+import SwiftUI
 import UIKit
 
 /// Saved tab: header (Cubi, total, progress) and History rows in a collection view list,
@@ -26,7 +28,7 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
 
     init() {
         super.init(nibName: nil, bundle: nil)
-        title = "Saved"
+        title = "Stats"
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
@@ -76,18 +78,6 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         let existing = Set(dataSource.snapshot().itemIdentifiers)
         snapshot.reconfigureItems(snapshot.itemIdentifiers.filter(existing.contains))
         dataSource.apply(snapshot, animatingDifferences: view.window != nil)
-    }
-
-    func showDecisionOptions(id: UUID, sheet: SavedDecisionSheet) {
-        let alert = UIAlertController(title: sheet.title, message: sheet.message, preferredStyle: .actionSheet)
-        for choice in sheet.choices {
-            alert.addAction(UIAlertAction(title: choice.title, style: .default) { [weak self] _ in
-                self?.presenter?.chooseDecisionOption(id: id, option: choice.option)
-            })
-        }
-        alert.addAction(UIAlertAction(title: sheet.cancelTitle, style: .cancel))
-        anchor(alert, to: id)
-        present(alert, animated: true)
     }
 
     func showDeleteConfirmation(id: UUID, confirmation: SavedDeleteConfirmation) {
@@ -153,18 +143,20 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.spacing = Self.rowGap
-        let heading = makeLabel(title ?? "Saved", font: ThawFont.display(36))
+        let heading = makeLabel(title ?? "Stats", font: ThawFont.display(36))
         heading.accessibilityTraits = .header
         stack.addArrangedSubview(heading)
-        stack.addArrangedSubview(CubiHeaderView(mood: model.cubi.mood, line: model.cubi.line, spoken: model.cubi.line))
-        stack.addArrangedSubview(makeLabel("Saved since you started", font: ThawFont.body(15), color: Theme.inkSecondary))
-        stack.addArrangedSubview(makeLabel(model.savedText, font: ThawFont.display(40)))
-
         if let progress = model.progress {
-            stack.addArrangedSubview(makeLabel("Your progress", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
-            stack.addArrangedSubview(progressCard(progress))
-        } else if let emptyText = model.emptyText {
-            stack.addArrangedSubview(makeLabel(emptyText, font: ThawFont.body(16)))
+            stack.addArrangedSubview(cubiBesideStats(model.cubi, progress))
+        } else {
+            stack.addArrangedSubview(CubiHeaderView(mood: model.cubi.mood, line: model.cubi.line, spoken: model.cubi.line))
+            if let emptyText = model.emptyText {
+                stack.addArrangedSubview(makeLabel(emptyText, font: ThawFont.body(16)))
+            }
+        }
+        if model.monthlySaved.count >= 2 {
+            stack.addArrangedSubview(makeLabel("Saved per month", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
+            stack.addArrangedSubview(savedChart(model.monthlySaved))
         }
         if !model.history.isEmpty {
             stack.addArrangedSubview(makeLabel("History", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
@@ -201,8 +193,8 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         cell.accessibilityLabel = "\(row.name), \(row.priceText)"
         cell.accessibilityValue = "\(row.outcome) · \(row.dateText)"
         cell.accessibilityCustomActions = [
-            UIAccessibilityCustomAction(name: "Edit decision") { [weak self] _ in
-                self?.presenter?.tapEditDecision(id: id)
+            UIAccessibilityCustomAction(name: "Edit") { [weak self] _ in
+                self?.presenter?.tapEdit(id: id)
                 return true
             },
             UIAccessibilityCustomAction(name: "Delete") { [weak self] _ in
@@ -221,8 +213,12 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         cell.accessibilityCustomActions = nil
     }
 
-    private func progressCard(_ model: SavedProgressViewModel) -> UIView {
-        let card = CardView()
+    /// Cubi on the leading edge with the progress stats beside it; stacks at accessibility sizes.
+    private func cubiBesideStats(_ cubi: SavedCubiViewModel, _ model: SavedProgressViewModel) -> UIView {
+        let avatar = CubiView(mood: cubi.mood, size: 56)
+        avatar.spokenLine = cubi.line
+        avatar.setContentHuggingPriority(.required, for: .horizontal)
+        avatar.setContentCompressionResistancePriority(.required, for: .horizontal)
         let column = UIStackView()
         column.axis = .vertical
         column.spacing = 14
@@ -233,18 +229,28 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
             item.axis = .vertical
             item.spacing = 2
             item.isAccessibilityElement = true
-            item.accessibilityLabel = "\(stat.value). \(stat.caption)"
+            item.accessibilityLabel = stat.spoken
             column.addArrangedSubview(item)
         }
-        column.translatesAutoresizingMaskIntoConstraints = false
-        card.addSubview(column)
-        NSLayoutConstraint.activate([
-            column.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 16),
-            column.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -16),
-            column.topAnchor.constraint(equalTo: card.topAnchor, constant: 16),
-            column.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -16),
-        ])
-        return card
+        let row = AdaptiveStackView(arrangedSubviews: [avatar, column])
+        row.compactAlignment = .top
+        row.spacing = 16
+        return row
+    }
+
+    private func savedChart(_ months: [SavedMonthlyAmount]) -> UIView {
+        let view = UIHostingConfiguration {
+            Chart(months) { point in
+                BarMark(x: .value("Month", point.month, unit: .month), y: .value("Saved", point.amount))
+                    .foregroundStyle(Color(Theme.accent))
+                    .cornerRadius(4)
+            }
+            .frame(height: 140)
+            .accessibilityLabel("Saved per month")
+        }
+        .margins(.all, 0)
+        .makeContentView()
+        return view
     }
 
     // MARK: - Swipe actions
@@ -259,7 +265,7 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         delete.image = UIImage(systemName: "trash")
         let edit = UIContextualAction(style: .normal, title: "Edit") { [weak self] _, _, done in
             done(true)
-            self?.presenter?.tapEditDecision(id: id)
+            self?.presenter?.tapEdit(id: id)
         }
         edit.image = UIImage(systemName: "arrow.uturn.backward")
         edit.backgroundColor = Theme.accent
@@ -269,18 +275,6 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
     }
 
     // MARK: - Helpers
-
-    private func anchor(_ alert: UIAlertController, to id: UUID) {
-        guard let popover = alert.popoverPresentationController else { return }
-        if let indexPath = dataSource.indexPath(for: .row(id)), let cell = collectionView.cellForItem(at: indexPath) {
-            popover.sourceView = cell
-            popover.sourceRect = cell.bounds
-        } else {
-            popover.sourceView = view
-            popover.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
-            popover.permittedArrowDirections = []
-        }
-    }
 
     private func pin(_ inner: UIView, in container: UIView, top: CGFloat, bottom: CGFloat) {
         inner.translatesAutoresizingMaskIntoConstraints = false

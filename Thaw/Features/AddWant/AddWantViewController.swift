@@ -7,6 +7,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
     private let reasonView = UITextView()
     private let errorLabel = UILabel()
     private let noteLabel = UILabel()
+    private let actionsStack = UIStackView()
     private let captionLabel = UILabel()
     private var discardTitle = "Discard this want?"
     private var discardMessage = "What you typed won't be saved."
@@ -31,14 +32,17 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         captionLabel.isHidden = true
         stack.addArrangedSubview(captionLabel)
 
-        stack.addArrangedSubview(makeLabel("What do you want?", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
         configure(nameField, placeholder: "Noise-cancelling headphones")
-        stack.addArrangedSubview(nameField)
-
-        stack.addArrangedSubview(makeLabel("Price", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
         configure(priceField, placeholder: "S$0")
         priceField.keyboardType = .decimalPad
-        stack.addArrangedSubview(priceField)
+        let nameColumn = fieldColumn("What do you want?", nameField)
+        let priceColumn = fieldColumn("Price", priceField)
+        priceColumn.widthAnchor.constraint(equalToConstant: 120).isActive = true
+        let nameAndPrice = AdaptiveStackView(arrangedSubviews: [nameColumn, priceColumn])
+        nameAndPrice.compactAlignment = .top
+        nameAndPrice.spacing = 12
+        nameAndPrice.distribution = .fill
+        stack.addArrangedSubview(nameAndPrice)
 
         stack.addArrangedSubview(makeLabel("Why do you want it? In your words.", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
         reasonView.delegate = self
@@ -65,7 +69,21 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         errorLabel.adjustsFontForContentSizeCategory = true
         errorLabel.isHidden = true
         stack.addArrangedSubview(errorLabel)
+
+        actionsStack.axis = .vertical
+        actionsStack.spacing = 10
+        actionsStack.isHidden = true
+        stack.addArrangedSubview(actionsStack)
         presenter?.viewDidLoad()
+    }
+
+    private func fieldColumn(_ caption: String, _ field: UIView) -> UIStackView {
+        let column = UIStackView(arrangedSubviews: [
+            makeLabel(caption, font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary), field,
+        ])
+        column.axis = .vertical
+        column.spacing = Theme.Spacing.gap
+        return column
     }
 
     private func configure(_ field: UITextField, placeholder: String) {
@@ -136,6 +154,16 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         present(sheet, animated: true)
     }
 
+    func showDeleteConfirmation(_ confirmation: AddWantDeleteConfirmation) {
+        guard presentedViewController == nil else { return }
+        let alert = UIAlertController(title: confirmation.title, message: confirmation.message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: confirmation.cancelTitle, style: .cancel))
+        alert.addAction(UIAlertAction(title: confirmation.deleteTitle, style: .destructive) { [weak self] _ in
+            self?.presenter?.confirmDelete()
+        })
+        present(alert, animated: true)
+    }
+
     override func accessibilityPerformEscape() -> Bool {
         cancelTapped()
         return true
@@ -152,6 +180,16 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         discardMessage = screen.discardMessage
         captionLabel.text = screen.caption
         captionLabel.isHidden = screen.caption == nil
+        actionsStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        for action in screen.actions {
+            let button = PillButton(title: action.title, style: action.kind == .delete ? .destructive : .secondary)
+            button.addAction(UIAction { [weak self] _ in
+                guard let self else { return }
+                self.presenter?.tapAction(action.kind, input: self.input)
+            }, for: .touchUpInside)
+            actionsStack.addArrangedSubview(button)
+        }
+        actionsStack.isHidden = screen.actions.isEmpty
         if let initial = screen.initial {
             nameField.text = initial.name
             priceField.text = initial.price

@@ -230,11 +230,14 @@ final class BackendStateTests: XCTestCase {
         XCTAssertEqual(store.want(id: want.id)?.thawsAt, calendar.date(byAdding: .day, value: 4, to: now))
     }
 
-    func testEditCannotTouchDecidedWants() {
+    func testEditChangesDetailsOfDecidedWantsButKeepsStatusAndDates() {
         let want = Want(id: UUID(), name: "Done", price: 50, reason: "r", frozenOn: .now, progress: 1,
                         status: .skipped, thawsAt: .now)
         let store = WantStore(wants: [want], payday: WantStore.fixturePayday())
         store.edit(want.id, name: "Changed", price: 99, reason: "x")
-        XCTAssertEqual(store.want(id: want.id)?.name, "Done")
+        XCTAssertEqual(store.want(id: want.id)?.name, "Changed")
+        XCTAssertEqual(store.want(id: want.id)?.price, 99)
+        XCTAssertEqual(store.want(id: want.id)?.status, .skipped)
+        XCTAssertEqual(store.want(id: want.id)?.thawsAt, want.thawsAt)
     }
 }

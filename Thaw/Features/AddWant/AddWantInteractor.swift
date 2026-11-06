@@ -29,4 +29,27 @@ final class AddWantInteractor: AddWantInteractorProtocol {
         reminders.refresh(requestingPermission: false)
         DataChange.post()
     }
+
+    func moveBackToCooling() {
+        guard let editingID else { return }
+        store.reopen(editingID)
+        didMutate()
+    }
+
+    func setDecision(_ status: Want.Status) {
+        guard let editingID else { return }
+        store.setDecision(editingID, to: status)
+        didMutate()
+    }
+
+    func deleteWant() {
+        guard let editingID else { return }
+        store.delete(editingID)
+        didMutate()
+    }
+
+    private func didMutate() {
+        reminders.refresh(requestingPermission: false)
+        DataChange.post()
+    }
 }

@@ -185,16 +185,17 @@ nonisolated final class WantStore: @unchecked Sendable {
         return added
     }
 
-    /// Edits a cooling want's name, price and reason. The thaw date only changes when the price crosses the
-    /// timer threshold, and is then counted from the edit time: down means a fresh timer, up means the next
-    /// payday after now. Staying on the same side keeps the date, including any Wait already applied.
+    /// Edits a want's name, price and reason. For a cooling want the thaw date only changes when the price
+    /// crosses the timer threshold, and is then counted from the edit time: down means a fresh timer, up means
+    /// the next payday after now. Staying on the same side keeps the date, including any Wait already applied.
+    /// A decided want keeps its status and dates; only the details change.
     func edit(_ id: UUID, name: String, price: Decimal, reason: String, now: Date = .now) {
-        guard let index = wants.firstIndex(where: { $0.id == id }), wants[index].status == .cooling else { return }
+        guard let index = wants.firstIndex(where: { $0.id == id }) else { return }
         let current = effectiveSettings
         let rounded = Self.rounded(price)
         let wasTimer = wants[index].price < current.timerThreshold
         let isTimer = rounded < current.timerThreshold
-        if wasTimer != isTimer {
+        if wants[index].status == .cooling, wasTimer != isTimer {
             wants[index].thawsAt = isTimer
                 ? calendar.date(byAdding: .day, value: current.timerDays, to: now) ?? now
                 : current.nextPayday(after: now, calendar: calendar)
