@@ -35,10 +35,12 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         super.viewDidLoad()
         view.backgroundColor = Theme.background
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.largeTitleDisplayMode = .always
+        // The system large title stays blank for a collection view until the first real scroll, so the header draws it.
+        navigationItem.largeTitleDisplayMode = .never
+        navigationItem.title = ""
 
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: makeLayout())
-        collectionView.backgroundColor = Theme.background
+        collectionView.backgroundColor = .clear
         collectionView.alwaysBounceVertical = true
         collectionView.delegate = self
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -151,6 +153,9 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.spacing = Self.rowGap
+        let heading = makeLabel(title ?? "Saved", font: ThawFont.display(36))
+        heading.accessibilityTraits = .header
+        stack.addArrangedSubview(heading)
         stack.addArrangedSubview(CubiHeaderView(mood: model.cubi.mood, line: model.cubi.line, spoken: model.cubi.line))
         stack.addArrangedSubview(makeLabel("Saved since you started", font: ThawFont.body(15), color: Theme.inkSecondary))
         stack.addArrangedSubview(makeLabel(model.savedText, font: ThawFont.display(40)))
