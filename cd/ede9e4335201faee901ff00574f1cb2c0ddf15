@@ -1,0 +1,53 @@
+Thaw.xcodeproj/project.pbxproj
+  s_19de58b4fa5a13::t_eec665b4cdfb45 47,98,165,209,449,452,711,714
+Thaw/App/AppDelegate.swift
+  s_19de58b4fa5a13::t_334173b94ff901 21,24-34
+Thaw/App/Reminders.swift
+  s_19de58b4fa5a13::t_467685c0ac1ba9 8-10
+Thaw/App/RootTabBarController.swift
+  s_19de58b4fa5a13::t_6a3e23c8af1f14 11
+Thaw/App/SceneDelegate.swift
+  s_19de58b4fa5a13::t_d72ce4fe0a98de 23-26
+Thaw/Features/ItemDetail/ItemDetailContracts.swift
+  s_19de58b4fa5a13::t_31784ac27d4f37 12-13,28,43
+Thaw/Features/ItemDetail/ItemDetailPresenter.swift
+  s_19de58b4fa5a13::t_47af1994680d14 31-32,40-44,64-68
+Thaw/Features/ItemDetail/ItemDetailRouter.swift
+  s_19de58b4fa5a13::t_95f140a16ce618 46-49
+Thaw/Features/ItemDetail/ItemDetailViewController.swift
+  s_19de58b4fa5a13::t_fbf7534c99e846 47-50,75-97
+Thaw/Features/Saved/SavedContracts.swift
+  s_19de58b4fa5a13::t_efb3d9b5e328c9 4,33-58,61-64,69-72,76,79-85
+Thaw/Features/Saved/SavedInteractor.swift
+  s_19de58b4fa5a13::t_73fbb65aa95623 4,6-7,9-12,14-15,20-39
+Thaw/Features/Saved/SavedPresenter.swift
+  s_19de58b4fa5a13::t_916f81591336f3 3,15,18-68,74
+Thaw/Features/Saved/SavedRouter.swift
+  s_19de58b4fa5a13::t_7bf7596edb5da7 6-9,12
+Thaw/Features/Saved/SavedViewController.swift
+  s_19de58b4fa5a13::t_2778cc5709f96d 3-19,22-26,34-36,39-52,60-61,63-153,155-156,164-165,167-216,245-282,284-287,290-304
+Thaw/Features/Shared/DataChange.swift
+  s_19de58b4fa5a13::t_cf5960dc8a4f85 19-21
+ThawTests/IntegrationSavedTests.swift
+  s_19de58b4fa5a13::t_fdb34b9788bfe1 1-102
+ThawTests/PresenterItemDetailTests.swift
+  s_19de58b4fa5a13::t_e159bcbc6504da 21-22,43-73
+ThawTests/PresenterSavedTests.swift
+  s_19de58b4fa5a13::t_c939120ead6458 8-15,19-21,24-29,84-177
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cdede9e4335201faee901ff00574f1cb2c0ddf15",
+  "prompts": {},
+  "sessions": {
+    "s_19de58b4fa5a13": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "s_19de58b4fa5a13",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
