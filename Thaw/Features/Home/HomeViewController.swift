@@ -1,28 +1,32 @@
 import UIKit
 
-/// Cooling tab: payday card and want cards in a collection view list, so wants get swipe Edit and Delete
-/// like Saved history. Tap opens the detail screen.
+/// Cooling tab: filter chips, sort menu and lean want rows in a collection view list, so wants get swipe
+/// Edit and Delete like Saved history. Tap opens the detail screen.
 final class HomeViewController: UIViewController, HomeViewProtocol, UICollectionViewDelegate {
     private nonisolated enum Section: Hashable, Sendable {
         case header
-        case wants
+        case empty
+        case wants(Int)
     }
 
     private nonisolated enum Item: Hashable, Sendable {
         case title
         case payday
+        case filters
         case empty
+        case sectionHeader(Int)
         case want(UUID)
     }
 
-    /// Same column cap and margins as `ScrollStackViewController`.
-    private static let maxContentWidth: CGFloat = 700
     private static let rowGap = WantListStyle.rowGap
 
     var presenter: HomePresenterProtocol?
 
     private var model: HomeViewModel?
     private var cards: [UUID: HomeCardViewModel] = [:]
+    private var sortButton: UIButton?
+    /// One bar for the screen's lifetime, so a tap keeps its selection animation across renders.
+    private var filterBar: FilterChipBar?
     private var collectionView: UICollectionView!
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
     private var isLongPress = false
@@ -41,7 +45,7 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
         // The system large title stays blank for a collection view until the first real scroll, so the list draws it.
         navigationItem.largeTitleDisplayMode = .never
         navigationItem.title = ""
-        navigationItem.rightBarButtonItem = makeAddItem()
+        navigationItem.rightBarButtonItems = [makeAddItem(), makeSortItem()]
 
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: makeLayout())
         collectionView.backgroundColor = .clear
@@ -90,17 +94,60 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
         return item
     }
 
+    private func makeSortItem() -> UIBarButtonItem {
+        let sort = UIButton(type: .system)
+        sort.setImage(UIImage(systemName: "arrow.up.arrow.down",
+                              withConfiguration: UIImage.SymbolConfiguration(pointSize: 17, weight: .semibold)), for: .normal)
+        sort.tintColor = Theme.ink
+        sort.showsMenuAsPrimaryAction = true
+        sort.accessibilityLabel = "Sort"
+        sort.accessibilityIdentifier = "home.sort"
+        sort.widthAnchor.constraint(equalToConstant: 44).isActive = true
+        sort.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        sortButton = sort
+        return UIBarButtonItem(customView: sort)
+    }
+
+    private func updateSortMenu(_ model: HomeViewModel) {
+        guard let sortButton else { return }
+        sortButton.accessibilityValue = model.sortTitle
+        sortButton.menu = UIMenu(title: "Sort", options: .singleSelection, children: model.sortOptions.map { option in
+            UIAction(title: option.title, state: option.isSelected ? .on : .off) { [weak self] _ in
+                self?.presenter?.selectSort(option.sort)
+            }
+        })
+    }
+
+    private func updateFilterBar(_ model: HomeViewModel) {
+        if let filterBar {
+            filterBar.selectedIndex = model.filterIndex
+            return
+        }
+        let bar = FilterChipBar(titles: model.filterTitles, selectedIndex: model.filterIndex)
+        bar.accessibilityIdentifier = "home.filters"
+        bar.onChange = { [weak self] index in self?.presenter?.selectFilter(at: index) }
+        filterBar = bar
+    }
+
     // MARK: - Rendering
 
     func render(_ model: HomeViewModel) {
         self.model = model
-        cards = Dictionary(uniqueKeysWithValues: model.cards.map { ($0.id, $0) })
+        cards = Dictionary(uniqueKeysWithValues: model.sections.flatMap(\.cards).map { ($0.id, $0) })
+        updateSortMenu(model)
+        updateFilterBar(model)
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections([.header])
-        snapshot.appendItems(model.emptyText == nil ? [.title, .payday] : [.title, .payday, .empty], toSection: .header)
-        if !model.cards.isEmpty {
-            snapshot.appendSections([.wants])
-            snapshot.appendItems(model.cards.map { .want($0.id) }, toSection: .wants)
+        let showsFilters = model.empty?.kind != .noWants
+        snapshot.appendItems(showsFilters ? [.title, .payday, .filters] : [.title, .payday], toSection: .header)
+        if model.empty != nil {
+            snapshot.appendSections([.empty])
+            snapshot.appendItems([.empty], toSection: .empty)
+        }
+        for (index, section) in model.sections.enumerated() {
+            snapshot.appendSections([.wants(index)])
+            if section.title != nil { snapshot.appendItems([.sectionHeader(index)], toSection: .wants(index)) }
+            snapshot.appendItems(section.cards.map { .want($0.id) }, toSection: .wants(index))
         }
         let existing = Set(dataSource.snapshot().itemIdentifiers)
         snapshot.reconfigureItems(snapshot.itemIdentifiers.filter(existing.contains))
@@ -122,26 +169,29 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
         UICollectionViewCompositionalLayout { [weak self] index, environment in
             guard let self else { return nil }
             let section = self.dataSource?.sectionIdentifier(for: index) ?? .header
+            let isWants: Bool
+            if case .wants = section { isWants = true } else { isWants = false }
             var config = UICollectionLayoutListConfiguration(appearance: .plain)
             config.showsSeparators = false
             config.backgroundColor = .clear
-            if section == .wants {
+            if isWants {
                 config.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath in
                     self?.swipeActions(at: indexPath)
                 }
             }
             let layoutSection = NSCollectionLayoutSection.list(using: config, layoutEnvironment: environment)
             layoutSection.contentInsetsReference = .none
-            if section == .wants { WantListStyle.applyRowSpacing(to: layoutSection) }
-            let safe = self.collectionView?.safeAreaInsets ?? .zero
-            let available = environment.container.contentSize.width - safe.left - safe.right
-            let side = max(Theme.Spacing.screen, (available - Self.maxContentWidth) / 2)
-            let hasWants = self.dataSource?.snapshot().indexOfSection(.wants) != nil
-            let top: CGFloat = section == .wants ? Self.rowGap / 2 : 0
-            let bottom: CGFloat = section == .wants ? 24 : (!hasWants ? 24 - Self.rowGap / 2 : 0)
-            layoutSection.contentInsets = NSDirectionalEdgeInsets(
-                top: top, leading: safe.left + side, bottom: bottom, trailing: safe.right + side
-            )
+            if isWants { WantListStyle.applyRowSpacing(to: layoutSection) }
+            let isLast = index == (self.dataSource?.snapshot().numberOfSections ?? 1) - 1
+            let top: CGFloat
+            switch section {
+            case .header: top = 0
+            case .empty: top = Self.rowGap * 2
+            case .wants: top = Self.rowGap
+            }
+            layoutSection.contentInsets = WantListStyle.contentInsets(
+                environment: environment, safeArea: self.collectionView?.safeAreaInsets ?? .zero,
+                top: top, bottom: isLast ? 24 : 0)
             return layoutSection
         }
     }
@@ -190,23 +240,32 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
             if !model.hasReview { payday.accessibilityTraits.insert(.notEnabled) }
             payday.accessibilityHint = model.hasReview ? "Opens the payday preview" : "Nothing has thawed yet"
             content = payday
+        case .filters:
+            guard let filterBar else { return }
+            content = filterBar
         case .empty:
-            let label = UILabel()
-            label.text = model?.emptyText
-            label.font = ThawFont.body(15)
-            label.textColor = Theme.inkSecondary
-            label.numberOfLines = 0
-            label.adjustsFontForContentSizeCategory = true
-            content = label
+            guard let empty = model?.empty else { return }
+            content = makeEmptyView(empty)
+            topGap = 0
+            bottomGap = 0
+        case .sectionHeader(let index):
+            guard let section = model?.sections[safe: index], let title = section.title else { return }
+            content = SectionHeaderView(title: title, detail: section.trailing)
+            // Baseline alignment leaves its height loose, so the cell would keep the list's taller estimate.
+            let hug = content.heightAnchor.constraint(equalToConstant: 0)
+            hug.priority = .fittingSizeLevel
+            hug.isActive = true
+            topGap = 0
+            bottomGap = 0
         case .want(let id):
             guard let card = cards[id] else { return }
             topGap = 0
             bottomGap = 0
-            let label = "\(card.name), \(card.priceText)"
-            let value = "\(card.statusText), \(card.trailingText)"
+            let label = card.accessibilityLabel
+            let value = card.accessibilityValue
             content = WantRowView(model: WantRowModel(
-                title: card.name, priceText: card.priceText, status: card.statusText,
-                statusTone: .neutral, trailing: card.trailingText,
+                title: card.name, priceText: card.priceText, leadingSymbol: card.symbol,
+                tone: card.isTimer ? .timer : .accent, trailing: card.trailingText,
                 progress: card.progress, progressTone: card.isTimer ? .timer : .accent,
                 accessibilityLabel: label, accessibilityValue: value))
             content.isUserInteractionEnabled = false
@@ -228,6 +287,45 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
             content.topAnchor.constraint(equalTo: cell.contentView.topAnchor, constant: topGap),
             content.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor, constant: -bottomGap),
         ])
+    }
+
+    private func makeEmptyView(_ empty: HomeEmptyViewModel) -> UIView {
+        switch empty.kind {
+        case .noWants:
+            let view = EmptyStateView(mood: .frozen, line: empty.line, actionTitle: empty.actionTitle)
+            view.onAction = { [weak self] in self?.presenter?.tapAdd() }
+            view.accessibilityIdentifier = "home.empty"
+            return view
+        case .noMatches:
+            let label = UILabel()
+            label.text = empty.line
+            label.font = ThawFont.body(15)
+            label.textColor = Theme.inkSecondary
+            label.textAlignment = .center
+            label.numberOfLines = 0
+            label.adjustsFontForContentSizeCategory = true
+
+            var config = UIButton.Configuration.plain()
+            config.title = empty.actionTitle
+            config.baseForegroundColor = Theme.accent
+            config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attributes in
+                var updated = attributes
+                updated.font = ThawFont.body(15, weight: .semibold)
+                return updated
+            }
+            let button = UIButton(configuration: config)
+            button.titleLabel?.adjustsFontForContentSizeCategory = true
+            button.accessibilityIdentifier = "home.showAll"
+            button.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
+            button.addAction(UIAction { [weak self] _ in self?.presenter?.tapShowAll() }, for: .touchUpInside)
+
+            let stack = UIStackView(arrangedSubviews: [label, button])
+            stack.axis = .vertical
+            stack.alignment = .center
+            stack.spacing = 4
+            stack.accessibilityIdentifier = "home.noMatches"
+            return stack
+        }
     }
 
     // MARK: - Swipe actions
@@ -272,4 +370,8 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
 extension HomeViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                            shouldRecognizeSimultaneouslyWith other: UIGestureRecognizer) -> Bool { true }
+}
+
+private extension Array {
+    subscript(safe index: Int) -> Element? { indices.contains(index) ? self[index] : nil }
 }
