@@ -109,6 +109,7 @@ Implemented in `[ux-ds-scroll]` (4e268d6, 8480afb) and `[ux-fe-modals]` / `[ux-f
 | UX-10 | Fixed | Onboarding and Home render full width on iPhone portrait (a first version collapsed the column; fixed in 8480afb). Landscape and iPad not checked. |
 | UX-14 | Fixed | Checked: the tab bar is hidden on Item detail. Moment at AX5 not checked. |
 | UX-17, 18 | Fixed | Title "Payday preview"; onboarding footnote "We'll ask to send payday reminders next." visible. |
-| UX-15, 16 | Backlog | Need a product decision. |
+| UX-15 | Fixed | T5 (770dd42): Settings saves each change as you go; no Save button. |
+| UX-16 | Backlog | Needs a product decision. |
 
 Also added: Home and Item detail refresh through a `.thawDataChanged` notification after a review or Decide now.
