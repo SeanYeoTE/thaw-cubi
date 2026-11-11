@@ -1,5 +1,7 @@
 # Thaw UX audit: modality, dismissal and escape routes
 
+> Archived. Kept for its modal rules (summarised in `docs/design/README.md`) and the fix history. UX-15 is fixed by the redesign (T5); UX-16 stays in the backlog. Line numbers below refer to older code.
+
 ## 1. Scope and method
 
 Read-only heuristic audit of `Thaw/App/**`, `Thaw/Features/**`, `Thaw/DesignSystem/**` and `docs/contracts/*.md` (intended behaviour), judged against Apple HIG (Modality, Sheets, Navigation bars) and the app's own decisions (sprint-2 D5, sprint-3 D1/D2/D4). Static code reading only: nothing was built or run, so on-screen behaviour (animation timing, VoiceOver output) is inferred from code.
