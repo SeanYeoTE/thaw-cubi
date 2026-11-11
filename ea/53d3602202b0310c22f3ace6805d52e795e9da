@@ -1,0 +1,55 @@
+Thaw/Features/Payday/PaydayReadiness.swift
+  s_5f5e799d0e03d3::t_ebcd43c67292c9 1-20
+Thaw/Features/Payday/PaydayRouter.swift
+  s_5f5e799d0e03d3::t_da7df2248f2e21 1-39
+ThawTests/PresenterPaydayTests.swift
+  s_5f5e799d0e03d3::t_2b75a7f804fa76 1-193
+Thaw/Features/Payday/PaydayPresenter.swift
+  s_5f5e799d0e03d3::t_7c0652ba005f1c 1-185
+Thaw/Features/Payday/PaydayContracts.swift
+  s_5f5e799d0e03d3::t_8cd7c3f62260aa 1-78
+Thaw/App/SceneDelegate.swift
+  s_5f5e799d0e03d3::t_731fc40e34a428 29-38
+  s_fb6ef678cb5d44::t_cc7290e78d5d07 25
+Thaw/Features/Payday/PaydayViewController.swift
+  s_5f5e799d0e03d3::t_97a3a4261900ad 1-192
+Thaw/Features/Payday/PaydayInteractor.swift
+  s_5f5e799d0e03d3::t_c3690f60725c34 12-13
+  s_5f5e799d0e03d3::t_350821ac584439 1-11,14-52
+Thaw/App/ReviewRouter.swift
+  s_4fbb013a071a7c::t_f0bbc6ea8e8a96 32-34
+Thaw/App/RootTabBarController.swift
+  s_4fbb013a071a7c::t_c02a57d283745b 4-12,14,19-22,25,28-30,32-39,43-63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ea53d3602202b0310c22f3ace6805d52e795e9da",
+  "prompts": {},
+  "sessions": {
+    "s_4fbb013a071a7c": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "213ab804-853c-40c4-89d0-3e248fa36557",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    },
+    "s_5f5e799d0e03d3": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "f53fd0d2-9ea4-408f-8c5d-d46acacb877d",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    },
+    "s_fb6ef678cb5d44": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "357877c6-fdc9-44af-8855-8b10fe1faf9c",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
