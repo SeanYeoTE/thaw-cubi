@@ -1,0 +1,19 @@
+docs/design/README.md
+  s_e31ba14972c639::t_a80b13655a2f68 9-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d14c370aacc182d464bddf0db71622b98996195c",
+  "prompts": {},
+  "sessions": {
+    "s_e31ba14972c639": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "73995f04-92b3-496e-82e8-dd4ec1ed8de3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
