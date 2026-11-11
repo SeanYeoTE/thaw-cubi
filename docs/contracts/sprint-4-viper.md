@@ -1,6 +1,6 @@
 # Sprint 4: VIPER refactor (frozen)
 
-Goal: move every screen in `Thaw/Features` to a VIPER module with **no behaviour or visual change**. All UX-audit modal rules (`docs/design/ux-audit.md`) must be preserved.
+Goal: move every screen in `Thaw/Features` to a VIPER module with **no behaviour or visual change**. All UX-audit modal rules (`docs/design/archive/ux-audit.md`) must be preserved.
 
 ## Module layout
 `Thaw/Features/<Name>/` contains `<Name>Contracts.swift`, `<Name>ViewController.swift`, `<Name>Interactor.swift`, `<Name>Presenter.swift`, `<Name>Router.swift`.

@@ -1,0 +1,207 @@
+import UIKit
+
+/// The Settings tab: an inset-grouped list that saves as you change it.
+final class SettingsViewController: UIViewController, SettingsViewProtocol, UICollectionViewDelegate {
+    var presenter: SettingsPresenterProtocol?
+
+    private var content: SettingsContent?
+    private var collectionView: UICollectionView!
+    private var dataSource: UICollectionViewDiffableDataSource<String, SettingsRowID>!
+    private static let titleKind = "settings.title"
+
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        title = "Settings"
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = Theme.background
+        // The system large title stays blank over a collection view until the first scroll, so the list draws
+        // the title itself, like Cooling, Payday and Stats. The pushed Payday screen gets a chevron-only back button.
+        navigationItem.largeTitleDisplayMode = .never
+        navigationItem.title = ""
+        navigationItem.backButtonDisplayMode = .minimal
+
+        let titleItem = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(64)),
+            elementKind: Self.titleKind, alignment: .top)
+        let layoutConfiguration = UICollectionViewCompositionalLayoutConfiguration()
+        layoutConfiguration.boundarySupplementaryItems = [titleItem]
+        let layout = UICollectionViewCompositionalLayout(sectionProvider: { [weak self] index, environment in
+            let section = self?.section(at: index)
+            let configuration = SettingsListStyle.listConfiguration(footer: section?.footer != nil)
+            return SettingsListStyle.section(configuration, environment: environment)
+        }, configuration: layoutConfiguration)
+        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = Theme.background
+        collectionView.keyboardDismissMode = .interactive
+        collectionView.delegate = self
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(collectionView)
+        view.keyboardLayoutGuide.usesBottomSafeArea = false
+        NSLayoutConstraint.activate([
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor),
+        ])
+        configureDataSource()
+        presenter?.viewDidLoad()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        presenter?.viewWillAppear()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        // Commits a field that is still being edited, so switching tabs never loses it.
+        view.endEditing(true)
+    }
+
+    // MARK: Data source
+
+    private func section(at index: Int) -> SettingsSectionViewModel? {
+        guard let sections = content?.sections, sections.indices.contains(index) else { return nil }
+        return sections[index]
+    }
+
+    private func row(_ id: SettingsRowID) -> SettingsRowViewModel? {
+        content?.sections.lazy.flatMap(\.rows).first { $0.id == id }
+    }
+
+    private func configureDataSource() {
+        let plain = UICollectionView.CellRegistration<UICollectionViewListCell, SettingsRowID> { [weak self] cell, _, id in
+            guard let model = self?.row(id) else { return }
+            var configuration = UIListContentConfiguration.valueCell()
+            SettingsListStyle.style(&configuration)
+            configuration.text = model.title
+            configuration.secondaryText = model.value
+            cell.contentConfiguration = configuration
+            cell.accessories = model.control == .disclosure ? [.disclosureIndicator()] : []
+            cell.isAccessibilityElement = true
+            cell.accessibilityLabel = model.accessibilityLabel
+            cell.accessibilityValue = model.accessibilityValue
+            cell.accessibilityTraits = model.control == .disclosure ? .button : .staticText
+        }
+        let amount = UICollectionView.CellRegistration<SettingsAmountCell, SettingsRowID> { [weak self] cell, _, id in
+            guard let model = self?.row(id), case .amount(let editText) = model.control else { return }
+            cell.configure(model, editText: editText)
+            cell.onEnd = { [weak self] text in self?.presenter?.amountEdited(id, text: text) }
+        }
+        let stepper = UICollectionView.CellRegistration<SettingsStepperCell, SettingsRowID> { [weak self] cell, _, id in
+            guard let model = self?.row(id), case .stepper(let value, let minimum, let maximum) = model.control else { return }
+            cell.configure(model, value: value, minimum: minimum, maximum: maximum)
+            cell.onChange = { [weak self] value in self?.presenter?.stepperChanged(id, value: value) }
+        }
+        let time = UICollectionView.CellRegistration<SettingsTimeCell, SettingsRowID> { [weak self] cell, _, id in
+            guard let model = self?.row(id), case .time(let minutes) = model.control else { return }
+            cell.configure(model, minutes: minutes)
+            cell.onChange = { [weak self] minutes in self?.presenter?.reviewTimeChanged(minutes: minutes) }
+        }
+        dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView) { [weak self] view, path, id in
+            switch self?.row(id)?.control {
+            case .amount: view.dequeueConfiguredReusableCell(using: amount, for: path, item: id)
+            case .stepper: view.dequeueConfiguredReusableCell(using: stepper, for: path, item: id)
+            case .time: view.dequeueConfiguredReusableCell(using: time, for: path, item: id)
+            default: view.dequeueConfiguredReusableCell(using: plain, for: path, item: id)
+            }
+        }
+        let header = UICollectionView.SupplementaryRegistration<UICollectionViewListCell>(
+            elementKind: UICollectionView.elementKindSectionHeader
+        ) { [weak self] view, _, path in
+            view.contentConfiguration = SettingsListStyle.header(self?.section(at: path.section)?.header)
+        }
+        let footer = UICollectionView.SupplementaryRegistration<UICollectionViewListCell>(
+            elementKind: UICollectionView.elementKindSectionFooter
+        ) { [weak self] view, _, path in
+            view.contentConfiguration = SettingsListStyle.footer(self?.section(at: path.section)?.footer)
+        }
+        let titleHeader = UICollectionView.SupplementaryRegistration<SettingsTitleView>(
+            elementKind: Self.titleKind
+        ) { [weak self] view, _, _ in
+            view.text = self?.content?.title ?? "Settings"
+        }
+        dataSource.supplementaryViewProvider = { view, kind, path in
+            switch kind {
+            case Self.titleKind: view.dequeueConfiguredReusableSupplementary(using: titleHeader, for: path)
+            case UICollectionView.elementKindSectionHeader: view.dequeueConfiguredReusableSupplementary(using: header, for: path)
+            default: view.dequeueConfiguredReusableSupplementary(using: footer, for: path)
+            }
+        }
+    }
+
+    // MARK: SettingsViewProtocol
+
+    func render(_ content: SettingsContent) {
+        self.content = content
+        title = content.title
+        // Setting `title` also sets the bar title; the list draws it instead.
+        navigationItem.title = ""
+        guard let dataSource else { return }
+        var snapshot = NSDiffableDataSourceSnapshot<String, SettingsRowID>()
+        for section in content.sections {
+            snapshot.appendSections([section.id])
+            snapshot.appendItems(section.rows.map(\.id), toSection: section.id)
+        }
+        if dataSource.snapshot().itemIdentifiers == snapshot.itemIdentifiers {
+            snapshot.reconfigureItems(snapshot.itemIdentifiers)
+        }
+        dataSource.apply(snapshot, animatingDifferences: false)
+    }
+
+    func playSaveFeedback() {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+    }
+
+    // MARK: UICollectionViewDelegate
+
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        guard let id = dataSource.itemIdentifier(for: indexPath) else { return false }
+        return row(id)?.control == .disclosure
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        guard let id = dataSource.itemIdentifier(for: indexPath) else { return }
+        presenter?.tapRow(id)
+    }
+}
+
+/// The screen title drawn at the top of the list, aligned with the inset-grouped cards and capped to the content column.
+private final class SettingsTitleView: UICollectionReusableView {
+    private let label = UILabel()
+
+    var text: String? {
+        get { label.text }
+        set { label.text = newValue }
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        label.font = ThawFont.display(36)
+        label.textColor = Theme.ink
+        label.numberOfLines = 0
+        label.adjustsFontForContentSizeCategory = true
+        label.accessibilityTraits = .header
+        label.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(label)
+        let column = SettingsListStyle.maxContentWidth - 2 * Theme.Spacing.screen
+        let width = label.widthAnchor.constraint(equalToConstant: column)
+        width.priority = .defaultHigh
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: centerXAnchor),
+            label.leadingAnchor.constraint(greaterThanOrEqualTo: safeAreaLayoutGuide.leadingAnchor, constant: Theme.Spacing.screen),
+            label.trailingAnchor.constraint(lessThanOrEqualTo: safeAreaLayoutGuide.trailingAnchor, constant: -Theme.Spacing.screen),
+            width,
+            label.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+            label.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
+        ])
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
+}

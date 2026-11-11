@@ -29,9 +29,9 @@ final class ReviewRouter {
                 root.present(alert, animated: true)
                 return
             }
-            // Land on Home so the finished review leaves the user on the Cooling list.
-            if let tabs = root as? UITabBarController {
-                tabs.selectedIndex = 0
+            // Land on Payday so the finished review leaves the user on the Payday tab.
+            if let tabs = root as? RootTabBarController {
+                tabs.select(.payday)
                 (tabs.selectedViewController as? UINavigationController)?.popToRootViewController(animated: false)
             }
             let review = PaydayReviewRouter.createModule(store: store, reminders: reminders, wants: wants) { [weak root] in

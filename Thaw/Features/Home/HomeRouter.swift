@@ -33,11 +33,6 @@ final class HomeRouter: HomeRouterProtocol {
         viewController?.present(UINavigationController(rootViewController: module), animated: true)
     }
 
-    func showPaydayPreview() {
-        let module = PaydayPreviewRouter.createModule(store: store, reminders: reminders)
-        viewController?.present(UINavigationController(rootViewController: module), animated: true)
-    }
-
     func showItemDetail(id: UUID) {
         guard let module = ItemDetailRouter.createModule(store: store, reminders: reminders, wantID: id) else { return }
         viewController?.navigationController?.pushViewController(module, animated: true)

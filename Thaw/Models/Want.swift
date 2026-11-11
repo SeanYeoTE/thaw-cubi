@@ -16,11 +16,16 @@ nonisolated struct Want: Identifiable, Equatable, Codable, Sendable {
     var status: Status
     var thawsAt: Date
     var link: URL?
+    var decidedOn: Date?
+
+    /// When the want was skipped or bought. Data saved before `decidedOn` existed falls back to the payday it thawed on.
+    var decisionDate: Date { decidedOn ?? thawsAt }
 
     init(id: UUID, name: String, price: Decimal, reason: String, frozenOn: Date,
-         progress: Double, status: Status, thawsAt: Date? = nil, link: URL? = nil) {
+         progress: Double, status: Status, thawsAt: Date? = nil, link: URL? = nil, decidedOn: Date? = nil) {
         self.id = id
         self.link = link
+        self.decidedOn = decidedOn
         self.name = name
         self.price = price
         self.reason = reason

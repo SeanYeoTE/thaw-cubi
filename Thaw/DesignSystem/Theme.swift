@@ -3,12 +3,19 @@ import UIKit
 enum Theme {
     static let background = UIColor(hex: 0xF2F7F9)
     static let surface = UIColor(hex: 0xFFFFFF)
+    /// Decorative card and divider edges only; under 3:1, so never the only way to see a control.
     static let border = UIColor(hex: 0xDDE7EC)
+    /// Edges of interactive controls (fields, unselected chips, radio dots, toggles): 3.68:1 on surface,
+    /// 3.41:1 on background, meeting WCAG 1.4.11.
+    static let controlBorder = UIColor(hex: 0x72889A)
     static let track = UIColor(hex: 0xE3ECF0)
     static let ink = UIColor(hex: 0x0D2230)
     static let inkSecondary = UIColor(hex: 0x4F6370)
     static let accent = UIColor(hex: 0x08708F)
+    /// Over-budget fill on the dark meter track. Too light for light backgrounds; use `timer` there.
     static let warm = UIColor(hex: 0xE8875A)
+    /// Quick-thaw tone on light backgrounds: 4.74:1 on surface.
+    static let timer = UIColor(hex: 0xB8572A)
     static let paydayCard = UIColor(hex: 0x0D2230)
     static let paydayLabel = UIColor(hex: 0xC7D5DD)
     static let paydaySubtext = UIColor(hex: 0xF2C6B4)
@@ -19,8 +26,8 @@ enum Theme {
     static let glow = UIColor(hex: 0xFBE3D3)
     static let puddle = UIColor(hex: 0xBFE3EF)
     static let meterTrack = UIColor(hex: 0x2A4150)
-    static let radioDot = UIColor(hex: 0x9FB2BD)
-    static let toggleBorder = UIColor(hex: 0xC3D0D7)
+    static let radioDot = controlBorder
+    static let toggleBorder = controlBorder
     static let toggleText = UIColor(hex: 0x2F4653)
     static let divider = UIColor(hex: 0xEDF2F5)
     static let destructive = UIColor(hex: 0xB3261E)

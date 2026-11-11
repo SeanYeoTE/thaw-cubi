@@ -1,5 +1,20 @@
 import Foundation
 
+// MARK: Shared
+
+protocol PaydaySetupInteractorProtocol: AnyObject {
+    var output: PaydaySetupInteractorOutput? { get set }
+    var settings: PaydaySettings { get }
+    /// Persists the settings, refreshes reminders (asking for permission only when told to) and posts `DataChange`.
+    func save(_ settings: PaydaySettings, requestingPermission: Bool)
+}
+
+protocol PaydaySetupInteractorOutput: AnyObject {
+    func settingsDidChange()
+}
+
+// MARK: Onboarding
+
 struct SetupChoiceViewModel: Equatable {
     let title: String
     let hint: String
@@ -17,22 +32,20 @@ struct StepperViewModel {
 }
 
 struct PaydaySetupContent {
-    let isOnboarding: Bool
+    let heading: String
+    let subtitle: String
+    let legend: String
     let choices: [SetupChoiceViewModel]
     let detail: StepperViewModel?
-    let review: StepperViewModel
-    let funMoney: StepperViewModel
-    let timerThreshold: StepperViewModel
-    let timerLength: StepperViewModel
-    let saveTitle: String
+    let notice: String
+    let continueTitle: String
 }
 
 protocol PaydaySetupViewProtocol: AnyObject {
     func render(_ content: PaydaySetupContent)
     func renderChoices(_ choices: [SetupChoiceViewModel])
     func renderDetail(_ detail: StepperViewModel?)
-    func updateSaveTitle(_ title: String)
-    func showSavedConfirmation()
+    func updateContinueTitle(_ title: String)
     func playSuccessFeedback()
 }
 
@@ -40,20 +53,92 @@ protocol PaydaySetupPresenterProtocol: AnyObject {
     func viewDidLoad()
     func selectChoice(at index: Int)
     func detailChanged(_ value: Double)
-    func reviewChanged(_ value: Double)
-    func funMoneyChanged(_ value: Double)
-    func timerThresholdChanged(_ value: Double)
-    func timerLengthChanged(_ value: Double)
-    func tapSave()
-}
-
-protocol PaydaySetupInteractorProtocol: AnyObject {
-    var settings: PaydaySettings { get }
-    /// Persists the settings and asks for notification permission on first save.
-    func save(_ settings: PaydaySettings)
+    func tapContinue()
 }
 
 protocol PaydaySetupRouterProtocol: AnyObject {
-    var isOnboarding: Bool { get }
     func finishOnboarding()
+}
+
+// MARK: Settings tab
+
+nonisolated enum SettingsRowID: Hashable {
+    case payday, nextPayday, funMoney, timerThreshold, timerDays, reviewTime
+}
+
+struct SettingsRowViewModel: Equatable {
+    enum Control: Equatable {
+        case disclosure
+        case readOnly
+        /// Inline amount field; `editText` is the bare number shown while editing.
+        case amount(editText: String)
+        case stepper(value: Int, minimum: Int, maximum: Int)
+        /// Time picker; minutes since midnight.
+        case time(minutes: Int)
+    }
+
+    let id: SettingsRowID
+    let title: String
+    let value: String
+    let accessibilityLabel: String
+    let accessibilityValue: String
+    let control: Control
+}
+
+struct SettingsSectionViewModel: Equatable {
+    let id: String
+    let header: String?
+    let footer: String?
+    let rows: [SettingsRowViewModel]
+}
+
+struct SettingsContent: Equatable {
+    let title: String
+    let sections: [SettingsSectionViewModel]
+}
+
+protocol SettingsViewProtocol: AnyObject {
+    func render(_ content: SettingsContent)
+    func playSaveFeedback()
+}
+
+protocol SettingsPresenterProtocol: AnyObject {
+    func viewDidLoad()
+    func viewWillAppear()
+    func tapRow(_ id: SettingsRowID)
+    /// Called when an amount field ends editing, with the raw text.
+    func amountEdited(_ id: SettingsRowID, text: String)
+    func stepperChanged(_ id: SettingsRowID, value: Int)
+    func reviewTimeChanged(minutes: Int)
+}
+
+protocol SettingsRouterProtocol: AnyObject {
+    func showPaydayRule()
+}
+
+// MARK: Payday rule screen
+
+struct PaydayRuleOptionViewModel: Equatable {
+    let title: String
+    let hint: String?
+    let selected: Bool
+}
+
+struct PaydayRuleContent: Equatable {
+    let title: String
+    let options: [PaydayRuleOptionViewModel]
+    let day: RuleDayViewModel?
+    let nextPaydayTitle: String
+    let nextPayday: String
+}
+
+protocol PaydayRuleViewProtocol: AnyObject {
+    func render(_ content: PaydayRuleContent)
+    func playSaveFeedback()
+}
+
+protocol PaydayRulePresenterProtocol: AnyObject {
+    func viewDidLoad()
+    func selectRule(at index: Int)
+    func dayChanged(_ value: Int)
 }

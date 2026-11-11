@@ -111,11 +111,22 @@ nonisolated final class WantStore: @unchecked Sendable {
     func decide(id: UUID, keep: Bool, now: Date = .now) {
         guard let index = wants.firstIndex(where: { $0.id == id }) else { return }
         if keep {
-            wants[index].status = .bought
+            setStatus(at: index, to: .bought, now: now)
         } else {
             wants[index].thawsAt = effectiveSettings.paydayAfter(max(wants[index].thawsAt, now), calendar: calendar)
         }
         persist()
+    }
+
+    /// Every status change goes through here so `decidedOn` stays in step: set on the first decision,
+    /// kept when switching between skipped and bought, cleared when the want goes back to cooling.
+    private func setStatus(at index: Int, to status: Want.Status, now: Date) {
+        let wasDecided = wants[index].status != .cooling
+        wants[index].status = status
+        switch status {
+        case .cooling: wants[index].decidedOn = nil
+        case .skipped, .bought: if !wasDecided { wants[index].decidedOn = now }
+        }
     }
 
     private func persist() {
@@ -149,18 +160,18 @@ nonisolated final class WantStore: @unchecked Sendable {
                     frozenOn: frozenOn, progress: 0, status: .cooling, thawsAt: thawsAt, link: link)
     }
 
-    /// Moves a decided (skipped or bought) want back to cooling, keeping its original thaw date.
+    /// Moves a decided (skipped or bought) want back to cooling, keeping its original thaw date and clearing `decidedOn`.
     func reopen(_ id: UUID) {
         guard let index = wants.firstIndex(where: { $0.id == id }), wants[index].status != .cooling else { return }
-        wants[index].status = .cooling
+        setStatus(at: index, to: .cooling, now: .now)
         persist()
     }
 
-    /// Switches a decided want between skipped and bought; anything else is a no-op.
+    /// Switches a decided want between skipped and bought, keeping `decidedOn`; anything else is a no-op.
     func setDecision(_ id: UUID, to status: Want.Status) {
         guard status != .cooling, let index = wants.firstIndex(where: { $0.id == id }),
               wants[index].status != .cooling, wants[index].status != status else { return }
-        wants[index].status = status
+        setStatus(at: index, to: status, now: .now)
         persist()
     }
 
@@ -212,9 +223,9 @@ nonisolated final class WantStore: @unchecked Sendable {
         persist()
     }
 
-    func update(_ id: UUID, status: Want.Status) {
+    func update(_ id: UUID, status: Want.Status, now: Date = .now) {
         guard let index = wants.firstIndex(where: { $0.id == id }) else { return }
-        wants[index].status = status
+        setStatus(at: index, to: status, now: now)
         persist()
     }
 
@@ -265,7 +276,7 @@ nonisolated final class WantStore: @unchecked Sendable {
             let thawsAt = calendar.date(byAdding: .month, value: -monthsAgo, to: now) ?? now
             let frozenOn = thawsAt.addingTimeInterval(-86_400 * 20)
             return Want(id: UUID(), name: name, price: price, reason: "Fixture", frozenOn: frozenOn,
-                        progress: 1, status: status, thawsAt: thawsAt)
+                        progress: 1, status: status, thawsAt: thawsAt, decidedOn: thawsAt)
         }
         return [
             decided("Linen overshirt", 69, .skipped, monthsAgo: 0),

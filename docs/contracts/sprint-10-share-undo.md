@@ -1,6 +1,6 @@
 # Sprint 10: share sheet capture, reversible decisions, persistence tests (FROZEN)
 
-Branch `feature/s10-share-undo` (shared working tree; never switch branches, never `git add -A`, explicit pathspecs, `git pull --rebase` before push). VIPER rules from `docs/contracts/sprint-4-viper.md`; modal rules from `docs/design/ux-audit.md`. Explicit `deinit {}` on MainActor classes holding weak refs.
+Branch `feature/s10-share-undo` (shared working tree; never switch branches, never `git add -A`, explicit pathspecs, `git pull --rebase` before push). VIPER rules from `docs/contracts/sprint-4-viper.md`; modal rules from `docs/design/archive/ux-audit.md`. Explicit `deinit {}` on MainActor classes holding weak refs.
 
 ## Product decisions (from user)
 1. **Share sheet**: a Share Extension shows the existing "Add to Thaw" form. Name is prefilled from the shared page title, the link is kept, price and reason are typed. Saving shows the Cubi "added" moment (design: Cubi appears when added from the share sheet) and closes. It lands in Thaw the next time the app opens or comes to the foreground.

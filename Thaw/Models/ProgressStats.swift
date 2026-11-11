@@ -12,7 +12,7 @@ nonisolated struct ProgressStats: Equatable, Sendable {
     }
 
     /// Streak counts consecutive months, ending this month or last, in which a want was skipped.
-    /// A skipped want belongs to the month of its `thawsAt`, the payday it was decided on.
+    /// A skipped want belongs to the month of its `decisionDate`, when it was skipped.
     static func make(wants: [Want], funMoney: Decimal, now: Date = .now, calendar: Calendar = .current) -> ProgressStats {
         let skipped = wants.filter { $0.status == .skipped }
         let decided = wants.filter { $0.status != .cooling }
@@ -22,7 +22,7 @@ nonisolated struct ProgressStats: Equatable, Sendable {
             let c = calendar.dateComponents([.year, .month], from: date)
             return (c.year ?? 0) * 12 + (c.month ?? 1)
         }
-        let months = Set(skipped.map { monthIndex($0.thawsAt) })
+        let months = Set(skipped.map { monthIndex($0.decisionDate) })
         let current = monthIndex(now)
         var cursor = months.contains(current) ? current : current - 1
         var streak = 0

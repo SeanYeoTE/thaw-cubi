@@ -1,5 +1,7 @@
 # Thaw UX audit: modality, dismissal and escape routes
 
+> Archived. Kept for its modal rules (summarised in `docs/design/README.md`) and the fix history. UX-15 is fixed by the redesign (T5); UX-16 stays in the backlog. Line numbers below refer to older code.
+
 ## 1. Scope and method
 
 Read-only heuristic audit of `Thaw/App/**`, `Thaw/Features/**`, `Thaw/DesignSystem/**` and `docs/contracts/*.md` (intended behaviour), judged against Apple HIG (Modality, Sheets, Navigation bars) and the app's own decisions (sprint-2 D5, sprint-3 D1/D2/D4). Static code reading only: nothing was built or run, so on-screen behaviour (animation timing, VoiceOver output) is inferred from code.
@@ -107,6 +109,7 @@ Implemented in `[ux-ds-scroll]` (4e268d6, 8480afb) and `[ux-fe-modals]` / `[ux-f
 | UX-10 | Fixed | Onboarding and Home render full width on iPhone portrait (a first version collapsed the column; fixed in 8480afb). Landscape and iPad not checked. |
 | UX-14 | Fixed | Checked: the tab bar is hidden on Item detail. Moment at AX5 not checked. |
 | UX-17, 18 | Fixed | Title "Payday preview"; onboarding footnote "We'll ask to send payday reminders next." visible. |
-| UX-15, 16 | Backlog | Need a product decision. |
+| UX-15 | Fixed | T5 (770dd42): Settings saves each change as you go; no Save button. |
+| UX-16 | Backlog | Needs a product decision. |
 
 Also added: Home and Item detail refresh through a `.thawDataChanged` notification after a review or Decide now.

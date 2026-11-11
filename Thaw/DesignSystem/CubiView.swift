@@ -57,6 +57,8 @@ final class CubiView: UIView {
         isOpaque = false
         isAccessibilityElement = true
         accessibilityTraits = .image
+        // Cubi is artwork: Smart Invert would turn the ice cube dark and the face light.
+        accessibilityIgnoresInvertColors = true
         buildBody()
         art.addSublayer(backLayer)
         art.addSublayer(bodyLayer)

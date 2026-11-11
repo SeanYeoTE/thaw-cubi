@@ -51,7 +51,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         reasonView.backgroundColor = Theme.surface
         reasonView.layer.cornerRadius = 12
         reasonView.layer.borderWidth = 1
-        reasonView.layer.borderColor = Theme.border.cgColor
+        reasonView.layer.borderColor = Theme.controlBorder.cgColor
         reasonView.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
         reasonView.heightAnchor.constraint(greaterThanOrEqualToConstant: 120).isActive = true
         reasonView.adjustsFontForContentSizeCategory = true
@@ -97,7 +97,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         field.backgroundColor = Theme.surface
         field.layer.cornerRadius = 12
         field.layer.borderWidth = 1
-        field.layer.borderColor = Theme.border.cgColor
+        field.layer.borderColor = Theme.controlBorder.cgColor
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 14, height: 1))
         field.leftViewMode = .always
         field.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true
