@@ -1,0 +1,38 @@
+docs/design/tasks/T3-payday-tab.md
+  s_e31ba14972c639::t_a1ed4c286bb65e 1-74
+docs/design/README.md
+  s_e31ba14972c639::t_1ac336b1ae3f10 1-89,91
+  s_e31ba14972c639::t_f9e8eef80e60ee 90
+docs/contracts/sprint-4-viper.md
+  s_e31ba14972c639::t_6e084e261107e1 3
+docs/design/tasks/T1-data-decided-on.md
+  s_e31ba14972c639::t_3cd25b4d534b82 1-77
+docs/design/tasks/T2-shared-components.md
+  s_e31ba14972c639::t_eccec4eab1a9f5 1-55
+docs/design/tasks/T6-stats.md
+  s_e31ba14972c639::t_60fe6a27e313d8 1-70
+docs/design/tasks/T5-settings.md
+  s_e31ba14972c639::t_0d87ee886d8f36 1-86
+docs/design/archive/ux-audit.md
+  s_e31ba14972c639::t_f9e8eef80e60ee 1-114
+docs/design/tasks/T4-cooling.md
+  s_e31ba14972c639::t_7c5a40db4c9638 1-86
+docs/contracts/sprint-10-share-undo.md
+  s_e31ba14972c639::t_6e084e261107e1 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "87fa5066a7839ccb4b9e8892ea26558498e3c7e8",
+  "prompts": {},
+  "sessions": {
+    "s_e31ba14972c639": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "73995f04-92b3-496e-82e8-dd4ec1ed8de3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
