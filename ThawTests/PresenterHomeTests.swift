@@ -14,15 +14,13 @@ final class PresenterHomeTests: XCTestCase {
         init() {}
         weak var output: HomeInteractorOutput?
         var cooling: [Want] = []
-        var queue: [Want] = []
         var deleted: [UUID] = []
         var nextPayday: Date = .now.addingTimeInterval(86_400 * 3)
         var filter: CoolingFilter = .all
         var sort: CoolingSort = .soonest
         func delete(_ id: UUID) { deleted.append(id) }
         func snapshot() -> HomeSnapshot {
-            HomeSnapshot(cooling: cooling, reviewQueue: queue,
-                         payday: PaydaySchedule(nextPayday: nextPayday, funMoney: 300),
+            HomeSnapshot(cooling: cooling, payday: PaydaySchedule(nextPayday: nextPayday, funMoney: 300),
                          settings: .default)
         }
     }
@@ -30,7 +28,6 @@ final class PresenterHomeTests: XCTestCase {
     private final class FakeRouter: HomeRouterProtocol {
         var calls: [String] = []
         func showAddWant() { calls.append("add") }
-        func showPaydayPreview() { calls.append("preview") }
         func showItemDetail(id: UUID) { calls.append("detail") }
         func showEdit(id: UUID) { calls.append("edit") }
     }
@@ -40,37 +37,24 @@ final class PresenterHomeTests: XCTestCase {
         return (HomePresenter(view: view, interactor: interactor, router: router), view, interactor, router)
     }
 
-    func testEmptyStateDisablesPaydayCard() {
+    func testNoWantsShowsTheEmptyState() {
         let (presenter, view, _, _) = make()
         presenter.viewWillAppear()
         let model = view.models.last
-        XCTAssertEqual(model?.hasReview, false)
         XCTAssertEqual(model?.empty, HomeEmptyViewModel(kind: .noWants, line: "Nothing cooling.", actionTitle: "Add a want"))
         XCTAssertEqual(model?.cards.count, 0)
         XCTAssertEqual(model?.sections, [])
     }
 
-    func testCardsAndSubtitleReflectQueue() {
+    func testCardsSplitIntoTimerAndPayday() {
         let (presenter, view, interactor, _) = make()
         let keyboard = Fixture.want("Keyboard", 189)
         interactor.cooling = [keyboard, Fixture.want("Case", 24)]
-        interactor.queue = [keyboard]
         presenter.viewWillAppear()
         let model = view.models.last
-        XCTAssertEqual(model?.hasReview, true)
-        XCTAssertEqual(model?.paydaySubtitle, "1 want thaws then · S$189 vs S$300 fun money")
         XCTAssertEqual(model?.cards.first { $0.name == "Keyboard" }?.isTimer, false)
         XCTAssertEqual(model?.cards.first { $0.name == "Case" }?.isTimer, true)
         XCTAssertNil(model?.empty)
-    }
-
-    func testPaydayTapIsIgnoredWhenQueueEmpty() {
-        let (presenter, _, interactor, router) = make()
-        presenter.tapPayday()
-        XCTAssertEqual(router.calls, [])
-        interactor.queue = [Fixture.want("Keyboard", 189)]
-        presenter.tapPayday()
-        XCTAssertEqual(router.calls, ["preview"])
     }
 
     func testDataChangeRerenders() {

@@ -48,10 +48,6 @@ struct HomeEmptyViewModel: Equatable {
 }
 
 struct HomeViewModel {
-    let daysLeft: Int
-    let nextPaydayText: String
-    let paydaySubtitle: String
-    let hasReview: Bool
     let filterTitles: [String]
     let filterIndex: Int
     let sortTitle: String
@@ -64,7 +60,6 @@ struct HomeViewModel {
 
 struct HomeSnapshot {
     let cooling: [Want]
-    let reviewQueue: [Want]
     let payday: PaydaySchedule
     let settings: PaydaySettings
 }
@@ -85,7 +80,6 @@ protocol HomeViewProtocol: AnyObject {
 protocol HomePresenterProtocol: AnyObject {
     func viewWillAppear()
     func tapAdd()
-    func tapPayday()
     func tapWant(id: UUID)
     func tapEdit(id: UUID)
     func tapDelete(id: UUID)
@@ -111,7 +105,6 @@ protocol HomeInteractorOutput: AnyObject {
 
 protocol HomeRouterProtocol: AnyObject {
     func showAddWant()
-    func showPaydayPreview()
     func showItemDetail(id: UUID)
     func showEdit(id: UUID)
 }

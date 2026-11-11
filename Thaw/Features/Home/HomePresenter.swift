@@ -21,11 +21,6 @@ final class HomePresenter: HomePresenterProtocol, HomeInteractorOutput {
 
     func tapAdd() { router.showAddWant() }
 
-    func tapPayday() {
-        guard !interactor.snapshot().reviewQueue.isEmpty else { return }
-        router.showPaydayPreview()
-    }
-
     func tapWant(id: UUID) { router.showItemDetail(id: id) }
 
     func tapEdit(id: UUID) {
@@ -77,11 +72,6 @@ final class HomePresenter: HomePresenterProtocol, HomeInteractorOutput {
         let snapshot = interactor.snapshot()
         let filter = interactor.filter
         let sort = interactor.sort
-        let thawing = snapshot.reviewQueue
-        let total = thawing.reduce(Decimal(0)) { $0 + $1.price }
-        let subtitle = "\(thawing.count) \(thawing.count == 1 ? "want thaws" : "wants thaw") then · "
-            + "\(Formatting.sgd(total)) vs \(Formatting.sgd(snapshot.payday.funMoney)) fun money"
-
         let threshold = snapshot.settings.timerThreshold
         let sorted = Self.sorted(snapshot.cooling, by: sort)
         let visible = sorted.filter { Self.matches($0, filter: filter, threshold: threshold) }
@@ -99,10 +89,6 @@ final class HomePresenter: HomePresenterProtocol, HomeInteractorOutput {
         }
 
         view?.render(HomeViewModel(
-            daysLeft: snapshot.payday.daysUntilNext,
-            nextPaydayText: Formatting.paydayDate(snapshot.payday.nextPayday),
-            paydaySubtitle: subtitle,
-            hasReview: !thawing.isEmpty,
             filterTitles: CoolingFilter.allCases.map(Self.title(for:)),
             filterIndex: CoolingFilter.allCases.firstIndex(of: filter) ?? 0,
             sortTitle: Self.title(for: sort),

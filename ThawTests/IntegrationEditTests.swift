@@ -28,7 +28,6 @@ final class IntegrationEditTests: XCTestCase {
 
     private final class FakeHomeRouter: HomeRouterProtocol {
         func showAddWant() {}
-        func showPaydayPreview() {}
         func showItemDetail(id: UUID) {}
         func showEdit(id: UUID) {}
     }

@@ -11,7 +11,6 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
 
     private nonisolated enum Item: Hashable, Sendable {
         case title
-        case payday
         case filters
         case empty
         case sectionHeader(Int)
@@ -139,7 +138,7 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections([.header])
         let showsFilters = model.empty?.kind != .noWants
-        snapshot.appendItems(showsFilters ? [.title, .payday, .filters] : [.title, .payday], toSection: .header)
+        snapshot.appendItems(showsFilters ? [.title, .filters] : [.title], toSection: .header)
         if model.empty != nil {
             snapshot.appendSections([.empty])
             snapshot.appendItems([.empty], toSection: .empty)
@@ -229,17 +228,6 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
             label.accessibilityTraits = .header
             content = label
             topGap = 0
-        case .payday:
-            guard let model else { return }
-            let payday = PaydayCardView(daysLeft: model.daysLeft, nextPayday: model.nextPaydayText,
-                                        subtitle: model.paydaySubtitle)
-            payday.addAction(UIAction { [weak self] _ in self?.presenter?.tapPayday() }, for: .touchUpInside)
-            payday.accessibilityIdentifier = "home.payday"
-            payday.isEnabled = model.hasReview
-            payday.alpha = model.hasReview ? 1 : 0.5
-            if !model.hasReview { payday.accessibilityTraits.insert(.notEnabled) }
-            payday.accessibilityHint = model.hasReview ? "Opens the payday preview" : "Nothing has thawed yet"
-            content = payday
         case .filters:
             guard let filterBar else { return }
             content = filterBar
