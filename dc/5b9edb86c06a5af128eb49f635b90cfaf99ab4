@@ -1,0 +1,23 @@
+Thaw/Features/Home/HomeInteractor.swift
+  s_1d57440a072d54::t_dd23d8c3a7b20c 34
+Thaw/Features/Home/HomeViewController.swift
+  s_1d57440a072d54::t_983fef79585371 141
+ThawTests/PresenterHomeTests.swift
+  s_1d57440a072d54::t_6cb1e0f94d2970 23,40,49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dc5b9edb86c06a5af128eb49f635b90cfaf99ab4",
+  "prompts": {},
+  "sessions": {
+    "s_1d57440a072d54": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "1152c58e-16d1-4ad3-914b-41f8831ba6cd",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
