@@ -1,0 +1,46 @@
+docs/design/archive/s11-tasks/T1-data-decided-on.md
+  s_e31ba14972c639::t_43d137847674e0 1-79
+docs/design/archive/s11-tasks/T6-stats.md
+  s_e31ba14972c639::t_43d137847674e0 1-72
+docs/design/archive/s11-tasks/T3-payday-tab.md
+  s_e31ba14972c639::t_43d137847674e0 1-76
+docs/design/tasks/U6-list-foundation.md
+  s_e31ba14972c639::t_e25a4c2c17a81e 1-45
+docs/design/archive/s11-tasks/T5-settings.md
+  s_e31ba14972c639::t_43d137847674e0 1-88
+docs/design/archive/s11-README.md
+  s_e31ba14972c639::t_43d137847674e0 1-93
+docs/design/tasks/U1-payday-budget.md
+  s_e31ba14972c639::t_c4b6a92ec83566 1-54
+docs/design/README.md
+  s_e31ba14972c639::t_cdf35d54345156 1,3,5,7,9-10,14,16-29,31,33-43,45,52-55,57-65,67-68,70-71,73,75-80,89-114
+docs/design/tasks/U4-add-edit-sheet.md
+  s_e31ba14972c639::t_41a625a124e93d 1-58
+docs/design/archive/s11-tasks/T4-cooling.md
+  s_e31ba14972c639::t_43d137847674e0 1-88
+docs/design/archive/s11-tasks/T2-shared-components.md
+  s_e31ba14972c639::t_43d137847674e0 1-57
+docs/design/tasks/U2-review-flow.md
+  s_e31ba14972c639::t_ad103c2865d9f1 47
+  s_e31ba14972c639::t_cdd9ad113fbe8e 1-46,48-68
+docs/design/tasks/U5-ui-tests-a11y.md
+  s_e31ba14972c639::t_ef2fd278b72de0 1-51
+docs/design/tasks/U3-item-detail.md
+  s_e31ba14972c639::t_e41c882d7e4893 1-58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "42acb8015fa47bb776b01cf787bd9cc7a12eb577",
+  "prompts": {},
+  "sessions": {
+    "s_e31ba14972c639": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "73995f04-92b3-496e-82e8-dd4ec1ed8de3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
