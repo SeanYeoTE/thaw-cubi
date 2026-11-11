@@ -1,0 +1,21 @@
+Thaw/Features/PaydaySetup/SettingsViewController.swift
+  s_e31ba14972c639::t_c5eaf843a293c5 10,22-33,37,124-128,130-134,143-144,174-201,203-206
+  s_e31ba14972c639::t_da8841c09ac5cf 202
+  s_e31ba14972c639::t_4612681478776a 207
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8a48a6f509b2d4b07c6db7ef0ccb0fd89995e785",
+  "prompts": {},
+  "sessions": {
+    "s_e31ba14972c639": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "73995f04-92b3-496e-82e8-dd4ec1ed8de3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
