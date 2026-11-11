@@ -128,7 +128,7 @@ final class WantRowView: UIView {
         switch tone {
         case .neutral: Theme.inkSecondary
         case .accent: Theme.accent
-        case .timer: Theme.warm
+        case .timer: Theme.timer
         }
     }
 }

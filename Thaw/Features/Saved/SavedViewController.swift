@@ -249,6 +249,8 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         cell.isAccessibilityElement = true
         cell.accessibilityLabel = row.accessibilityLabel
         cell.accessibilityValue = row.accessibilityValue
+        cell.accessibilityTraits = .button
+        cell.accessibilityHint = "Opens Edit"
         cell.accessibilityCustomActions = WantListStyle.accessibilityActions(
             onEdit: { [weak self] in self?.presenter?.tapEdit(id: id) },
             onDelete: { [weak self] in self?.presenter?.tapDelete(id: id) })
@@ -260,6 +262,8 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         cell.isAccessibilityElement = false
         cell.accessibilityLabel = nil
         cell.accessibilityValue = nil
+        cell.accessibilityTraits = []
+        cell.accessibilityHint = nil
         cell.accessibilityCustomActions = nil
     }
 
@@ -363,9 +367,25 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
     }
 }
 
+/// Tapping a History row opens Edit (which also offers Delete), so swiping is never the only way to reach them.
 extension SavedViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool { false }
-    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool { false }
+    func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
+        isRow(at: indexPath)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        isRow(at: indexPath)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        if case .row(let id) = dataSource.itemIdentifier(for: indexPath) { presenter?.tapEdit(id: id) }
+    }
+
+    private func isRow(at indexPath: IndexPath) -> Bool {
+        if case .row = dataSource.itemIdentifier(for: indexPath) { return true }
+        return false
+    }
 }
 
 /// Month header in the History list. Sizes to its text, so it isn't held to the list's 44 pt estimated row height.
@@ -402,20 +422,25 @@ private final class MonthHeaderCell: UICollectionViewCell {
     }
 }
 
-/// Bars per month; the current month is solid. Tapping or dragging over a bar keeps it selected and labels it.
+/// Bars per month, all in solid accent so each clears 3:1 against the background. The highlighted bar (the
+/// current month until the user picks another) is drawn in ink and labelled, so colour is never the only cue.
 private struct SavedChartView: View {
     let months: [SavedMonthlyAmount]
     let label: String
     @State private var rawSelection: Date?
     @State private var selectedMonth: Date?
 
+    private var highlightedMonth: Date? {
+        selectedMonth ?? months.first(where: \.isCurrent)?.month
+    }
+
     var body: some View {
         Chart(months) { point in
             BarMark(x: .value("Month", point.month, unit: .month), y: .value("Saved", point.amount))
-                .foregroundStyle(Color(Theme.accent).opacity(point.isCurrent || point.month == selectedMonth ? 1 : 0.35))
+                .foregroundStyle(Color(point.month == highlightedMonth ? Theme.ink : Theme.accent))
                 .cornerRadius(4)
                 .annotation(position: .top, overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
-                    if point.month == selectedMonth {
+                    if point.month == highlightedMonth {
                         Text(point.selectionText)
                             .font(Font(ThawFont.body(13, weight: .semibold)))
                             .foregroundStyle(Color(Theme.ink))

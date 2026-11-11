@@ -89,7 +89,7 @@ final class FilterChipBar: UIView {
             } else {
                 config.baseBackgroundColor = Theme.surface
                 config.baseForegroundColor = Theme.ink
-                config.background.strokeColor = Theme.border
+                config.background.strokeColor = Theme.controlBorder
                 config.background.strokeWidth = 1
             }
             config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attributes in

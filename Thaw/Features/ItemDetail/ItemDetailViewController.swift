@@ -28,7 +28,7 @@ final class ItemDetailViewController: ScrollStackViewController, ItemDetailViewP
         let countdown = CardView()
         let days = makeLabel(model.daysText, font: ThawFont.display(36))
         let until = makeLabel(model.untilText, font: ThawFont.body(14), color: Theme.inkSecondary)
-        let progress = ProgressBarView(fraction: CGFloat(model.progress), color: model.isTimer ? Theme.warm : Theme.accent)
+        let progress = ProgressBarView(fraction: CGFloat(model.progress), color: model.isTimer ? Theme.timer : Theme.accent)
         let countStack = UIStackView(arrangedSubviews: [days, until, progress])
         countStack.axis = .vertical
         countStack.spacing = 10
