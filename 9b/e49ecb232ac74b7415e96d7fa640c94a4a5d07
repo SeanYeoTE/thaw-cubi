@@ -1,0 +1,35 @@
+Thaw/Features/Home/HomeContracts.swift
+  s_fb6ef678cb5d44::t_d12a1e0a2a5fc9 3-10,17-18,20-47,55-61,93-95,100-103
+Thaw/Features/Home/HomeInteractor.swift
+  s_fb6ef678cb5d44::t_8610d80dca91ea 4-6,10,16,19,23-32
+Thaw/Features/Home/HomePresenter.swift
+  s_4fbb013a071a7c::t_d126bb3c87fac6 51-69,74-75,78-79,84-100,106-114,118-185,188-203
+Thaw/Features/Home/HomeViewController.swift
+  s_fb6ef678cb5d44::t_111ef48a841374 3-4,8-9,15,17,27-29,48,97-131,136-138,141-150,172-173,177,184-194,243-245,247-259,264-265,267-268,292-330,374-377
+ThawTests/PresenterHomeTests.swift
+  s_fb6ef678cb5d44::t_00618244b12f96 19-21,25,48,50,62-64,119,128-330
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9be49ecb232ac74b7415e96d7fa640c94a4a5d07",
+  "prompts": {},
+  "sessions": {
+    "s_4fbb013a071a7c": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "213ab804-853c-40c4-89d0-3e248fa36557",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    },
+    "s_fb6ef678cb5d44": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "357877c6-fdc9-44af-8855-8b10fe1faf9c",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
