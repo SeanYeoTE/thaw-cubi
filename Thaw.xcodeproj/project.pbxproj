@@ -65,7 +65,6 @@
 		6F4C0CE7DD236D5CE357724F /* PaydayReviewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58BDD9230954D66A5B20A4CC /* PaydayReviewRouter.swift */; };
 		7257CC23CCDB2CC790723511 /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A504E812CFA3EF891C88120E /* Formatting.swift */; };
 		75D553904D96CE29B59C289D /* AddWantContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006600B4F7BC2D0D6420AD7F /* AddWantContracts.swift */; };
-		77446FE5744E1246A6A119B2 /* WantCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377D9BE27783B2F43FA60BAA /* WantCardView.swift */; };
 		792160079627C8620BDD6B5F /* ItemDetailContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEF95F7FFB88503ED479D0C9 /* ItemDetailContracts.swift */; };
 		7A1EAA326A34E3DF5A170F95 /* ReviewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3608794257CA9D2CD63855E5 /* ReviewRouter.swift */; };
 		7C8389049FDDD59051C306DB /* ItemDetailRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A7FCE28C930DA61B2A8546 /* ItemDetailRouter.swift */; };
@@ -170,7 +169,6 @@
 		33895ADF18C40EF814F7D450 /* PresenterPaydaySetupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterPaydaySetupTests.swift; sourceTree = "<group>"; };
 		3608794257CA9D2CD63855E5 /* ReviewRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRouter.swift; sourceTree = "<group>"; };
 		37036FE395D3487FC2A885BF /* PaydayReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayReviewViewController.swift; sourceTree = "<group>"; };
-		377D9BE27783B2F43FA60BAA /* WantCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WantCardView.swift; sourceTree = "<group>"; };
 		3875C0C3237E2AC0D088414D /* HomePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePresenter.swift; sourceTree = "<group>"; };
 		3A4A8A25D66EDB6BFB83EEF4 /* StillWantItViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillWantItViewController.swift; sourceTree = "<group>"; };
 		3D5FDD6B49F220715E738273 /* MomentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentView.swift; sourceTree = "<group>"; };
@@ -446,7 +444,6 @@
 				3875C0C3237E2AC0D088414D /* HomePresenter.swift */,
 				5925C0EFAFB2E123DF8BF9E3 /* HomeRouter.swift */,
 				E40459DC7F21FA527CDD4EDB /* HomeViewController.swift */,
-				377D9BE27783B2F43FA60BAA /* WantCardView.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -684,7 +681,6 @@
 				9EBB3668C44C880491BC5B72 /* StillWantItViewController.swift in Sources */,
 				55ABEDA9BA4FA4A661C12B84 /* Theme.swift in Sources */,
 				9BF415AF2DEB3CEE68DB1D8B /* Want.swift in Sources */,
-				77446FE5744E1246A6A119B2 /* WantCardView.swift in Sources */,
 				320847D69BEBAF3C7919D945 /* WantRowModel.swift in Sources */,
 				D1C8A2C458CC7E4BE8F3D48D /* WantRowView.swift in Sources */,
 				49F36EEFE058146C0CBC5DFB /* WantStore+Review.swift in Sources */,
