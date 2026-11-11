@@ -100,7 +100,7 @@ final class SavedPresenter: SavedPresenterProtocol, SavedInteractorOutput {
         let streak = SavedStatChip(
             symbol: "flame.fill",
             value: "\(stats.streak)",
-            caption: nil,
+            caption: "streak",
             spoken: stats.streak == 0
                 ? "No streak yet. Skip one want at payday to start a streak."
                 : "\(stats.streak) \(stats.streak == 1 ? "payday" : "paydays") in a row. You let a want go at each one."
@@ -116,12 +116,12 @@ final class SavedPresenter: SavedPresenterProtocol, SavedInteractorOutput {
         if months >= 1 {
             let value = String(format: "%.1f", months)
             funMoney = SavedStatChip(
-                symbol: "banknote", value: "\(value) mo", caption: nil,
+                symbol: "banknote", value: value, caption: "months",
                 spoken: "\(value) months of fun money. That's what you chose not to spend.")
         } else {
             let value = "\(Int((months * 100).rounded()))%"
             funMoney = SavedStatChip(
-                symbol: "banknote", value: value, caption: "fun money",
+                symbol: "banknote", value: value, caption: "of a month",
                 spoken: "\(value) of a month's fun money. That's what you chose not to spend.")
         }
         return [streak, winRate, funMoney]

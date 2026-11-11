@@ -39,7 +39,7 @@ final class ComponentGalleryViewController: ScrollStackViewController {
         let streak = StatChipView(symbol: "flame.fill", value: "3", caption: "streak", spoken: "3 payday streak")
         streak.addAction(UIAction { _ in }, for: .touchUpInside)
         let rate = StatChipView(symbol: "percent", value: "60%", caption: "let go", spoken: "Let go of 60 percent")
-        let months = StatChipView(symbol: nil, value: "1.4 mo", caption: nil, spoken: "1.4 months of fun money")
+        let months = StatChipView(symbol: "banknote", value: "1.4", caption: "months", spoken: "1.4 months of fun money")
         let chips = AdaptiveStackView(arrangedSubviews: [streak, rate, months, UIView()])
         chips.spacing = 8
         stack.addArrangedSubview(chips)

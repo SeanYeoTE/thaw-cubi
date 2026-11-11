@@ -288,26 +288,16 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         return row
     }
 
-    /// One row of chips, stacking at accessibility sizes.
+    /// Three equal-width tiles in a row; they stack full width at accessibility sizes.
     private func chipRow(_ chips: [SavedStatChip]) -> UIView {
-        let row = AdaptiveStackView()
-        row.compactAlignment = .center
+        let row = ChipRowStackView()
         row.spacing = 8
         for (index, chip) in chips.enumerated() {
             let view = StatChipView(symbol: chip.symbol, value: chip.value, caption: chip.caption, spoken: chip.spoken)
             view.addAction(UIAction { [weak self] _ in self?.presenter?.tapChip(at: index) }, for: .touchUpInside)
             row.addArrangedSubview(view)
         }
-        let container = UIView()
-        row.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(row)
-        NSLayoutConstraint.activate([
-            row.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            row.trailingAnchor.constraint(lessThanOrEqualTo: container.trailingAnchor),
-            row.topAnchor.constraint(equalTo: container.topAnchor),
-            row.bottomAnchor.constraint(equalTo: container.bottomAnchor),
-        ])
-        return container
+        return row
     }
 
     private func rangePicker(_ chart: SavedChartViewModel) -> UIView {
@@ -364,6 +354,26 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
         return label
+    }
+}
+
+/// Horizontal with equal widths and heights at standard sizes; vertical and full width at accessibility sizes.
+private final class ChipRowStackView: UIStackView {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        alignment = .fill
+        registerForTraitChanges([UITraitPreferredContentSizeCategory.self]) { (self: ChipRowStackView, _) in
+            self.updateAxis()
+        }
+        updateAxis()
+    }
+
+    required init(coder: NSCoder) { fatalError("init(coder:) is not supported") }
+
+    private func updateAxis() {
+        let large = traitCollection.preferredContentSizeCategory.isAccessibilityCategory
+        axis = large ? .vertical : .horizontal
+        distribution = large ? .fill : .fillEqually
     }
 }
 

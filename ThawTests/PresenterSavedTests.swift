@@ -109,16 +109,18 @@ final class PresenterSavedTests: XCTestCase {
         let model = render([want("Shirt", 69, .skipped), want("Grinder", 420, .skipped), want("Keyboard", 189, .bought)])
         let chips = model?.chips ?? []
         XCTAssertEqual(chips.map(\.symbol), ["flame.fill", "xmark.circle", "banknote"])
-        XCTAssertEqual(chips.map(\.value), ["1", "67%", "1.6 mo"])
+        XCTAssertEqual(chips.map(\.value), ["1", "67%", "1.6"])
+        XCTAssertEqual(chips.map(\.caption), ["streak", "let go", "months"])
         XCTAssertEqual(chips[0].spoken, "1 payday in a row. You let a want go at each one.")
         XCTAssertEqual(chips[1].spoken, "67 percent let go. You skipped 2 of 3 wants you froze.")
         XCTAssertEqual(chips[2].spoken, "1.6 months of fun money. That's what you chose not to spend.")
     }
 
     func testFunMoneyChipSwitchesToPercentageBelowOneMonth() {
-        XCTAssertEqual(render([want("Exactly", 300, .skipped)])?.chips[2].value, "1.0 mo")
+        XCTAssertEqual(render([want("Exactly", 300, .skipped)])?.chips[2].value, "1.0")
         let below = render([want("Lamp", 120, .skipped)])?.chips[2]
         XCTAssertEqual(below?.value, "40%")
+        XCTAssertEqual(below?.caption, "of a month")
         XCTAssertEqual(below?.symbol, "banknote")
         XCTAssertEqual(below?.spoken, "40% of a month's fun money. That's what you chose not to spend.")
     }
