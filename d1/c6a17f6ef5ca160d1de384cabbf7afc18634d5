@@ -1,0 +1,25 @@
+Thaw.xcodeproj/project.pbxproj
+  s_2d7d1998475fcf::t_d1f050c994ed55 32,224,300,687
+Thaw/Features/Home/HomeViewController.swift
+  s_2d7d1998475fcf::t_33c5026ef9fa85 20,135,140-141,169,202-203,225,233-236
+Thaw/Features/Saved/SavedViewController.swift
+  s_2d7d1998475fcf::t_714027857e41e1 20,108,113,115,176,248-251
+Thaw/Features/Shared/WantListStyle.swift
+  s_2d7d1998475fcf::t_2bc390d46c446b 1-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d1c6a17f6ef5ca160d1de384cabbf7afc18634d5",
+  "prompts": {},
+  "sessions": {
+    "s_2d7d1998475fcf": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "04f8ce7d-4cf5-422e-9ff9-95c0d3acc7ee",
+        "model": "openrouter/OpenRouter/anthropic/claude-sonnet-5.5"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
