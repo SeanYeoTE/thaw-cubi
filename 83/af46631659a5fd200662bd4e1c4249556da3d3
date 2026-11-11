@@ -1,0 +1,21 @@
+Thaw.xcodeproj/project.pbxproj
+  s_e2ec78a4f3e7e8::t_f4034168fb2678 24,78,87,95,109,123,181,195,197,207,239,245,394-396,402-404,703-705,724-726
+docs/design/archive/ux-audit.md
+  s_e2ec78a4f3e7e8::t_0f29e4b9729551 112-113
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "83af46631659a5fd200662bd4e1c4249556da3d3",
+  "prompts": {},
+  "sessions": {
+    "s_e2ec78a4f3e7e8": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "aa310863-7fd2-443d-ab1f-8d74ffe1b765",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
