@@ -6,8 +6,9 @@ s12 finishes the job. It brings the remaining screens into the same style, makes
 
 ## Before anyone starts
 
-1. **Merge #18 into `main`.** s12 builds on it and on the UI test target and `-thawFixture thawed` from #17, which are only on `main`.
-2. Every agent branches from `main` after that merge, in its own git worktree, named `feature/s12-<task>` (for example `feature/s12-u3-item-detail`). Commit prefix: `[s12]`.
+1. **Already done:** #18 is merged into `main` (11 Nov 2026). `main` also has the UI test target and `-thawFixture thawed` from #17.
+2. **Base branch: `docs/s12-handover`.** It is `main` plus these handover docs. Every agent branches from it, in its own git worktree, named `feature/s12-<task>` (for example `feature/s12-u3-item-detail`). Commit prefix: `[s12]`.
+3. **Merging:** each task opens its PR against `main`. Whoever merges first brings the docs along; the rest are unaffected, because the docs are their only shared change.
 
 ## Tasks
 
