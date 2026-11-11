@@ -1,0 +1,25 @@
+ThawTests/BackendDecisionDateTests.swift
+  s_acff64b1dc7689::t_e9919ecf8041c2 1-143
+Thaw/Models/ProgressStats.swift
+  s_acff64b1dc7689::t_fa14f5e7cd9f89 15,25
+Thaw/Models/Want.swift
+  s_acff64b1dc7689::t_abc465227b09bd 19-22,25,28
+Thaw/Services/WantStore.swift
+  s_acff64b1dc7689::t_22917324886312 108,115-125,157,160,164,168,220,222,259
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8ec2946146ca8024c5e8a35a2259a51966f5576b",
+  "prompts": {},
+  "sessions": {
+    "s_acff64b1dc7689": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "dd4666e1-d2a4-4017-8cc0-7eed0d9ce273",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
