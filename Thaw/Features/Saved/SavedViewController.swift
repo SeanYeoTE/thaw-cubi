@@ -179,16 +179,9 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         cell.isAccessibilityElement = true
         cell.accessibilityLabel = "\(row.name), \(row.priceText)"
         cell.accessibilityValue = "\(row.outcome), frozen \(row.dateText)"
-        cell.accessibilityCustomActions = [
-            UIAccessibilityCustomAction(name: "Edit") { [weak self] _ in
-                self?.presenter?.tapEdit(id: id)
-                return true
-            },
-            UIAccessibilityCustomAction(name: "Delete") { [weak self] _ in
-                self?.presenter?.tapDelete(id: id)
-                return true
-            },
-        ]
+        cell.accessibilityCustomActions = WantListStyle.accessibilityActions(
+            onEdit: { [weak self] in self?.presenter?.tapEdit(id: id) },
+            onDelete: { [weak self] in self?.presenter?.tapDelete(id: id) })
     }
 
     private func prepare(_ cell: UICollectionViewListCell) {

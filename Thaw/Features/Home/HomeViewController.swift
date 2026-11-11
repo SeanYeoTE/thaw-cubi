@@ -164,6 +164,7 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
         cell.accessibilityLabel = nil
         cell.accessibilityValue = nil
         cell.accessibilityHint = nil
+        cell.accessibilityCustomActions = nil
         let content: UIView
         var topGap = Self.rowGap / 2
         var bottomGap = Self.rowGap / 2
@@ -215,6 +216,9 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
             cell.accessibilityLabel = label
             cell.accessibilityValue = value
             cell.accessibilityTraits = .button
+            cell.accessibilityCustomActions = WantListStyle.accessibilityActions(
+                onEdit: { [weak self] in self?.presenter?.tapEdit(id: id) },
+                onDelete: { [weak self] in self?.presenter?.tapDelete(id: id) })
         }
         content.translatesAutoresizingMaskIntoConstraints = false
         cell.contentView.addSubview(content)

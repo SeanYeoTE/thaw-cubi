@@ -9,14 +9,22 @@ enum WantListStyle {
         section.interGroupSpacing = rowGap
     }
 
+    /// Swipe buttons are icon-only, so cells also expose Edit and Delete as named VoiceOver actions.
+    static func accessibilityActions(onEdit: @escaping () -> Void, onDelete: @escaping () -> Void) -> [UIAccessibilityCustomAction] {
+        [
+            UIAccessibilityCustomAction(name: "Edit") { _ in onEdit(); return true },
+            UIAccessibilityCustomAction(name: "Delete") { _ in onDelete(); return true },
+        ]
+    }
+
     static func swipeActions(onEdit: @escaping () -> Void, onDelete: @escaping () -> Void) -> UISwipeActionsConfiguration {
-        let delete = UIContextualAction(style: .destructive, title: "Delete") { _, _, done in
+        let delete = UIContextualAction(style: .destructive, title: nil) { _, _, done in
             // The row stays until the user confirms, so the swipe reports "not performed".
             done(false)
             onDelete()
         }
         delete.image = UIImage(systemName: "trash")
-        let edit = UIContextualAction(style: .normal, title: "Edit") { _, _, done in
+        let edit = UIContextualAction(style: .normal, title: nil) { _, _, done in
             done(true)
             onEdit()
         }
