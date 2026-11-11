@@ -1,0 +1,37 @@
+Thaw/Features/Saved/SavedContracts.swift
+  s_4fbb013a071a7c::t_93f97a67dcf123 3-5,8-10,13,15-33,37,40-44,48-86,88-99,113-114,122-124,131-132
+Thaw/Features/Saved/SavedInteractor.swift
+  s_4fbb013a071a7c::t_5a3e11b0fa55ab 4-6,10,16,19,26-35
+Thaw/Features/Saved/SavedPresenter.swift
+  s_4fbb013a071a7c::t_1967621102a8dc 4-7,11-13,18-19,23-24,52-70,75-76,80-81,83-87,92-96,99-101,103,108-109,111,114-245
+Thaw/Features/Saved/SavedViewController.swift
+  s_03e3f03c75096c::t_df0264ab3e3c0a 5,9-11,15-17,21-37,44,55-57,89,91-93,97-107,110-111,124-129,135-136,140,147-160,166,168-180,188-193,202,206,210-215,217-230,232-235,237,243-247,252-253,268-271,274-282,285,289-328,372-408
+ThawTests/IntegrationSavedTests.swift
+  s_4fbb013a071a7c::t_df822889797520 12,35-46,57,60-62,68-71,76-78,85,88-91,108,111,115-116,119-120,123-142
+ThawTests/PresenterSavedTests.swift
+  s_4fbb013a071a7c::t_edb102a29454f4 10,15,24-25,35-50,52-61,66-71,74-75,78-82,85-87,89-92,95-98,101-103,106-115,118-247,252,255-256,258,264-265,270,277,285,296,301-302
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a2ee2b3716fea903d8d3ea7748ab63ae0dd57918",
+  "prompts": {},
+  "sessions": {
+    "s_03e3f03c75096c": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "838bba59-8487-4356-bbc9-f3a65edf74e2",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    },
+    "s_4fbb013a071a7c": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "213ab804-853c-40c4-89d0-3e248fa36557",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
