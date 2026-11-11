@@ -1,6 +1,8 @@
 # T3: Payday tab
 
-Read [../README.md](../README.md) first for the working rules.
+> **Done.** Shipped on `feature/s11-ui-standardise` (SeanYeoTE/thaw-cubi#18). Kept for history; the code is the source of truth now.
+
+Read [../../README.md](../../README.md) first for the working rules.
 
 **Owns:** `Thaw/Features/Payday` (new VIPER module), `Thaw/App` (`RootTabBarController`, `ReviewRouter`, `SceneDelegate`, `Reminders`), new `ThawTests/PresenterPaydayTests.swift`.
 **Depends on:** T2 merged (`EmptyStateView`, `SectionHeaderView`, leaner `WantRowModel`). **Unblocks:** T4's last step (removing the card from Cooling).

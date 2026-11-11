@@ -1,6 +1,8 @@
 # T4: Cooling
 
-Read [../README.md](../README.md) first for the working rules.
+> **Done.** Shipped on `feature/s11-ui-standardise` (SeanYeoTE/thaw-cubi#18). Kept for history; the code is the source of truth now.
+
+Read [../../README.md](../../README.md) first for the working rules.
 
 **Owns:** `Thaw/Features/Home`, `Thaw/Features/PaydayPreview` (you delete it), `ThawTests/PresenterHomeTests.swift`.
 **Depends on:** T2 merged (`FilterChipBar`, `SectionHeaderView`, `EmptyStateView`, leaner `WantRowModel`). Step 5 waits for T3 to be merged.

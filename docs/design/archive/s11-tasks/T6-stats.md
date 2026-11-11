@@ -1,6 +1,8 @@
 # T6: Stats
 
-Read [../README.md](../README.md) first for the working rules.
+> **Done.** Shipped on `feature/s11-ui-standardise` (SeanYeoTE/thaw-cubi#18). Kept for history; the code is the source of truth now.
+
+Read [../../README.md](../../README.md) first for the working rules.
 
 **Owns:** `Thaw/Features/Saved`, `ThawTests/PresenterSavedTests.swift`, `ThawTests/IntegrationSavedTests.swift`.
 **Depends on:** T1 merged (`Want.decisionDate`) and T2 merged (`StatChipView`, `FilterChipBar`, `SectionHeaderView`, `EmptyStateView`, leaner `WantRowModel`).

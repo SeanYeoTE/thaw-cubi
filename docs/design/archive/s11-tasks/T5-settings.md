@@ -1,6 +1,8 @@
 # T5: Settings
 
-Read [../README.md](../README.md) first for the working rules.
+> **Done.** Shipped on `feature/s11-ui-standardise` (SeanYeoTE/thaw-cubi#18). Kept for history; the code is the source of truth now.
+
+Read [../../README.md](../../README.md) first for the working rules.
 
 **Owns:** `Thaw/Features/PaydaySetup` (including `StepperSettingRow.swift`), `ThawTests/PresenterPaydaySetupTests.swift`.
 **Depends on:** nothing. It can run in wave 1.
@@ -81,6 +83,6 @@ Keep it as a full-page flow with the nav bar hidden. Trim it:
 - Screenshots of onboarding, Settings and the rule screen at the default size and at AX3.
 
 ## Done when
-- The tab has no Save button and changes persist immediately. This closes UX-15 in `../archive/ux-audit.md`.
+- The tab has no Save button and changes persist immediately. This closes UX-15 in `../ux-audit.md`.
 - Onboarding is the trimmed one-question flow.
 - Tests and build pass.
