@@ -22,10 +22,20 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneWillEnterForeground(_ scene: UIScene) {
         appDelegate?.ingestSharedDrafts()
+        (window?.rootViewController as? RootTabBarController)?.refreshBadge()
     }
 
     private func tabs() -> UIViewController {
-        RootTabBarController(store: store, reminders: reminders)
+        let tabs = RootTabBarController(store: store, reminders: reminders)
+#if DEBUG
+        // `-thawTab payday` opens on a given tab, for simulator checks and screenshots.
+        let arguments = ProcessInfo.processInfo.arguments
+        if let index = arguments.firstIndex(of: "-thawTab"), arguments.indices.contains(index + 1),
+           let tab = RootTabBarController.Tab.allCases.first(where: { "\($0)" == arguments[index + 1] }) {
+            tabs.select(tab)
+        }
+#endif
+        return tabs
     }
 
     private func onboarding() -> UIViewController {
