@@ -1,0 +1,31 @@
+Thaw/Features/Saved/SavedViewController.swift
+  s_e31ba14972c639::t_64595fdbb838f5 291,293,300,360-377
+  s_e31ba14972c639::t_2154f5a99a006d 378-379
+Thaw/Features/Saved/SavedPresenter.swift
+  s_e31ba14972c639::t_c84f1854781b2d 103,124
+  s_e31ba14972c639::t_9badae58c33851 119
+Thaw/DesignSystem/StatChipView.swift
+  s_e31ba14972c639::t_64595fdbb838f5 3-4,10,15,26,28-29,32-39,41-47,49-51,61-69
+  s_e31ba14972c639::t_7a6f7a1af272af 52-54
+ThawTests/PresenterSavedTests.swift
+  s_e31ba14972c639::t_c84f1854781b2d 112,120,123
+  s_e31ba14972c639::t_8d3b6829104e17 113
+Thaw/Features/Shared/ComponentGalleryViewController.swift
+  s_e31ba14972c639::t_a82a99bf734444 42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "887c18910400b49c0355ea4fc19c72bfc135be2a",
+  "prompts": {},
+  "sessions": {
+    "s_e31ba14972c639": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "73995f04-92b3-496e-82e8-dd4ec1ed8de3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
