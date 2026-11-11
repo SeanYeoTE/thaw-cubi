@@ -7,6 +7,7 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol, UICo
     private var content: SettingsContent?
     private var collectionView: UICollectionView!
     private var dataSource: UICollectionViewDiffableDataSource<String, SettingsRowID>!
+    private static let titleKind = "settings.title"
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -18,14 +19,22 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol, UICo
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = Theme.background
-        navigationItem.largeTitleDisplayMode = .always
-        navigationController?.navigationBar.prefersLargeTitles = true
+        // The system large title stays blank over a collection view until the first scroll, so the list draws
+        // the title itself, like Cooling, Payday and Stats. The pushed Payday screen gets a chevron-only back button.
+        navigationItem.largeTitleDisplayMode = .never
+        navigationItem.title = ""
+        navigationItem.backButtonDisplayMode = .minimal
 
-        let layout = UICollectionViewCompositionalLayout { [weak self] index, environment in
+        let titleItem = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(64)),
+            elementKind: Self.titleKind, alignment: .top)
+        let layoutConfiguration = UICollectionViewCompositionalLayoutConfiguration()
+        layoutConfiguration.boundarySupplementaryItems = [titleItem]
+        let layout = UICollectionViewCompositionalLayout(sectionProvider: { [weak self] index, environment in
             let section = self?.section(at: index)
             let configuration = SettingsListStyle.listConfiguration(footer: section?.footer != nil)
             return SettingsListStyle.section(configuration, environment: environment)
-        }
+        }, configuration: layoutConfiguration)
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = Theme.background
         collectionView.keyboardDismissMode = .interactive
@@ -112,10 +121,17 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol, UICo
         ) { [weak self] view, _, path in
             view.contentConfiguration = SettingsListStyle.footer(self?.section(at: path.section)?.footer)
         }
+        let titleHeader = UICollectionView.SupplementaryRegistration<SettingsTitleView>(
+            elementKind: Self.titleKind
+        ) { [weak self] view, _, _ in
+            view.text = self?.content?.title ?? "Settings"
+        }
         dataSource.supplementaryViewProvider = { view, kind, path in
-            kind == UICollectionView.elementKindSectionHeader
-                ? view.dequeueConfiguredReusableSupplementary(using: header, for: path)
-                : view.dequeueConfiguredReusableSupplementary(using: footer, for: path)
+            switch kind {
+            case Self.titleKind: view.dequeueConfiguredReusableSupplementary(using: titleHeader, for: path)
+            case UICollectionView.elementKindSectionHeader: view.dequeueConfiguredReusableSupplementary(using: header, for: path)
+            default: view.dequeueConfiguredReusableSupplementary(using: footer, for: path)
+            }
         }
     }
 
@@ -124,6 +140,8 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol, UICo
     func render(_ content: SettingsContent) {
         self.content = content
         title = content.title
+        // Setting `title` also sets the bar title; the list draws it instead.
+        navigationItem.title = ""
         guard let dataSource else { return }
         var snapshot = NSDiffableDataSourceSnapshot<String, SettingsRowID>()
         for section in content.sections {
@@ -152,4 +170,38 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol, UICo
         guard let id = dataSource.itemIdentifier(for: indexPath) else { return }
         presenter?.tapRow(id)
     }
+}
+
+/// The screen title drawn at the top of the list, aligned with the inset-grouped cards and capped to the content column.
+private final class SettingsTitleView: UICollectionReusableView {
+    private let label = UILabel()
+
+    var text: String? {
+        get { label.text }
+        set { label.text = newValue }
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        label.font = ThawFont.display(36)
+        label.textColor = Theme.ink
+        label.numberOfLines = 0
+        label.adjustsFontForContentSizeCategory = true
+        label.accessibilityTraits = .header
+        label.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(label)
+        let column = SettingsListStyle.maxContentWidth - 2 * Theme.Spacing.screen
+        let width = label.widthAnchor.constraint(equalToConstant: column)
+        width.priority = .defaultHigh
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: centerXAnchor),
+            label.leadingAnchor.constraint(greaterThanOrEqualTo: safeAreaLayoutGuide.leadingAnchor, constant: Theme.Spacing.screen),
+            label.trailingAnchor.constraint(lessThanOrEqualTo: safeAreaLayoutGuide.trailingAnchor, constant: -Theme.Spacing.screen),
+            width,
+            label.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+            label.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
+        ])
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
 }
