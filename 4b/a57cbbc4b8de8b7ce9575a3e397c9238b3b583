@@ -1,0 +1,34 @@
+Thaw/DesignSystem/EmptyStateView.swift
+  s_7763096e29871a::t_17211a53e8098c 1-47
+Thaw/DesignSystem/StatChipView.swift
+  s_7763096e29871a::t_e862c3892ffa77 1-77
+  s_7763096e29871a::t_0397635edfe90b 78-81
+Thaw/DesignSystem/FilterChipBar.swift
+  s_7763096e29871a::t_c032c3d0703a57 1-140
+Thaw/DesignSystem/SectionHeaderView.swift
+  s_7763096e29871a::t_44957d7e849f95 1-61
+Thaw/Features/Shared/WantListStyle.swift
+  s_7763096e29871a::t_12c337f4f57e54 6-16
+Thaw/Features/Shared/ComponentGalleryViewController.swift
+  s_7763096e29871a::t_5a4b27511e1fcd 1-79
+Thaw/Features/Shared/WantRowModel.swift
+  s_7763096e29871a::t_71e2e5ed9b84df 11-12,20-51
+Thaw/Features/Shared/WantRowView.swift
+  s_7763096e29871a::t_d0a65b621253b9 5-6,30-46,48-70,135-144
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4ba57cbbc4b8de8b7ce9575a3e397c9238b3b583",
+  "prompts": {},
+  "sessions": {
+    "s_7763096e29871a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "713934a4-d6ff-41f2-886f-7a2a7c01a43d",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
