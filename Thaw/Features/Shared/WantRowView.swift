@@ -2,6 +2,8 @@ import UIKit
 
 /// Two-line card: title and price, then status and trailing caption. Both lines use the full row width and
 /// stack vertically at accessibility sizes. Progress is a strip on the card's bottom edge so rows stay short.
+/// With no status the card is one line (optional symbol · title, then price · trailing); it also stacks at
+/// accessibility sizes.
 final class WantRowView: UIView {
     private static let stripHeight: CGFloat = 4
 
@@ -19,21 +21,53 @@ final class WantRowView: UIView {
         price.setContentCompressionResistancePriority(.required, for: .horizontal)
         price.textAlignment = .right
 
-        let status = Self.label(model.status, font: ThawFont.body(13), color: Self.color(model.statusTone))
         let trailing = Self.label(model.trailing ?? "", font: ThawFont.body(13), color: Theme.inkSecondary)
         trailing.setContentHuggingPriority(.required, for: .horizontal)
         trailing.setContentCompressionResistancePriority(.required, for: .horizontal)
         trailing.textAlignment = .right
         trailing.isHidden = model.trailing == nil
 
-        let top = AdaptiveStackView(arrangedSubviews: [title, price])
-        top.compactAlignment = .firstBaseline
-        top.spacing = 12
-        let bottom = AdaptiveStackView(arrangedSubviews: [status, trailing])
-        bottom.compactAlignment = .firstBaseline
-        bottom.spacing = 12
+        let titleView: UIView
+        if let symbol = model.leadingSymbol, let image = UIImage(systemName: symbol) {
+            let icon = UIImageView(image: image)
+            icon.preferredSymbolConfiguration = UIImage.SymbolConfiguration(font: ThawFont.body(15, weight: .semibold))
+            icon.adjustsImageSizeForAccessibilityContentSizeCategory = true
+            icon.tintColor = Self.color(model.statusTone)
+            icon.contentMode = .scaleAspectFit
+            icon.setContentHuggingPriority(.required, for: .horizontal)
+            icon.setContentCompressionResistancePriority(.required, for: .horizontal)
+            let titleRow = TitleRowStackView(arrangedSubviews: [icon, title])
+            titleRow.baselineView = title
+            titleRow.alignment = .center
+            titleRow.spacing = 8
+            titleView = titleRow
+        } else {
+            titleView = title
+        }
 
-        let stack = UIStackView(arrangedSubviews: [top, bottom])
+        let stack = UIStackView()
+        if let statusText = model.status {
+            let status = Self.label(statusText, font: ThawFont.body(13), color: Self.color(model.statusTone))
+            let top = AdaptiveStackView(arrangedSubviews: [titleView, price])
+            top.compactAlignment = .firstBaseline
+            top.spacing = 12
+            let bottom = AdaptiveStackView(arrangedSubviews: [status, trailing])
+            bottom.compactAlignment = .firstBaseline
+            bottom.spacing = 12
+            stack.addArrangedSubview(top)
+            stack.addArrangedSubview(bottom)
+        } else {
+            // Lean row: symbol · title on the left, price · trailing on the right, on one line.
+            let values = UIStackView(arrangedSubviews: [price, trailing])
+            values.alignment = .firstBaseline
+            values.spacing = 8
+            values.setContentHuggingPriority(.required, for: .horizontal)
+            values.setContentCompressionResistancePriority(.required, for: .horizontal)
+            let row = AdaptiveStackView(arrangedSubviews: [titleView, values])
+            row.compactAlignment = .center
+            row.spacing = 12
+            stack.addArrangedSubview(row)
+        }
         stack.axis = .vertical
         stack.spacing = 2
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -97,4 +131,14 @@ final class WantRowView: UIView {
         case .timer: Theme.warm
         }
     }
+}
+
+/// Icon beside the title that aligns with neighbouring text on the title's baseline, not the icon's bottom.
+private final class TitleRowStackView: UIStackView {
+    weak var baselineView: UIView?
+
+    override var forFirstBaselineLayout: UIView { baselineView ?? super.forFirstBaselineLayout }
+    override var forLastBaselineLayout: UIView { baselineView ?? super.forLastBaselineLayout }
+
+    deinit {}
 }
