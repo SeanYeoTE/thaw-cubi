@@ -2,27 +2,46 @@ import Charts
 import SwiftUI
 import UIKit
 
-/// Saved tab: header (Cubi, total, progress) and History rows in a collection view list,
+/// Stats tab: header (total, chips, chart, filter) and month-grouped History rows in a collection view list,
 /// so History rows get swipe actions. Visually matches the `ScrollStackViewController` screens.
 final class SavedViewController: UIViewController, SavedViewProtocol {
     private nonisolated enum Section: Hashable, Sendable {
-        case header
-        case history
+        case top
+        case note
+        case month(Date)
     }
 
     private nonisolated enum Item: Hashable, Sendable {
-        case header
+        case top
+        case note
+        case monthHeader(Date)
         case row(UUID)
     }
 
-    /// Same column cap and margins as `ScrollStackViewController`.
-    private static let maxContentWidth: CGFloat = 700
+    /// Everything the top cell draws, except the filter selection, which the chip bar already shows after a tap.
+    private struct TopContent: Equatable {
+        let hero: SavedHeroViewModel
+        let chips: [SavedStatChip]
+        let chart: SavedChartViewModel
+        let empty: SavedEmptyViewModel?
+        let filterTitles: [String]?
+
+        init(_ model: SavedViewModel) {
+            hero = model.hero
+            chips = model.chips
+            chart = model.chart
+            empty = model.empty
+            filterTitles = model.history?.filterTitles
+        }
+    }
+
     private static let rowGap = WantListStyle.rowGap
 
     var presenter: SavedPresenterProtocol?
 
     private var model: SavedViewModel?
     private var rows: [UUID: SavedHistoryRow] = [:]
+    private var sections: [Date: SavedHistorySection] = [:]
     private var collectionView: UICollectionView!
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
 
@@ -32,6 +51,9 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
+
+    // Explicit deinit: the synthesized one on a MainActor class with weak refs corrupts the heap in the test host.
+    deinit {}
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,19 +86,29 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
     // MARK: - SavedViewProtocol
 
     func render(_ model: SavedViewModel) {
+        let topChanged = self.model.map { TopContent($0) != TopContent(model) } ?? true
         self.model = model
-        rows = Dictionary(model.history.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let history = model.history?.sections ?? []
+        rows = Dictionary(history.flatMap(\.rows).map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        sections = Dictionary(history.map { ($0.month, $0) }, uniquingKeysWith: { first, _ in first })
         guard let dataSource else { return }
 
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        snapshot.appendSections([.header])
-        snapshot.appendItems([.header])
-        if !model.history.isEmpty {
-            snapshot.appendSections([.history])
-            snapshot.appendItems(model.history.map { .row($0.id) })
+        snapshot.appendSections([.top])
+        snapshot.appendItems([.top])
+        if model.history?.emptyText != nil {
+            snapshot.appendSections([.note])
+            snapshot.appendItems([.note])
+        }
+        var seen = Set<UUID>()
+        for section in history {
+            snapshot.appendSections([.month(section.month)])
+            let ids = section.rows.map(\.id).filter { seen.insert($0).inserted }
+            snapshot.appendItems([.monthHeader(section.month)] + ids.map { .row($0) })
         }
         let existing = Set(dataSource.snapshot().itemIdentifiers)
-        snapshot.reconfigureItems(snapshot.itemIdentifiers.filter(existing.contains))
+        let reconfigure = snapshot.itemIdentifiers.filter { existing.contains($0) && ($0 != .top || topChanged) }
+        snapshot.reconfigureItems(reconfigure)
         dataSource.apply(snapshot, animatingDifferences: view.window != nil)
     }
 
@@ -89,39 +121,63 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         present(alert, animated: true)
     }
 
+    func showChipExplanation(_ explanation: SavedChipExplanation) {
+        let alert = UIAlertController(title: nil, message: explanation.message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: explanation.dismissTitle, style: .default))
+        present(alert, animated: true)
+    }
+
     // MARK: - Layout
 
     private func makeLayout() -> UICollectionViewLayout {
         UICollectionViewCompositionalLayout { [weak self] index, environment in
             guard let self else { return nil }
-            let section = self.dataSource?.sectionIdentifier(for: index) ?? .header
+            let snapshot = self.dataSource?.snapshot()
+            let section = self.dataSource?.sectionIdentifier(for: index) ?? .top
             var config = UICollectionLayoutListConfiguration(appearance: .plain)
             config.showsSeparators = false
             config.backgroundColor = .clear
-            if section == .history {
+            if case .month = section {
                 config.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath in
                     self?.swipeActions(at: indexPath)
                 }
             }
             let layoutSection = NSCollectionLayoutSection.list(using: config, layoutEnvironment: environment)
             layoutSection.contentInsetsReference = .none
-            if section == .history { WantListStyle.applyRowSpacing(to: layoutSection) }
-            let safe = self.collectionView?.safeAreaInsets ?? .zero
-            let available = environment.container.contentSize.width - safe.left - safe.right
-            let side = max(Theme.Spacing.screen, (available - Self.maxContentWidth) / 2)
-            let hasHistory = self.dataSource?.snapshot().indexOfSection(.history) != nil
-            let bottom: CGFloat = section == .history ? 24 : (!hasHistory ? 24 - Self.rowGap / 2 : 0)
-            layoutSection.contentInsets = NSDirectionalEdgeInsets(
-                top: section == .history ? Self.rowGap / 2 : 0, leading: safe.left + side, bottom: bottom, trailing: safe.right + side
-            )
+            let top: CGFloat
+            switch section {
+            case .top:
+                top = 0
+            case .note:
+                top = Self.rowGap
+            case .month:
+                WantListStyle.applyRowSpacing(to: layoutSection)
+                top = 24
+            }
+            let isLast = index == (snapshot?.numberOfSections ?? 1) - 1
+            layoutSection.contentInsets = WantListStyle.contentInsets(
+                environment: environment, safeArea: self.collectionView?.safeAreaInsets ?? .zero,
+                top: top, bottom: isLast ? 24 : 0)
             return layoutSection
         }
     }
 
     private func makeDataSource() -> UICollectionViewDiffableDataSource<Section, Item> {
-        let headerRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Item> { [weak self] cell, _, _ in
+        let topRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Item> { [weak self] cell, _, _ in
             guard let self, let model = self.model else { return }
-            self.configureHeader(cell, model: model)
+            self.configureTop(cell, model: model)
+        }
+        let noteRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Item> { [weak self] cell, _, _ in
+            guard let self, let text = self.model?.history?.emptyText else { return }
+            self.prepare(cell)
+            let label = self.makeLabel(text, font: ThawFont.body(15), color: Theme.inkSecondary)
+            self.pin(label, in: cell.contentView, top: 0, bottom: 0)
+        }
+        // A plain cell, so the header isn't held to the list cell's 44 pt minimum height.
+        let headerRegistration = UICollectionView.CellRegistration<UICollectionViewCell, Date> { [weak self] cell, _, month in
+            guard let self, let section = self.sections[month] else { return }
+            cell.contentView.subviews.forEach { $0.removeFromSuperview() }
+            self.pin(SectionHeaderView(title: section.title, detail: section.detail), in: cell.contentView, top: 0, bottom: 0)
         }
         let rowRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, UUID> { [weak self] cell, _, id in
             guard let self, let row = self.rows[id] else { return }
@@ -129,8 +185,12 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         }
         return UICollectionViewDiffableDataSource(collectionView: collectionView) { collectionView, indexPath, item in
             switch item {
-            case .header:
-                collectionView.dequeueConfiguredReusableCell(using: headerRegistration, for: indexPath, item: item)
+            case .top:
+                collectionView.dequeueConfiguredReusableCell(using: topRegistration, for: indexPath, item: item)
+            case .note:
+                collectionView.dequeueConfiguredReusableCell(using: noteRegistration, for: indexPath, item: item)
+            case .monthHeader(let month):
+                collectionView.dequeueConfiguredReusableCell(using: headerRegistration, for: indexPath, item: month)
             case .row(let id):
                 collectionView.dequeueConfiguredReusableCell(using: rowRegistration, for: indexPath, item: id)
             }
@@ -139,46 +199,58 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
 
     // MARK: - Cells
 
-    private func configureHeader(_ cell: UICollectionViewListCell, model: SavedViewModel) {
+    private func configureTop(_ cell: UICollectionViewListCell, model: SavedViewModel) {
         prepare(cell)
         let stack = UIStackView()
         stack.axis = .vertical
-        stack.spacing = Self.rowGap
+        stack.spacing = 20
         let heading = makeLabel(title ?? "Stats", font: ThawFont.display(36))
         heading.accessibilityTraits = .header
         stack.addArrangedSubview(heading)
-        if let progress = model.progress {
-            stack.addArrangedSubview(cubiBesideStats(model.cubi, progress))
-        } else {
-            stack.addArrangedSubview(CubiHeaderView(mood: model.cubi.mood, line: model.cubi.line, spoken: model.cubi.line))
-            if let emptyText = model.emptyText {
-                stack.addArrangedSubview(makeLabel(emptyText, font: ThawFont.body(16)))
+
+        if let empty = model.empty {
+            stack.setCustomSpacing(48, after: heading)
+            stack.addArrangedSubview(EmptyStateView(mood: empty.mood, line: empty.line, actionTitle: nil))
+            pin(stack, in: cell.contentView, top: 16, bottom: 0)
+            return
+        }
+
+        stack.setCustomSpacing(Theme.Spacing.gap, after: heading)
+        stack.addArrangedSubview(heroView(model.hero))
+        if !model.chips.isEmpty {
+            stack.addArrangedSubview(chipRow(model.chips))
+        }
+        if model.chart.showsChart {
+            let chart = model.chart
+            if chart.showsRangePicker {
+                let picker = rangePicker(chart)
+                stack.addArrangedSubview(picker)
+                stack.setCustomSpacing(Theme.Spacing.gap, after: picker)
             }
+            stack.addArrangedSubview(savedChart(chart))
         }
-        if model.monthlySaved.count >= 2 {
-            stack.addArrangedSubview(makeLabel("Saved per month", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
-            stack.addArrangedSubview(savedChart(model.monthlySaved))
+        if let history = model.history {
+            let filter = FilterChipBar(titles: history.filterTitles, selectedIndex: history.selectedFilter)
+            filter.onChange = { [weak self] index in self?.presenter?.selectHistoryFilter(at: index) }
+            stack.addArrangedSubview(filter)
         }
-        if !model.history.isEmpty {
-            stack.addArrangedSubview(makeLabel("History", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
-        }
-        pin(stack, in: cell.contentView, top: 16, bottom: Self.rowGap / 2)
+        pin(stack, in: cell.contentView, top: 16, bottom: 0)
     }
 
     private func configureRow(_ cell: UICollectionViewListCell, row: SavedHistoryRow) {
         prepare(cell)
         let card = WantRowView(model: WantRowModel(
-            title: row.name, priceText: row.priceText, status: row.outcome,
-            statusTone: row.isSkipped ? .accent : .neutral, trailing: row.dateText,
-            progress: nil, progressTone: .neutral,
-            accessibilityLabel: "\(row.name), \(row.priceText)",
-            accessibilityValue: "\(row.outcome), frozen \(row.dateText)"))
+            title: row.name, priceText: row.priceText,
+            leadingSymbol: row.isSkipped ? "xmark.circle" : "checkmark.circle",
+            tone: row.isSkipped ? .accent : .neutral,
+            accessibilityLabel: row.accessibilityLabel,
+            accessibilityValue: row.accessibilityValue))
         pin(card, in: cell.contentView, top: 0, bottom: 0)
 
         let id = row.id
         cell.isAccessibilityElement = true
-        cell.accessibilityLabel = "\(row.name), \(row.priceText)"
-        cell.accessibilityValue = "\(row.outcome), frozen \(row.dateText)"
+        cell.accessibilityLabel = row.accessibilityLabel
+        cell.accessibilityValue = row.accessibilityValue
         cell.accessibilityCustomActions = WantListStyle.accessibilityActions(
             onEdit: { [weak self] in self?.presenter?.tapEdit(id: id) },
             onDelete: { [weak self] in self?.presenter?.tapDelete(id: id) })
@@ -193,45 +265,70 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         cell.accessibilityCustomActions = nil
     }
 
-    /// Cubi on the leading edge with the progress stats beside it; stacks at accessibility sizes.
-    private func cubiBesideStats(_ cubi: SavedCubiViewModel, _ model: SavedProgressViewModel) -> UIView {
-        let avatar = CubiView(mood: cubi.mood, size: 56)
-        avatar.spokenLine = cubi.line
+    /// Cubi beside the total saved; stacks at accessibility sizes.
+    private func heroView(_ hero: SavedHeroViewModel) -> UIView {
+        let avatar = CubiView(mood: hero.mood, size: 72)
+        avatar.spokenLine = hero.spokenLine
         avatar.setContentHuggingPriority(.required, for: .horizontal)
         avatar.setContentCompressionResistancePriority(.required, for: .horizontal)
-        let column = AdaptiveStackView()
-        column.compactAlignment = .top
-        column.distribution = .fillEqually
-        column.spacing = 12
-        for stat in model.stats {
-            let value = makeLabel(stat.value, font: ThawFont.display(22))
-            let caption = makeLabel(stat.caption, font: ThawFont.body(12), color: Theme.inkSecondary)
-            let item = UIStackView(arrangedSubviews: [value, caption])
-            item.axis = .vertical
-            item.spacing = 2
-            item.isAccessibilityElement = true
-            item.accessibilityLabel = stat.spoken
-            column.addArrangedSubview(item)
-        }
+
+        let amount = makeLabel(hero.savedText, font: ThawFont.display(44))
+        let caption = makeLabel(hero.caption, font: ThawFont.body(15), color: Theme.inkSecondary)
+        let column = UIStackView(arrangedSubviews: [amount, caption])
+        column.axis = .vertical
+        column.spacing = 0
+        column.isAccessibilityElement = true
+        column.accessibilityLabel = hero.spoken
+
         let row = AdaptiveStackView(arrangedSubviews: [avatar, column])
         row.compactAlignment = .center
-        row.spacing = 14
+        row.spacing = 16
         return row
     }
 
-    private func savedChart(_ months: [SavedMonthlyAmount]) -> UIView {
-        let view = UIHostingConfiguration {
-            Chart(months) { point in
-                BarMark(x: .value("Month", point.month, unit: .month), y: .value("Saved", point.amount))
-                    .foregroundStyle(Color(Theme.accent))
-                    .cornerRadius(4)
-            }
-            .frame(height: 140)
-            .accessibilityLabel("Saved per month")
+    /// One row of chips, stacking at accessibility sizes.
+    private func chipRow(_ chips: [SavedStatChip]) -> UIView {
+        let row = AdaptiveStackView()
+        row.compactAlignment = .center
+        row.spacing = 8
+        for (index, chip) in chips.enumerated() {
+            let view = StatChipView(symbol: chip.symbol, value: chip.value, caption: chip.caption, spoken: chip.spoken)
+            view.addAction(UIAction { [weak self] _ in self?.presenter?.tapChip(at: index) }, for: .touchUpInside)
+            row.addArrangedSubview(view)
+        }
+        let container = UIView()
+        row.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(row)
+        NSLayoutConstraint.activate([
+            row.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            row.trailingAnchor.constraint(lessThanOrEqualTo: container.trailingAnchor),
+            row.topAnchor.constraint(equalTo: container.topAnchor),
+            row.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+        ])
+        return container
+    }
+
+    private func rangePicker(_ chart: SavedChartViewModel) -> UIView {
+        let picker = UISegmentedControl(items: chart.rangeTitles)
+        picker.selectedSegmentIndex = chart.selectedRange
+        let font = ThawFont.body(13, weight: .semibold)
+        picker.setTitleTextAttributes([.font: font, .foregroundColor: Theme.ink], for: .normal)
+        picker.setTitleTextAttributes([.font: font, .foregroundColor: UIColor.white], for: .selected)
+        picker.selectedSegmentTintColor = Theme.accent
+        picker.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
+        picker.addAction(UIAction { [weak self, weak picker] _ in
+            guard let picker else { return }
+            self?.presenter?.selectChartRange(at: picker.selectedSegmentIndex)
+        }, for: .valueChanged)
+        return picker
+    }
+
+    private func savedChart(_ chart: SavedChartViewModel) -> UIView {
+        UIHostingConfiguration {
+            SavedChartView(months: chart.months, label: chart.accessibilityLabel)
         }
         .margins(.all, 0)
         .makeContentView()
-        return view
     }
 
     // MARK: - Swipe actions
@@ -271,4 +368,41 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
 extension SavedViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool { false }
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool { false }
+}
+
+/// Bars per month; the current month is solid. Tapping or dragging over a bar keeps it selected and labels it.
+private struct SavedChartView: View {
+    let months: [SavedMonthlyAmount]
+    let label: String
+    @State private var rawSelection: Date?
+    @State private var selectedMonth: Date?
+
+    var body: some View {
+        Chart(months) { point in
+            BarMark(x: .value("Month", point.month, unit: .month), y: .value("Saved", point.amount))
+                .foregroundStyle(Color(Theme.accent).opacity(point.isCurrent || point.month == selectedMonth ? 1 : 0.35))
+                .cornerRadius(4)
+                .annotation(position: .top, overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
+                    if point.month == selectedMonth {
+                        Text(point.selectionText)
+                            .font(Font(ThawFont.body(13, weight: .semibold)))
+                            .foregroundStyle(Color(Theme.ink))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Capsule().fill(Color(Theme.surface)))
+                            .overlay(Capsule().stroke(Color(Theme.border)))
+                    }
+                }
+                .accessibilityLabel(point.spokenMonth)
+                .accessibilityValue(point.spokenAmount)
+        }
+        .chartXSelection(value: $rawSelection)
+        .onChange(of: rawSelection) { _, new in
+            guard let new else { return }
+            selectedMonth = months.first { Calendar.current.isDate($0.month, equalTo: new, toGranularity: .month) }?.month
+        }
+        .padding(.top, 28)
+        .frame(height: 180)
+        .accessibilityLabel(label)
+    }
 }
