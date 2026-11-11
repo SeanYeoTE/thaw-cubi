@@ -1,0 +1,19 @@
+Thaw/Features/Saved/SavedViewController.swift
+  s_03e3f03c75096c::t_61c58946c1c93f 176,178,371-404
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9586572a34ac819b6cc7b072b9647014cfed2c80",
+  "prompts": {},
+  "sessions": {
+    "s_03e3f03c75096c": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "838bba59-8487-4356-bbc9-f3a65edf74e2",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
