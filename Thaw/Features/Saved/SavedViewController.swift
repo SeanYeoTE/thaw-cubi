@@ -17,7 +17,7 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
 
     /// Same column cap and margins as `ScrollStackViewController`.
     private static let maxContentWidth: CGFloat = 700
-    private static let rowGap: CGFloat = 14
+    private static let rowGap = WantListStyle.rowGap
 
     var presenter: SavedPresenterProtocol?
 
@@ -105,13 +105,14 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
             }
             let layoutSection = NSCollectionLayoutSection.list(using: config, layoutEnvironment: environment)
             layoutSection.contentInsetsReference = .none
+            if section == .history { WantListStyle.applyRowSpacing(to: layoutSection) }
             let safe = self.collectionView?.safeAreaInsets ?? .zero
             let available = environment.container.contentSize.width - safe.left - safe.right
             let side = max(Theme.Spacing.screen, (available - Self.maxContentWidth) / 2)
             let hasHistory = self.dataSource?.snapshot().indexOfSection(.history) != nil
-            let bottom: CGFloat = section == .history || !hasHistory ? 24 - Self.rowGap / 2 : 0
+            let bottom: CGFloat = section == .history ? 24 : (!hasHistory ? 24 - Self.rowGap / 2 : 0)
             layoutSection.contentInsets = NSDirectionalEdgeInsets(
-                top: 0, leading: safe.left + side, bottom: bottom, trailing: safe.right + side
+                top: section == .history ? Self.rowGap / 2 : 0, leading: safe.left + side, bottom: bottom, trailing: safe.right + side
             )
             return layoutSection
         }
@@ -172,7 +173,7 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
             progress: nil, progressTone: .neutral,
             accessibilityLabel: "\(row.name), \(row.priceText)",
             accessibilityValue: "\(row.outcome), frozen \(row.dateText)"))
-        pin(card, in: cell.contentView, top: Self.rowGap / 2, bottom: Self.rowGap / 2)
+        pin(card, in: cell.contentView, top: 0, bottom: 0)
 
         let id = row.id
         cell.isAccessibilityElement = true
@@ -244,21 +245,10 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
 
     private func swipeActions(at indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard case .row(let id) = dataSource.itemIdentifier(for: indexPath) else { return nil }
-        let delete = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, done in
-            // The row stays until the user confirms, so the swipe reports "not performed".
-            done(false)
-            self?.presenter?.tapDelete(id: id)
-        }
-        delete.image = UIImage(systemName: "trash")
-        let edit = UIContextualAction(style: .normal, title: "Edit") { [weak self] _, _, done in
-            done(true)
-            self?.presenter?.tapEdit(id: id)
-        }
-        edit.image = UIImage(systemName: "arrow.uturn.backward")
-        edit.backgroundColor = Theme.accent
-        let configuration = UISwipeActionsConfiguration(actions: [delete, edit])
-        configuration.performsFirstActionWithFullSwipe = false
-        return configuration
+        return WantListStyle.swipeActions(
+            onEdit: { [weak self] in self?.presenter?.tapEdit(id: id) },
+            onDelete: { [weak self] in self?.presenter?.tapDelete(id: id) }
+        )
     }
 
     // MARK: - Helpers

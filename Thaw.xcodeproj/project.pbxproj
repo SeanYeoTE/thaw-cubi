@@ -29,6 +29,7 @@
 		2F93D62C00351179632F3FC1 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C6FD23F86B998D45F66CF5 /* Theme.swift */; };
 		314A644020947C37A9A8F79A /* PresenterSavedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115E67F988ECDC1D95B88459 /* PresenterSavedTests.swift */; };
 		320847D69BEBAF3C7919D945 /* WantRowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FA6672BF692E903693B43B /* WantRowModel.swift */; };
+		36A59BFA94F23381564CD3F0 /* WantListStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2649F7C89AD359E73C96300 /* WantListStyle.swift */; };
 		3D59B7262BF14428EFA318EC /* AddWantViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8046A6BE40C36BFCD77BF1 /* AddWantViewController.swift */; };
 		3E05091ADA60413300AEE509 /* PaydaySetupContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE81E638F2A9EDA5221AD1A5 /* PaydaySetupContracts.swift */; };
 		40DC6FE7DA9F4E2D4992C2D1 /* PresenterPaydaySetupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33895ADF18C40EF814F7D450 /* PresenterPaydaySetupTests.swift */; };
@@ -220,6 +221,7 @@
 		D075AB4E1E93236E8E2A7DB4 /* StillWantItInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillWantItInteractor.swift; sourceTree = "<group>"; };
 		D7CA6D24F6CB292754099B8D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DFC231751AC0B6D182D8F131 /* StillWantItRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillWantItRouter.swift; sourceTree = "<group>"; };
+		E2649F7C89AD359E73C96300 /* WantListStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WantListStyle.swift; sourceTree = "<group>"; };
 		E40459DC7F21FA527CDD4EDB /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		E4EBA4161660F177F921754F /* ReviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSheet.swift; sourceTree = "<group>"; };
 		E70FE21CD13500F375F4B52D /* PaydayPreviewInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayPreviewInteractor.swift; sourceTree = "<group>"; };
@@ -295,6 +297,7 @@
 				3D5FDD6B49F220715E738273 /* MomentView.swift */,
 				E4EBA4161660F177F921754F /* ReviewSheet.swift */,
 				8AAE0F7AB3622B54B79F59EE /* ShareItemParser.swift */,
+				E2649F7C89AD359E73C96300 /* WantListStyle.swift */,
 				44FA6672BF692E903693B43B /* WantRowModel.swift */,
 				F6FC8314B7F61D8701275C6F /* WantRowView.swift */,
 				73DFBA44C4D21B9E45828A3D /* WantStore+Review.swift */,
@@ -681,6 +684,7 @@
 				9EBB3668C44C880491BC5B72 /* StillWantItViewController.swift in Sources */,
 				55ABEDA9BA4FA4A661C12B84 /* Theme.swift in Sources */,
 				9BF415AF2DEB3CEE68DB1D8B /* Want.swift in Sources */,
+				36A59BFA94F23381564CD3F0 /* WantListStyle.swift in Sources */,
 				320847D69BEBAF3C7919D945 /* WantRowModel.swift in Sources */,
 				D1C8A2C458CC7E4BE8F3D48D /* WantRowView.swift in Sources */,
 				49F36EEFE058146C0CBC5DFB /* WantStore+Review.swift in Sources */,

@@ -17,7 +17,7 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
 
     /// Same column cap and margins as `ScrollStackViewController`.
     private static let maxContentWidth: CGFloat = 700
-    private static let rowGap: CGFloat = 18
+    private static let rowGap = WantListStyle.rowGap
 
     var presenter: HomePresenterProtocol?
 
@@ -132,12 +132,13 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
             }
             let layoutSection = NSCollectionLayoutSection.list(using: config, layoutEnvironment: environment)
             layoutSection.contentInsetsReference = .none
+            if section == .wants { WantListStyle.applyRowSpacing(to: layoutSection) }
             let safe = self.collectionView?.safeAreaInsets ?? .zero
             let available = environment.container.contentSize.width - safe.left - safe.right
             let side = max(Theme.Spacing.screen, (available - Self.maxContentWidth) / 2)
             let hasWants = self.dataSource?.snapshot().indexOfSection(.wants) != nil
-            let top: CGFloat = 0
-            let bottom: CGFloat = section == .wants || !hasWants ? 24 - Self.rowGap / 2 : 0
+            let top: CGFloat = section == .wants ? Self.rowGap / 2 : 0
+            let bottom: CGFloat = section == .wants ? 24 : (!hasWants ? 24 - Self.rowGap / 2 : 0)
             layoutSection.contentInsets = NSDirectionalEdgeInsets(
                 top: top, leading: safe.left + side, bottom: bottom, trailing: safe.right + side
             )
@@ -165,6 +166,7 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
         cell.accessibilityHint = nil
         let content: UIView
         var topGap = Self.rowGap / 2
+        var bottomGap = Self.rowGap / 2
         switch item {
         case .title:
             let label = UILabel()
@@ -197,6 +199,8 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
             content = label
         case .want(let id):
             guard let card = cards[id] else { return }
+            topGap = 0
+            bottomGap = 0
             let label = "\(card.name), \(card.priceText)"
             let value = "\(card.statusText), \(card.trailingText)"
             content = WantRowView(model: WantRowModel(
@@ -218,7 +222,7 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
             content.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor),
             content.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor),
             content.topAnchor.constraint(equalTo: cell.contentView.topAnchor, constant: topGap),
-            content.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor, constant: -Self.rowGap / 2),
+            content.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor, constant: -bottomGap),
         ])
     }
 
@@ -226,21 +230,10 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
 
     private func swipeActions(at indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard case .want(let id) = dataSource.itemIdentifier(for: indexPath) else { return nil }
-        let delete = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, done in
-            // The row stays until the user confirms, so the swipe reports "not performed".
-            done(false)
-            self?.presenter?.tapDelete(id: id)
-        }
-        delete.image = UIImage(systemName: "trash")
-        let edit = UIContextualAction(style: .normal, title: "Edit") { [weak self] _, _, done in
-            done(true)
-            self?.presenter?.tapEdit(id: id)
-        }
-        edit.image = UIImage(systemName: "pencil")
-        edit.backgroundColor = Theme.accent
-        let configuration = UISwipeActionsConfiguration(actions: [delete, edit])
-        configuration.performsFirstActionWithFullSwipe = false
-        return configuration
+        return WantListStyle.swipeActions(
+            onEdit: { [weak self] in self?.presenter?.tapEdit(id: id) },
+            onDelete: { [weak self] in self?.presenter?.tapDelete(id: id) }
+        )
     }
 
     // MARK: - Delegate
