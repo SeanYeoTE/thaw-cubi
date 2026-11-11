@@ -1,0 +1,38 @@
+Thaw/DesignSystem/FilterChipBar.swift
+  s_e31ba14972c639::t_3a678e1f672a1c 92
+Thaw/DesignSystem/CubiView.swift
+  s_e31ba14972c639::t_b6acceb3543486 60-61
+Thaw/DesignSystem/StatChipView.swift
+  s_e31ba14972c639::t_3a678e1f672a1c 15
+Thaw/Features/Shared/WantRowView.swift
+  s_e31ba14972c639::t_3a678e1f672a1c 131
+Thaw/DesignSystem/Theme.swift
+  s_e31ba14972c639::t_3a678e1f672a1c 6,8-10,15,17-18,29-30
+Thaw/Features/ItemDetail/ItemDetailViewController.swift
+  s_e31ba14972c639::t_3a678e1f672a1c 31
+Thaw/Features/Saved/SavedViewController.swift
+  s_e31ba14972c639::t_8b43d716b1fb87 252-253
+  s_e31ba14972c639::t_560695305d1023 370,372-388
+  s_e31ba14972c639::t_4211ada689436e 433-436
+  s_e31ba14972c639::t_c8f6194e4b2b12 440,443
+  s_e31ba14972c639::t_594b10982bff3b 265-266
+  s_e31ba14972c639::t_9be297d33a477b 425-426
+Thaw/Features/AddWant/AddWantViewController.swift
+  s_e31ba14972c639::t_3a678e1f672a1c 54,100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5f297b09ae4ffcc8be69f3ff9e6290345e5c6c0a",
+  "prompts": {},
+  "sessions": {
+    "s_e31ba14972c639": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "73995f04-92b3-496e-82e8-dd4ec1ed8de3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
