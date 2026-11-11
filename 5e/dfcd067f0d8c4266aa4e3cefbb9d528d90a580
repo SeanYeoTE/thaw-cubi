@@ -1,0 +1,19 @@
+Thaw.xcodeproj/project.pbxproj
+  s_e2ec78a4f3e7e8::t_2a3416d3290102 12,25,39,44-45,86,115,188,193,210,231,236,243,279,393-405,489,536,722-724,730,736,745,825
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5edfcd067f0d8c4266aa4e3cefbb9d528d90a580",
+  "prompts": {},
+  "sessions": {
+    "s_e2ec78a4f3e7e8": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "aa310863-7fd2-443d-ab1f-8d74ffe1b765",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
