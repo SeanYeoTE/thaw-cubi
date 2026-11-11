@@ -173,11 +173,9 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
             let label = self.makeLabel(text, font: ThawFont.body(15), color: Theme.inkSecondary)
             self.pin(label, in: cell.contentView, top: 0, bottom: 0)
         }
-        // A plain cell, so the header isn't held to the list cell's 44 pt minimum height.
-        let headerRegistration = UICollectionView.CellRegistration<UICollectionViewCell, Date> { [weak self] cell, _, month in
+        let headerRegistration = UICollectionView.CellRegistration<MonthHeaderCell, Date> { [weak self] cell, _, month in
             guard let self, let section = self.sections[month] else { return }
-            cell.contentView.subviews.forEach { $0.removeFromSuperview() }
-            self.pin(SectionHeaderView(title: section.title, detail: section.detail), in: cell.contentView, top: 0, bottom: 0)
+            cell.configure(title: section.title, detail: section.detail)
         }
         let rowRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, UUID> { [weak self] cell, _, id in
             guard let self, let row = self.rows[id] else { return }
@@ -368,6 +366,40 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
 extension SavedViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool { false }
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool { false }
+}
+
+/// Month header in the History list. Sizes to its text, so it isn't held to the list's 44 pt estimated row height.
+private final class MonthHeaderCell: UICollectionViewCell {
+    private let header = SectionHeaderView(title: "")
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        header.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(header)
+        NSLayoutConstraint.activate([
+            header.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            header.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            header.topAnchor.constraint(equalTo: contentView.topAnchor),
+            header.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+        ])
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
+
+    func configure(title: String, detail: String?) {
+        header.configure(title: title, detail: detail)
+    }
+
+    override func preferredLayoutAttributesFitting(
+        _ layoutAttributes: UICollectionViewLayoutAttributes
+    ) -> UICollectionViewLayoutAttributes {
+        let attributes = super.preferredLayoutAttributesFitting(layoutAttributes)
+        let size = contentView.systemLayoutSizeFitting(
+            CGSize(width: layoutAttributes.size.width, height: UIView.layoutFittingCompressedSize.height),
+            withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+        attributes.size.height = ceil(size.height)
+        return attributes
+    }
 }
 
 /// Bars per month; the current month is solid. Tapping or dragging over a bar keeps it selected and labels it.
