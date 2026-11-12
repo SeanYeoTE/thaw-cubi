@@ -1,0 +1,33 @@
+Thaw/Features/Payday/PaydayContracts.swift
+  s_e048aea97b944a::t_cff90388ac7731 14,16-24
+Thaw/Features/Payday/PaydayPresenter.swift
+  s_e048aea97b944a::t_71299c1d833039 58-63,67,77-81,83-91,93,104,106-107,114,116-119,127-166,168,177,182,186,201,208
+Thaw/Features/Payday/PaydayViewController.swift
+  s_e048aea97b944a::t_900f33d746e2fd 3,13-14,16,69-72,82-83,86,99-112,114,136,140-144,212-253
+ThawTests/PresenterPaydayTests.swift
+  s_7eb67a809c3ad5::t_f98840d4e86d8f 51,57-58,60,70-80,82,85-93,96,98-101,103-165,190,193-198,205-217
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "35d5a29ba42b4fac418f88e0dabab57528bb61c7",
+  "prompts": {},
+  "sessions": {
+    "s_7eb67a809c3ad5": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "2d36e4d0-0f19-48f2-a33f-b02b7e1f8df9",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    },
+    "s_e048aea97b944a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "fb770757-ff20-4c80-b42d-5f62f2dd0e8a",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
