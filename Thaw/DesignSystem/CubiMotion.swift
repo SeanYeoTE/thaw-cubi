@@ -46,6 +46,61 @@ enum CubiMotion {
         }
     }
 
+    /// Slow loops that keep Cubi alive while he sits on a screen. Additive, so they never fight the one-shot motion.
+    static func idleSteps(for mood: CubiMood, reduceMotion: Bool = UIAccessibility.isReduceMotionEnabled) -> [Step] {
+        guard !reduceMotion else { return [] }
+        switch mood {
+        case .frozen: // a quick shiver every few seconds
+            let shake = CAKeyframeAnimation(keyPath: "transform.translation.x")
+            shake.values = [0, 0, -2, 2, -2, 2, 0, 0]
+            shake.keyTimes = [0, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1]
+            shake.duration = 4
+            return [Step(part: .body, animation: loop(shake, autoreverses: false))]
+        case .thawing: // a drip that keeps forming
+            let drop = CABasicAnimation(keyPath: "transform.translation.y")
+            drop.fromValue = -4
+            drop.toValue = 6
+            let drip = group(drop, fade(from: 1, to: 0.2))
+            drip.duration = 1.8
+            return [Step(part: .prop, animation: loop(drip, autoreverses: false))]
+        case .thawed: // a gentle bob
+            return [Step(part: .body, animation: loop(bob(by: -3, duration: 1.2)))]
+        case .proud: // the star twinkles
+            return [
+                Step(part: .body, animation: loop(bob(by: -2, duration: 1.6))),
+                Step(part: .prop, animation: loop(fade(from: 1, to: 0.45, duration: 0.9))),
+            ]
+        case .snoozing: // slow breathing, the Zs drift
+            return [
+                Step(part: .body, animation: loop(bob(by: 2, duration: 1.8))),
+                Step(part: .prop, animation: loop(bob(by: -4, duration: 1.4))),
+            ]
+        }
+    }
+
+    private static func bob(by distance: CGFloat, duration: CFTimeInterval) -> CABasicAnimation {
+        let bob = CABasicAnimation(keyPath: "transform.translation.y")
+        bob.fromValue = 0
+        bob.toValue = distance
+        bob.duration = duration
+        bob.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        return bob
+    }
+
+    private static func loop(_ animation: CAAnimation, autoreverses: Bool = true) -> CAAnimation {
+        animation.repeatCount = .infinity
+        animation.autoreverses = autoreverses
+        let parts = (animation as? CAAnimationGroup)?.animations ?? [animation]
+        for case let property as CAPropertyAnimation in parts { property.isAdditive = true }
+        return animation
+    }
+
+    private static func fade(from: Float, to: Float, duration: CFTimeInterval? = nil) -> CABasicAnimation {
+        let animation = fade(from: from, to: to)
+        if let duration { animation.duration = duration }
+        return animation
+    }
+
     private static func fade(from: Float, to: Float) -> CABasicAnimation {
         let fade = CABasicAnimation(keyPath: "opacity")
         fade.fromValue = from
