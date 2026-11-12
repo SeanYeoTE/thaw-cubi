@@ -14,12 +14,15 @@ final class ReviewMeterCardView: UIView {
 
         captionLabel.text = caption
         captionLabel.font = ThawFont.body(14)
+        captionLabel.adjustsFontForContentSizeCategory = true
         captionLabel.textColor = Theme.paydayLabel
         amountLabel.text = amount
         amountLabel.font = ThawFont.money(24, weight: .heavy)
+        amountLabel.adjustsFontForContentSizeCategory = true
         amountLabel.textColor = .white
         amountLabel.setContentHuggingPriority(.required, for: .horizontal)
         statusLabel.font = ThawFont.body(15, weight: .semibold)
+        statusLabel.adjustsFontForContentSizeCategory = true
         for label in [captionLabel, amountLabel, statusLabel] {
             label.numberOfLines = 0
             label.adjustsFontForContentSizeCategory = true

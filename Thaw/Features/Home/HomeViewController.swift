@@ -244,6 +244,7 @@ final class HomeViewController: ThawListViewController, HomeViewProtocol, UIColl
             let label = UILabel()
             label.text = empty.line
             label.font = ThawFont.body(15)
+            label.adjustsFontForContentSizeCategory = true
             label.textColor = Theme.inkSecondary
             label.textAlignment = .center
             label.numberOfLines = 0

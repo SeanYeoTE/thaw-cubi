@@ -31,6 +31,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add to Thaw", style: .done, target: self, action: #selector(saveTapped))
 
         captionLabel.font = ThawFont.body(13, weight: .medium)
+        captionLabel.adjustsFontForContentSizeCategory = true
         captionLabel.textColor = Theme.inkSecondary
         captionLabel.numberOfLines = 0
         captionLabel.adjustsFontForContentSizeCategory = true
@@ -66,6 +67,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         stack.addArrangedSubview(nameAndPrice)
 
         thawLabel.font = ThawFont.body(13)
+        thawLabel.adjustsFontForContentSizeCategory = true
         thawLabel.textColor = Theme.inkSecondary
         thawLabel.numberOfLines = 0
         thawLabel.adjustsFontForContentSizeCategory = true
@@ -78,6 +80,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         reasonView.accessibilityLabel = "Why?"
         reasonView.accessibilityIdentifier = "addwant.reason"
         reasonView.font = ThawFont.body(16)
+        reasonView.adjustsFontForContentSizeCategory = true
         reasonView.textColor = Theme.ink
         reasonView.backgroundColor = Theme.surface
         reasonView.layer.cornerRadius = 12
@@ -90,6 +93,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
 
         reasonPlaceholder.text = "In your words. Thaw reads it back when it thaws."
         reasonPlaceholder.font = ThawFont.body(16)
+        reasonPlaceholder.adjustsFontForContentSizeCategory = true
         reasonPlaceholder.textColor = Theme.inkSecondary
         reasonPlaceholder.numberOfLines = 0
         reasonPlaceholder.adjustsFontForContentSizeCategory = true
@@ -105,6 +109,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         buildStatusRow()
 
         errorLabel.font = ThawFont.body(13)
+        errorLabel.adjustsFontForContentSizeCategory = true
         errorLabel.textColor = Theme.destructive
         errorLabel.numberOfLines = 0
         errorLabel.adjustsFontForContentSizeCategory = true
@@ -180,6 +185,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         }, for: .editingDidBegin)
         field.addAction(UIAction { [weak self] _ in self?.inputDidChange() }, for: .editingChanged)
         field.font = ThawFont.body(16)
+        field.adjustsFontForContentSizeCategory = true
         field.textColor = Theme.ink
         field.backgroundColor = Theme.surface
         field.layer.cornerRadius = 12

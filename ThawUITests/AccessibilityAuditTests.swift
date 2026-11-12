@@ -45,7 +45,7 @@ final class AccessibilityAuditTests: XCTestCase {
         goTo("Settings")
         let row = app.collectionViews.cells.matching(NSPredicate(format: "label BEGINSWITH %@", "Payday")).firstMatch
         tapWhenReady(row, "Payday rule row")
-        XCTAssertTrue(app.buttons["Same date every month"].waitForExistence(timeout: 8), "payday rule screen missing")
+        XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "label BEGINSWITH %@", "Same date")).firstMatch.waitForExistence(timeout: 8), "payday rule screen missing")
     }
 
     @MainActor func run(_ screen: String, fixture: String = "thawed", navigate: () -> Void) {

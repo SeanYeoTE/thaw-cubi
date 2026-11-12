@@ -80,7 +80,7 @@ final class ReviewFlowUITests: XCTestCase {
         tapWhenReady(all("payday.review").firstMatch, "Review button")
         tapWhenReady(all("review.letGo").firstMatch, "Let go on row 1")
         tapWhenReady(closeButton, "Close")
-        tapWhenReady(app.descendants(matching: .any).matching(identifier: "Keep choosing").firstMatch, "Keep choosing")
+        tapWhenReady(app.alerts.buttons["Keep choosing"].firstMatch, "Keep choosing")
         XCTAssertTrue(all("review.row").firstMatch.exists, "review should stay open")
         tapWhenReady(closeButton, "Close")
         tapWhenReady(app.descendants(matching: .any).matching(identifier: "Discard").firstMatch, "Discard")

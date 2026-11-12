@@ -13,6 +13,7 @@ final class EmptyStateView: UIView {
         let label = UILabel()
         label.text = line
         label.font = ThawFont.body(15)
+        label.adjustsFontForContentSizeCategory = true
         label.textColor = Theme.inkSecondary
         label.textAlignment = .center
         label.numberOfLines = 0

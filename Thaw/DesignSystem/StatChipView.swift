@@ -24,10 +24,12 @@ final class StatChipView: UIControl {
         symbolView.setContentCompressionResistancePriority(.required, for: .horizontal)
 
         valueLabel.font = ThawFont.money(20)
+        valueLabel.adjustsFontForContentSizeCategory = true
         valueLabel.textColor = Theme.ink
         valueLabel.adjustsFontForContentSizeCategory = true
         valueLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         captionLabel.font = ThawFont.body(13)
+        captionLabel.adjustsFontForContentSizeCategory = true
         captionLabel.textColor = Theme.inkSecondary
         captionLabel.adjustsFontForContentSizeCategory = true
         captionLabel.numberOfLines = 0

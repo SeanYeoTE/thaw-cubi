@@ -71,12 +71,16 @@ final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol 
         cubi.setContentCompressionResistancePriority(.required, for: .horizontal)
 
         valueLabel.font = ThawFont.display(40)
+        valueLabel.adjustsFontForContentSizeCategory = true
         valueLabel.textColor = .white
         captionLabel.font = ThawFont.body(15)
+        captionLabel.adjustsFontForContentSizeCategory = true
         captionLabel.textColor = Theme.paydayLabel
         budgetValueLabel.font = ThawFont.display(28)
+        budgetValueLabel.adjustsFontForContentSizeCategory = true
         budgetValueLabel.textColor = .white
         budgetLabel.font = ThawFont.body(14, weight: .medium)
+        budgetLabel.adjustsFontForContentSizeCategory = true
         budgetLabel.textColor = Theme.paydayLabel
         for label in [valueLabel, captionLabel, budgetValueLabel, budgetLabel] {
             label.numberOfLines = 0

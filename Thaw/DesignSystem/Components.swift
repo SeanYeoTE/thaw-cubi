@@ -146,9 +146,11 @@ final class ChoiceRowView: UIControl {
 
         titleLabel.text = title
         titleLabel.font = ThawFont.body(16, weight: .semibold)
+        titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.textColor = Theme.ink
         hintLabel.text = hint
         hintLabel.font = ThawFont.body(13)
+        hintLabel.adjustsFontForContentSizeCategory = true
         hintLabel.textColor = Theme.inkSecondary
         for label in [titleLabel, hintLabel] {
             label.numberOfLines = 0
@@ -292,13 +294,16 @@ final class SettingsRowView: UIView {
         super.init(frame: .zero)
         titleLabel.text = title
         titleLabel.font = ThawFont.body(16)
+        titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.textColor = Theme.ink
         subtitleLabel.text = subtitle
         subtitleLabel.font = ThawFont.body(13)
+        subtitleLabel.adjustsFontForContentSizeCategory = true
         subtitleLabel.textColor = Theme.inkSecondary
         subtitleLabel.isHidden = (subtitle ?? "").isEmpty
         valueLabel.text = value
         valueLabel.font = ThawFont.body(16, weight: .semibold)
+        valueLabel.adjustsFontForContentSizeCategory = true
         valueLabel.textColor = Theme.accent
         valueLabel.textAlignment = .right
         valueLabel.setContentHuggingPriority(.required, for: .horizontal)

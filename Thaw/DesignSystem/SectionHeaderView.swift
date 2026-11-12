@@ -12,6 +12,7 @@ final class SectionHeaderView: UIView {
         super.init(frame: .zero)
         for label in [titleLabel, detailLabel] {
             label.font = ThawFont.body(13, weight: .semibold)
+            label.adjustsFontForContentSizeCategory = true
             label.textColor = Theme.inkSecondary
             label.adjustsFontForContentSizeCategory = true
         }

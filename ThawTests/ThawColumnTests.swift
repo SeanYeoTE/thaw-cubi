@@ -14,7 +14,7 @@ final class ThawColumnTests: XCTestCase {
 
     func testPhoneLandscapeAddsSafeAreaToMargins() {
         let safe = UIEdgeInsets(top: 0, left: 59, bottom: 0, right: 59)
-        let insets = ThawColumn.insets(containerWidth: 874, safeArea: safe)
+        let insets = ThawColumn.insets(containerWidth: 818, safeArea: safe)
         XCTAssertEqual(insets.leading, 59 + Theme.Spacing.screen)
         XCTAssertEqual(insets.trailing, 59 + Theme.Spacing.screen)
     }

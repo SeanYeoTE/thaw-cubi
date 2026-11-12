@@ -59,6 +59,7 @@ class ScrollStackViewController: UIViewController {
         let label = UILabel()
         label.text = text
         label.font = font
+        label.adjustsFontForContentSizeCategory = true
         label.textColor = color
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true

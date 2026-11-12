@@ -52,7 +52,7 @@ final class PersonaTests: XCTestCase {
     }
 
     @MainActor func tapText(_ label: String) {
-        let t = app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", label)).firstMatch
+        let t = app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", label)).firstMatch
         tapWhenReady(t, "text \(label)")
     }
 

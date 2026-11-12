@@ -25,14 +25,19 @@ final class StillWantItViewController: ScrollStackViewController, StillWantItVie
         stack.spacing = 14
 
         progressLabel.font = ThawFont.body(13, weight: .medium)
+        progressLabel.adjustsFontForContentSizeCategory = true
         progressLabel.textColor = Theme.inkSecondary
         name.font = ThawFont.display(28)
+        name.adjustsFontForContentSizeCategory = true
         name.textColor = Theme.ink
         price.font = ThawFont.money(20)
+        price.adjustsFontForContentSizeCategory = true
         price.textColor = Theme.ink
         quote.font = ThawFont.body(17)
+        quote.adjustsFontForContentSizeCategory = true
         quote.textColor = Theme.ink
         dateLabel.font = ThawFont.body(13)
+        dateLabel.adjustsFontForContentSizeCategory = true
         dateLabel.textColor = Theme.inkSecondary
         for label in [progressLabel, name, price, quote, dateLabel] {
             label.numberOfLines = 0
