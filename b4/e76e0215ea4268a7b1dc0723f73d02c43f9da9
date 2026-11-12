@@ -1,0 +1,55 @@
+Thaw/DesignSystem/Components.swift
+  s_125c29137e7cc0::t_676d1df0b1667d 149,153,297,301,306
+Thaw/DesignSystem/EmptyStateView.swift
+  s_125c29137e7cc0::t_fa6055cb8d4ff0 16
+Thaw/DesignSystem/ReviewMeterCardView.swift
+  s_125c29137e7cc0::t_2ee4d5545bdeeb 17,21,25
+Thaw/DesignSystem/ScrollStackViewController.swift
+  s_125c29137e7cc0::t_6c13ada383d065 62
+Thaw/DesignSystem/SectionHeaderView.swift
+  s_125c29137e7cc0::t_db3f177fc181c6 15
+Thaw/DesignSystem/StatChipView.swift
+  s_125c29137e7cc0::t_fc090a068fb1d7 27,32
+Thaw/Features/AddWant/AddWantViewController.swift
+  s_125c29137e7cc0::t_9b559a8050af42 34,70,83,96,112,188
+Thaw/Features/Home/HomeViewController.swift
+  s_125c29137e7cc0::t_7135a4f5c0aa9d 247
+Thaw/Features/Payday/PaydayViewController.swift
+  s_125c29137e7cc0::t_acc21cce4b4ed7 74,77,80,83
+Thaw/Features/PaydaySetup/SettingsCells.swift
+  s_125c29137e7cc0::t_9e3a3d1198725f 20,24,32,39,49
+Thaw/Features/Saved/SavedViewController.swift
+  s_125c29137e7cc0::t_f1d0d4374cc368 305
+Thaw/Features/Shared/AdaptiveViews.swift
+  s_125c29137e7cc0::t_402bbdf2cdaf90 48
+Thaw/Features/Shared/MomentView.swift
+  s_125c29137e7cc0::t_00e37c5ef18ee8 17
+Thaw/Features/Shared/WantRowView.swift
+  s_125c29137e7cc0::t_d98377d489446b 121
+Thaw/Features/StillWantIt/StillWantItViewController.swift
+  s_125c29137e7cc0::t_5ae1b886753773 28,31,34,37,40
+ThawTests/ThawColumnTests.swift
+  s_125c29137e7cc0::t_ce8fce8b652e2f 17
+ThawUITests/AccessibilityAuditTests.swift
+  s_125c29137e7cc0::t_e9f9dd9c345913 48
+ThawUITests/PersonaTests.swift
+  s_125c29137e7cc0::t_ec95bb72568918 55
+ThawUITests/ReviewFlowUITests.swift
+  s_125c29137e7cc0::t_248f55c3ff75d4 83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b4e76e0215ea4268a7b1dc0723f73d02c43f9da9",
+  "prompts": {},
+  "sessions": {
+    "s_125c29137e7cc0": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "245a1e4a-c933-467b-bf9f-5c89dcc9a315",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
