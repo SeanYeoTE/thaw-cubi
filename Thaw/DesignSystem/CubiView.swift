@@ -53,6 +53,10 @@ final class CubiView: UIView {
         NotificationCenter.default.addObserver(
             self, selector: #selector(reduceMotionChanged),
             name: UIAccessibility.reduceMotionStatusDidChangeNotification, object: nil)
+        // Core Animation drops running animations when the app backgrounds.
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(restartIdle),
+            name: UIApplication.didBecomeActiveNotification, object: nil)
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
@@ -75,9 +79,11 @@ final class CubiView: UIView {
 
     override func didMoveToWindow() {
         super.didMoveToWindow()
-        guard window != nil, !playedInitialMotion else { return }
-        playedInitialMotion = true
-        playMotion(for: mood)
+        if window != nil, !playedInitialMotion {
+            playedInitialMotion = true
+            playMotion(for: mood)
+        }
+        startIdle()
     }
 
     func setOnFrost(_ onFrost: Bool) {
@@ -98,6 +104,7 @@ final class CubiView: UIView {
         applyMood(mood)
         updateAccessibility()
         if animated { playMotion(for: mood) }
+        startIdle()
     }
 
     // MARK: Accessibility
@@ -109,7 +116,10 @@ final class CubiView: UIView {
     @objc private func reduceMotionChanged() {
         art.removeAllAnimations()
         [bodyLayer, highlightLayer, faceLayer, propLayer].forEach { $0.removeAllAnimations() }
+        startIdle()
     }
+
+    @objc private func restartIdle() { startIdle() }
 
     // MARK: Drawing
 
@@ -138,10 +148,20 @@ final class CubiView: UIView {
     // MARK: Motion
 
     private func playMotion(for mood: CubiMood) {
-        for step in CubiMotion.steps(for: mood) {
+        play(CubiMotion.steps(for: mood), key: "motion")
+    }
+
+    private func startIdle() {
+        [bodyLayer, highlightLayer, faceLayer, propLayer].forEach { $0.removeAnimation(forKey: "idle") }
+        guard window != nil else { return }
+        play(CubiMotion.idleSteps(for: mood), key: "idle")
+    }
+
+    private func play(_ steps: [CubiMotion.Step], key: String) {
+        for step in steps {
             switch step.part {
-            case .body: [bodyLayer, highlightLayer, faceLayer].forEach { $0.add(step.animation, forKey: "motion") }
-            case .prop: propLayer.add(step.animation, forKey: "motion")
+            case .body: [bodyLayer, highlightLayer, faceLayer].forEach { $0.add(step.animation, forKey: key) }
+            case .prop: propLayer.add(step.animation, forKey: key)
             }
         }
     }
