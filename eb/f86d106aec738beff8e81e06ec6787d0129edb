@@ -1,0 +1,21 @@
+Thaw/DesignSystem/Components.swift
+  s_3737cd53033298::t_bf52a6b66b8af8 78
+Thaw/DesignSystem/FilterChipBar.swift
+  s_3737cd53033298::t_0b81c50a0fd0dd 101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ebf86d106aec738beff8e81e06ec6787d0129edb",
+  "prompts": {},
+  "sessions": {
+    "s_3737cd53033298": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "db8686e4-54c8-4fa2-a351-26eb6d697d77",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
