@@ -1,0 +1,41 @@
+Thaw.xcodeproj/project.pbxproj
+  s_125c29137e7cc0::t_a8cbd8838cf387 10,20,38,81,83,103,108,114,127,140,147,196,235,249,283-284,294,341-344,348,570,771-774,780,871-874,879,906
+Thaw/DesignSystem/CubiArtwork.swift
+  s_125c29137e7cc0::t_a7654174a02e54 1-153
+Thaw/DesignSystem/CubiCopy.swift
+  s_125c29137e7cc0::t_2d17c2c96b3cd9 1-26
+Thaw/DesignSystem/CubiMood.swift
+  s_125c29137e7cc0::t_75645fea8492e4 1-15
+Thaw/DesignSystem/CubiMotion.swift
+  s_125c29137e7cc0::t_21f948812e960c 1-62
+Thaw/DesignSystem/CubiView.swift
+  s_125c29137e7cc0::t_acdcc57f48c465 3-10,14,25,32-36,39-41,48-49,61-62,67,69,72-73,86,100,106,111,116-118,121-122,125-130,133,135,141-145
+Thaw/DesignSystem/EmptyStateView.swift
+  s_125c29137e7cc0::t_61be301fefde19 9
+Thaw/DesignSystem/HeroCardView.swift
+  s_125c29137e7cc0::t_cc7dd905188539 1-23
+Thaw/Features/Payday/PaydayViewController.swift
+  s_125c29137e7cc0::t_c25a5978b4d7d5 8,113
+Thaw/Features/Saved/SavedViewController.swift
+  s_125c29137e7cc0::t_87dac3ef2e9405 233,235,240-241,251
+Thaw/Features/Shared/MomentView.swift
+  s_125c29137e7cc0::t_7165b5a1c58b64 12
+ThawTests/CubiMotionTests.swift
+  s_125c29137e7cc0::t_cfc558c93dd1af 1-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b43ac84bdc1e30398316c9fd00bf30bb21023e58",
+  "prompts": {},
+  "sessions": {
+    "s_125c29137e7cc0": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "245a1e4a-c933-467b-bf9f-5c89dcc9a315",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
