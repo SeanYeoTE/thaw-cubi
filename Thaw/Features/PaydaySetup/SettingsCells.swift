@@ -1,17 +1,10 @@
 import UIKit
 
 enum SettingsListStyle {
-    static let maxContentWidth: CGFloat = 700
-
     /// Inset-grouped list section, capped to the content column on wide screens.
     static func section(_ configuration: UICollectionLayoutListConfiguration,
                         environment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
-        let section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: environment)
-        let width = environment.container.effectiveContentSize.width
-        let extra = max(0, (width - maxContentWidth) / 2)
-        section.contentInsets.leading += extra
-        section.contentInsets.trailing += extra
-        return section
+        ThawColumn.insetGroupedSection(configuration, environment: environment)
     }
 
     static func listConfiguration(footer: Bool) -> UICollectionLayoutListConfiguration {
@@ -24,9 +17,11 @@ enum SettingsListStyle {
 
     static func style(_ content: inout UIListContentConfiguration) {
         content.textProperties.font = ThawFont.body(17)
+        content.textProperties.adjustsFontForContentSizeCategory = true
         content.textProperties.color = Theme.ink
         content.textProperties.adjustsFontForContentSizeCategory = true
         content.secondaryTextProperties.font = ThawFont.body(17)
+        content.secondaryTextProperties.adjustsFontForContentSizeCategory = true
         content.secondaryTextProperties.color = Theme.inkSecondary
         content.secondaryTextProperties.adjustsFontForContentSizeCategory = true
     }
@@ -34,12 +29,14 @@ enum SettingsListStyle {
     static func styleSubtitle(_ content: inout UIListContentConfiguration) {
         style(&content)
         content.secondaryTextProperties.font = ThawFont.body(13)
+        content.secondaryTextProperties.adjustsFontForContentSizeCategory = true
     }
 
     static func header(_ text: String?) -> UIListContentConfiguration {
         var content = UIListContentConfiguration.groupedHeader()
         content.text = text
         content.textProperties.font = ThawFont.body(13, weight: .semibold)
+        content.textProperties.adjustsFontForContentSizeCategory = true
         content.textProperties.color = Theme.inkSecondary
         content.textProperties.adjustsFontForContentSizeCategory = true
         return content
@@ -49,6 +46,7 @@ enum SettingsListStyle {
         var content = UIListContentConfiguration.groupedFooter()
         content.text = text
         content.textProperties.font = ThawFont.body(13)
+        content.textProperties.adjustsFontForContentSizeCategory = true
         content.textProperties.color = Theme.inkSecondary
         content.textProperties.adjustsFontForContentSizeCategory = true
         return content

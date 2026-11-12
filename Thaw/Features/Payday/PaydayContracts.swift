@@ -11,10 +11,17 @@ struct PaydaySectionViewModel: Equatable {
     let rows: [PaydayRowViewModel]
 }
 
-/// "S$120 of S$300" against this payday's fun money.
+/// Spoken-for against this payday's fun money: "S$120 left" or "S$402 over".
 struct PaydayBudgetViewModel: Equatable {
-    let text: String
-    let fraction: Double
+    /// Big figure: "S$120 left" or "S$402 over".
+    let headline: String
+    /// "S$702 thawing · S$300 fun money".
+    let caption: String
+    let spoken: String
+    /// How full the bar is, 0...1 (the view clamps).
+    let fillFraction: Double
+    /// Where the 100% marker sits on the bar: 1 when it fits, fun money / spoken-for when over.
+    let markerFraction: Double
     let isOver: Bool
 }
 

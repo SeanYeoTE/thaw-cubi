@@ -1,6 +1,8 @@
 # T1: Decision date (`decidedOn`)
 
-Read [../README.md](../README.md) first for the working rules.
+> **Done.** Shipped on `feature/s11-ui-standardise` (SeanYeoTE/thaw-cubi#18). Kept for history; the code is the source of truth now.
+
+Read [../../README.md](../../README.md) first for the working rules.
 
 **Owns:** `Thaw/Models`, `Thaw/Services`, `ThawTests/Backend*`, plus the new `ThawTests/BackendDecisionDateTests.swift` if you prefer a separate file.
 **Depends on:** nothing. **Unblocks:** T6 (Stats).

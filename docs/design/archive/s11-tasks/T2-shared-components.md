@@ -1,6 +1,8 @@
 # T2: Shared components
 
-Read [../README.md](../README.md) first for the working rules.
+> **Done.** Shipped on `feature/s11-ui-standardise` (SeanYeoTE/thaw-cubi#18). Kept for history; the code is the source of truth now.
+
+Read [../../README.md](../../README.md) first for the working rules.
 
 **Owns:** `Thaw/DesignSystem`, `Thaw/Features/Shared`.
 **Depends on:** nothing. **Unblocks:** T3, T4, T6.

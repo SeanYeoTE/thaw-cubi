@@ -5,11 +5,16 @@ final class AddWantPresenter: AddWantPresenterProtocol {
     private let interactor: AddWantInteractorProtocol
     private let router: AddWantRouterProtocol
     private var saving = false
+    private let now: () -> Date
+    private let calendar: Calendar
 
     // Explicit deinit: the synthesized one on a MainActor class with weak refs corrupts the heap in the test host.
     deinit {}
 
-    init(view: AddWantViewProtocol, interactor: AddWantInteractorProtocol, router: AddWantRouterProtocol) {
+    init(view: AddWantViewProtocol, interactor: AddWantInteractorProtocol, router: AddWantRouterProtocol,
+         now: @escaping () -> Date = { .now }, calendar: Calendar = .current) {
+        self.now = now
+        self.calendar = calendar
         self.view = view
         self.interactor = interactor
         self.router = router
@@ -19,18 +24,16 @@ final class AddWantPresenter: AddWantPresenterProtocol {
     private var isEditing = false
 
     func viewDidLoad() {
-        let settings = interactor.settings
         if let want = interactor.editing {
-            let input = AddWantInput(name: want.name, price: Self.priceText(want.price), reason: want.reason)
+            let decided = want.status != .cooling
+            let input = AddWantInput(name: want.name, price: Self.priceText(want.price), reason: want.reason,
+                                     status: decided ? want.status : nil)
             initial = input
             isEditing = true
             view?.configure(AddWantScreen(title: "Edit want", actionTitle: "Save", discardTitle: "Discard changes?",
                                           discardMessage: "Your edits won't be saved.", initial: input,
-                                          actions: Self.actions(for: want.status)))
-            view?.render(note: want.status == .cooling
-                ? "You can change the name, price and reason. Moving the price across \(Formatting.sgd(settings.timerThreshold)) "
-                    + "restarts the wait from today: \(settings.timerDays)-day timer below it, payday above it."
-                : "You can change the name, price and reason. The price feeds your saved total and history.")
+                                          statusOptions: decided ? Self.statusOptions : [], deleteTitle: "Delete"))
+            view?.render(thawLine: thawLine(for: input))
             return
         }
         if let draft = interactor.draft {
@@ -39,17 +42,16 @@ final class AddWantPresenter: AddWantPresenterProtocol {
             view?.configure(AddWantScreen(title: "Add to Thaw", actionTitle: "Add to Thaw", discardTitle: "Discard this want?",
                                           discardMessage: "What you typed won't be saved.", initial: input,
                                           caption: draft.link.map { "From \(ShareItemParser.displayHost($0))" }))
-            view?.render(note: "Thaw will read this back to you when it thaws. It joins your Cooling list "
-                + "the next time you open Thaw.")
+            view?.render(thawLine: nil)
             return
         }
         view?.configure(AddWantScreen(title: "Add to Thaw", actionTitle: "Add to Thaw", discardTitle: "Discard this want?",
                                       discardMessage: "What you typed won't be saved.", initial: nil))
-        view?.render(note: "Thaw will read this back to you when it thaws. Items under "
-            + "\(Formatting.sgd(settings.timerThreshold)) use a \(settings.timerDays)-day timer; the rest thaw on payday.")
+        view?.render(thawLine: nil)
     }
 
     func inputChanged(_ input: AddWantInput) {
+        view?.render(thawLine: thawLine(for: input))
         view?.setModalInPresentation(hasInput(input) && !saving)
     }
 
@@ -65,33 +67,20 @@ final class AddWantPresenter: AddWantPresenterProtocol {
         view?.setModalInPresentation(false)
         if isEditing {
             interactor.save(name: name, price: price, reason: input.reason)
+            applyStatus(input.status)
             return router.dismiss()
         }
         interactor.add(name: name, price: price, reason: input.reason)
         view?.showSavedMoment(line: CubiMood.frozen.line) { [weak self] in self?.router.dismiss() }
     }
 
-    func tapAction(_ kind: AddWantAction.Kind, input: AddWantInput) {
+    func tapDelete() {
         guard isEditing else { return }
-        if kind == .delete {
-            let name = interactor.editing?.name ?? "this want"
-            return view?.showDeleteConfirmation(AddWantDeleteConfirmation(
-                title: "Delete \(name)?",
-                message: "It will be removed from Thaw, including your history and savings total.",
-                deleteTitle: "Delete", cancelTitle: "Cancel")) ?? ()
-        }
-        // Details typed before choosing an action are kept, as long as they are valid.
-        if let initial, normalized(input) != normalized(initial) {
-            guard let (name, price) = validated(input) else { return }
-            interactor.save(name: name, price: price, reason: input.reason)
-        }
-        switch kind {
-        case .moveBackToCooling: interactor.moveBackToCooling()
-        case .markBought: interactor.setDecision(.bought)
-        case .markSkipped: interactor.setDecision(.skipped)
-        case .delete: break
-        }
-        finishEditing()
+        let name = interactor.editing?.name ?? "this want"
+        view?.showDeleteConfirmation(AddWantDeleteConfirmation(
+            title: "Delete \(name)?",
+            message: "It will be removed from Thaw, including your history and savings total.",
+            deleteTitle: "Delete", cancelTitle: "Cancel"))
     }
 
     func confirmDelete() {
@@ -119,19 +108,56 @@ final class AddWantPresenter: AddWantPresenterProtocol {
         return (name, price)
     }
 
-    private static func actions(for status: Want.Status) -> [AddWantAction] {
-        switch status {
-        case .cooling:
-            [AddWantAction(kind: .delete, title: "Delete")]
-        case .skipped:
-            [AddWantAction(kind: .moveBackToCooling, title: "Move back to cooling"),
-             AddWantAction(kind: .markBought, title: "Mark as bought"),
-             AddWantAction(kind: .delete, title: "Delete")]
-        case .bought:
-            [AddWantAction(kind: .moveBackToCooling, title: "Move back to cooling"),
-             AddWantAction(kind: .markSkipped, title: "Mark as skipped"),
-             AddWantAction(kind: .delete, title: "Delete")]
+    private static let statusOptions = [
+        AddWantStatusOption(status: .cooling, title: "Cooling"),
+        AddWantStatusOption(status: .bought, title: "Bought"),
+        AddWantStatusOption(status: .skipped, title: "Let go"),
+    ]
+
+    private func applyStatus(_ status: Want.Status?) {
+        guard let status, let current = interactor.editing?.status, status != current else { return }
+        if status == .cooling { interactor.moveBackToCooling() } else { interactor.setDecision(status) }
+    }
+
+    /// Mirrors `WantStore.makeCoolingWant` and `WantStore.edit`: under the threshold is a timer from now, otherwise payday.
+    private func thawLine(for input: AddWantInput) -> String? {
+        guard interactor.draft == nil else { return nil }
+        let want = interactor.editing
+        if let want, want.status != .cooling { return nil }
+        guard let typed = Decimal(string: input.price.trimmingCharacters(in: .whitespacesAndNewlines)), typed > 0 else { return nil }
+        let settings = interactor.settings
+        let now = self.now()
+        var rounded = Decimal()
+        var value = typed
+        NSDecimalRound(&rounded, &value, 2, .plain)
+        let isTimer = rounded < settings.timerThreshold
+        let timerEnd = calendar.date(byAdding: .day, value: settings.timerDays, to: now) ?? now
+        let payday = { settings.nextPayday(after: now, calendar: self.calendar) }
+        guard let want else {
+            return isTimer ? Self.quickThaw(days: settings.timerDays) : "Thaws on payday · \(Self.shortDate(payday()))"
         }
+        if (want.price < settings.timerThreshold) != isTimer {
+            return isTimer ? "Moves to quick thaw · \(Self.shortDate(timerEnd))"
+                : "Moves to payday · \(Self.shortDate(payday()))"
+        }
+        guard want.thawsAt > now else { return nil }
+        if isTimer {
+            let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: now),
+                                               to: calendar.startOfDay(for: want.thawsAt)).day ?? 1
+            return Self.quickThaw(days: max(days, 1))
+        }
+        return "Thaws on payday · \(Self.shortDate(want.thawsAt))"
+    }
+
+    private static func quickThaw(days: Int) -> String {
+        "Quick thaw · \(days) \(days == 1 ? "day" : "days")"
+    }
+
+    private static func shortDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_SG")
+        formatter.dateFormat = "d MMM"
+        return formatter.string(from: date)
     }
 
     private func discardOrDismiss(_ input: AddWantInput) {
@@ -150,6 +176,7 @@ final class AddWantPresenter: AddWantPresenterProtocol {
     private func normalized(_ input: AddWantInput) -> AddWantInput {
         AddWantInput(name: input.name.trimmingCharacters(in: .whitespacesAndNewlines),
                      price: input.price.trimmingCharacters(in: .whitespacesAndNewlines),
-                     reason: input.reason.trimmingCharacters(in: .whitespacesAndNewlines))
+                     reason: input.reason.trimmingCharacters(in: .whitespacesAndNewlines),
+                     status: input.status)
     }
 }

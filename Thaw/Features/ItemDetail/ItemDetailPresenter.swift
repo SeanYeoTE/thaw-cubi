@@ -22,14 +22,15 @@ final class ItemDetailPresenter: ItemDetailPresenterProtocol {
         let reason = want.reason.isEmpty ? "No reason written." : want.reason
         view?.render(ItemDetailViewModel(
             name: want.name,
-            subtitle: "\(Formatting.sgd(want.price)) · frozen \(Formatting.paydayDate(want.frozenOn))",
-            daysText: "\(days) \(days == 1 ? "day" : "days")",
-            untilText: "\(isTimer ? "until it thaws" : "until payday") · \(Formatting.paydayDate(want.thawsAt))",
+            priceText: Formatting.sgd(want.price),
+            frozenText: "Frozen \(Self.shortDate(want.frozenOn))",
+            daysText: days == 0 ? "Today" : "\(days) \(days == 1 ? "day" : "days")",
+            captionText: "\(isTimer ? "Quick thaw" : "Thaws on payday") · \(Self.shortDate(want.thawsAt))",
             progress: want.progress,
             isTimer: isTimer,
             quote: "\u{201C}\(reason)\u{201D}",
-            thawsText: "Thaws · \(isTimer ? "Timer" : "Payday") · \(Formatting.paydayDate(want.thawsAt)) · \(Self.timeText(want.thawsAt))",
-            linkText: want.link.map { "Open link · \(Self.displayHost($0))" }
+            linkText: want.link.map { "Open link · \(Self.displayHost($0))" },
+            letGoTitle: "Let go · save \(Formatting.sgd(want.price))"
         ))
     }
 
@@ -47,18 +48,21 @@ final class ItemDetailPresenter: ItemDetailPresenterProtocol {
         viewDidLoad()
     }
 
-    func tapWait() {
-        interactor.waitOnePayday()
-        router.pop()
-    }
-
     func tapDecide() {
         router.showDecideNow(want: interactor.want)
     }
 
-    func tapSkip() {
+    func tapLetGo() {
+        let name = interactor.want.name
+        view?.showLetGoConfirmation(title: "Let go of \(name)?", confirmTitle: "Let go", cancelTitle: "Cancel") { [weak self] in
+            self?.confirmLetGo()
+        }
+    }
+
+    private func confirmLetGo() {
+        let price = interactor.want.price
         interactor.skip()
-        let line = CubiMood.proudLine(amount: Formatting.sgd(interactor.want.price))
+        let line = CubiMood.proudLine(amount: Formatting.sgd(price))
         view?.showSkipMoment(line: line) { [weak self] in self?.router.pop() }
     }
 
@@ -67,10 +71,10 @@ final class ItemDetailPresenter: ItemDetailPresenterProtocol {
         return host.hasPrefix("www.") ? String(host.dropFirst(4)) : host
     }
 
-    private static func timeText(_ date: Date) -> String {
+    private static func shortDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_SG")
-        formatter.dateFormat = "h:mm a"
-        return formatter.string(from: date).lowercased()
+        formatter.dateFormat = "d MMM"
+        return formatter.string(from: date)
     }
 }

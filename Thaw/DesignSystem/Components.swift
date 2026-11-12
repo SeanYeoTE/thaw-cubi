@@ -75,73 +75,11 @@ final class PillButton: UIButton {
             return updated
         }
         configuration = config
+        titleLabel?.adjustsFontForContentSizeCategory = true
         heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
-}
-
-final class PaydayCardView: UIControl {
-    private let row = UIStackView()
-
-    init(daysLeft: Int, nextPayday: String, subtitle: String) {
-        super.init(frame: .zero)
-        backgroundColor = Theme.paydayCard
-        layer.cornerRadius = Theme.Radius.pill
-
-        let cubi = CubiView(mood: .frozen, size: 64)
-        cubi.setContentHuggingPriority(.required, for: .horizontal)
-        cubi.setContentCompressionResistancePriority(.required, for: .horizontal)
-        let label = UILabel()
-        label.text = "Next payday · \(nextPayday)"
-        label.font = ThawFont.body(14)
-        label.textColor = Theme.paydayLabel
-        label.numberOfLines = 0
-
-        let days = UILabel()
-        days.text = daysLeft == 1 ? "1 day" : "\(daysLeft) days"
-        days.font = ThawFont.display(34)
-        days.textColor = .white
-        days.numberOfLines = 0
-
-        let sub = UILabel()
-        sub.text = subtitle
-        sub.font = ThawFont.body(14)
-        sub.textColor = Theme.paydaySubtext
-        sub.numberOfLines = 0
-
-        for item in [label, days, sub] { item.adjustsFontForContentSizeCategory = true }
-
-        let text = UIStackView(arrangedSubviews: [label, days, sub])
-        text.axis = .vertical
-        text.spacing = 2
-
-        row.addArrangedSubview(cubi)
-        row.addArrangedSubview(text)
-        row.spacing = 16
-        row.translatesAutoresizingMaskIntoConstraints = false
-        row.isUserInteractionEnabled = false
-        addSubview(row)
-        NSLayoutConstraint.activate([
-            row.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 18),
-            row.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -18),
-            row.topAnchor.constraint(equalTo: topAnchor, constant: 18),
-            row.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -18),
-        ])
-        updateAxis()
-        registerForTraitChanges([UITraitPreferredContentSizeCategory.self]) { (self: PaydayCardView, _) in
-            self.updateAxis()
-        }
-    }
-
-    required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
-
-    // Stack the face above the text at accessibility sizes.
-    private func updateAxis() {
-        let large = traitCollection.preferredContentSizeCategory.isAccessibilityCategory
-        row.axis = large ? .vertical : .horizontal
-        row.alignment = large ? .leading : .center
-    }
 }
 
 final class CubeIconView: UIView {
@@ -208,9 +146,11 @@ final class ChoiceRowView: UIControl {
 
         titleLabel.text = title
         titleLabel.font = ThawFont.body(16, weight: .semibold)
+        titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.textColor = Theme.ink
         hintLabel.text = hint
         hintLabel.font = ThawFont.body(13)
+        hintLabel.adjustsFontForContentSizeCategory = true
         hintLabel.textColor = Theme.inkSecondary
         for label in [titleLabel, hintLabel] {
             label.numberOfLines = 0
@@ -267,73 +207,12 @@ final class ChoiceRowView: UIControl {
     }
 }
 
-/// "Keep" / "Wait" pill. Toggles itself on tap and sends `.valueChanged`.
-final class KeepToggleButton: UIButton {
-    var name: String = "" {
-        didSet { updateAccessibility() }
-    }
-
-    var isKeeping: Bool {
-        didSet { applyState() }
-    }
-
-    init(isKeeping: Bool) {
-        self.isKeeping = isKeeping
-        super.init(frame: .zero)
-        translatesAutoresizingMaskIntoConstraints = false
-        setContentHuggingPriority(.required, for: .horizontal)
-        setContentCompressionResistancePriority(.required, for: .horizontal)
-        NSLayoutConstraint.activate([
-            widthAnchor.constraint(greaterThanOrEqualToConstant: 64),
-            heightAnchor.constraint(greaterThanOrEqualToConstant: 44),
-        ])
-        addAction(UIAction { [weak self] _ in
-            guard let self else { return }
-            self.isKeeping.toggle()
-            self.sendActions(for: .valueChanged)
-        }, for: .touchUpInside)
-        applyState()
-    }
-
-    required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
-
-    private func applyState() {
-        var config = UIButton.Configuration.filled()
-        config.cornerStyle = .capsule
-        config.title = isKeeping ? "Keep" : "Wait"
-        config.titleLineBreakMode = .byWordWrapping
-        config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16)
-        if isKeeping {
-            config.baseBackgroundColor = Theme.accent
-            config.baseForegroundColor = .white
-            config.background.strokeWidth = 0
-        } else {
-            config.baseBackgroundColor = Theme.surface
-            config.baseForegroundColor = Theme.toggleText
-            config.background.strokeColor = Theme.toggleBorder
-            config.background.strokeWidth = 1
-        }
-        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attributes in
-            var updated = attributes
-            updated.font = ThawFont.body(15, weight: .bold)
-            return updated
-        }
-        configuration = config
-        titleLabel?.adjustsFontForContentSizeCategory = true
-        updateAccessibility()
-    }
-
-    private func updateAccessibility() {
-        accessibilityLabel = name.isEmpty
-            ? (isKeeping ? "Keeping" : "Waiting")
-            : (isKeeping ? "Keeping \(name)" : "Waiting on \(name)")
-        accessibilityTraits = isKeeping ? [.button, .selected] : .button
-    }
-}
-
-/// 10pt bar: icy blue under budget, warm when over.
+/// 10pt bar: icy blue under budget, warm when over. An optional white tick marks 100% of fun money, so "over"
+/// reads without colour.
 final class FunMoneyMeterView: UIView {
     private let fill = UIView()
+    private let marker = UIView()
+    private var markerFraction: CGFloat?
     private var fillWidth: NSLayoutConstraint?
     private var fraction: CGFloat
 
@@ -346,6 +225,9 @@ final class FunMoneyMeterView: UIView {
         fill.layer.cornerRadius = 5
         fill.translatesAutoresizingMaskIntoConstraints = false
         addSubview(fill)
+        marker.backgroundColor = .white
+        marker.isHidden = true
+        addSubview(marker)
         NSLayoutConstraint.activate([
             fill.leadingAnchor.constraint(equalTo: leadingAnchor),
             fill.topAnchor.constraint(equalTo: topAnchor),
@@ -359,8 +241,11 @@ final class FunMoneyMeterView: UIView {
 
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
 
-    func update(fraction: Double, isOver: Bool, animated: Bool) {
+    func update(fraction: Double, isOver: Bool, marker position: Double? = nil, animated: Bool) {
         self.fraction = Self.clamp(fraction)
+        markerFraction = position.map(Self.clamp)
+        marker.isHidden = position == nil
+        setNeedsLayout()
         let color = isOver ? Theme.warm : Theme.cubeStroke
         applyWidth()
         let changes = {
@@ -372,6 +257,13 @@ final class FunMoneyMeterView: UIView {
         } else {
             changes()
         }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        guard let markerFraction else { return }
+        let x = min(max(bounds.width * markerFraction - 1, 0), bounds.width - 2)
+        marker.frame = CGRect(x: x, y: 0, width: 2, height: bounds.height)
     }
 
     private static func clamp(_ value: Double) -> CGFloat {
@@ -402,13 +294,16 @@ final class SettingsRowView: UIView {
         super.init(frame: .zero)
         titleLabel.text = title
         titleLabel.font = ThawFont.body(16)
+        titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.textColor = Theme.ink
         subtitleLabel.text = subtitle
         subtitleLabel.font = ThawFont.body(13)
+        subtitleLabel.adjustsFontForContentSizeCategory = true
         subtitleLabel.textColor = Theme.inkSecondary
         subtitleLabel.isHidden = (subtitle ?? "").isEmpty
         valueLabel.text = value
         valueLabel.font = ThawFont.body(16, weight: .semibold)
+        valueLabel.adjustsFontForContentSizeCategory = true
         valueLabel.textColor = Theme.accent
         valueLabel.textAlignment = .right
         valueLabel.setContentHuggingPriority(.required, for: .horizontal)

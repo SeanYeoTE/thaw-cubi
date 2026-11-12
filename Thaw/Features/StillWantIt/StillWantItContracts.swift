@@ -2,11 +2,18 @@ import Foundation
 
 struct StillWantItViewModel {
     let progressText: String
-    let question: String
+    let name: String
     let priceText: String
     let quote: String
-    let funText: String
-    let keepTitle: String
+    let dateText: String
+    let budgetCaption: String
+    let budgetText: String
+    let meterFraction: Double
+    let meterIsOver: Bool
+    let meterText: String
+    let letGoTitle: String
+    let buyTitle: String
+    let waitTitle: String
 }
 
 protocol StillWantItViewProtocol: AnyObject {
@@ -17,7 +24,7 @@ protocol StillWantItViewProtocol: AnyObject {
 
 protocol StillWantItPresenterProtocol: AnyObject {
     func viewDidLoad()
-    func tapSkip()
+    func tapLetGo()
     func tapBuy()
     func tapWait()
     func tapClose()

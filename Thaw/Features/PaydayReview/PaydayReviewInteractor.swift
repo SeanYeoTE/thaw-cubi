@@ -13,9 +13,13 @@ final class PaydayReviewInteractor: PaydayReviewInteractorProtocol {
 
     var budget: Decimal { store.effectiveSettings.funMoney }
 
-    func apply(keeping: Set<UUID>) {
+    func apply(choices: [UUID: ReviewChoice]) {
         for want in wants {
-            store.decide(id: want.id, keep: keeping.contains(want.id))
+            switch choices[want.id] ?? .wait {
+            case .keep: store.decide(id: want.id, keep: true)
+            case .wait: store.decide(id: want.id, keep: false)
+            case .letGo: store.update(want.id, status: .skipped)
+            }
         }
         reminders.refresh(requestingPermission: false)
         DataChange.post()

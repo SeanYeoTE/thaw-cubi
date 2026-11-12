@@ -1,12 +1,10 @@
 import UIKit
 
-/// Payday review: pick which thawed wants fit the fun money, Keep or Wait on each.
+/// Payday review: Keep, Wait or Let go of each thawed want against the fun money.
 final class PaydayReviewViewController: ScrollStackViewController, PaydayReviewViewProtocol {
     var presenter: PaydayReviewPresenterProtocol?
 
-    private let amountLabel = UILabel()
-    private let statusLabel = UILabel()
-    private let meter = FunMoneyMeterView(fraction: 0, isOver: false)
+    private var meterCard: ReviewMeterCardView?
     private let cta = PillButton(title: "Wait on all", style: .primary)
 
     init() {
@@ -24,93 +22,60 @@ final class PaydayReviewViewController: ScrollStackViewController, PaydayReviewV
     }
 
     func render(_ content: PaydayReviewContent) {
-        stack.addArrangedSubview(CubiHeaderView(mood: .thawed, line: "Cubi: \u{201C}Pick what fits your fun money.\u{201D}",
-                                              spoken: "Pick what fits your fun money."))
-        stack.addArrangedSubview(makeMeterCard(budgetText: content.budgetText))
+        let card = ReviewMeterCardView(caption: content.budgetCaption, amount: content.budgetText)
+        meterCard = card
+        stack.addArrangedSubview(card)
 
         for row in content.rows {
             stack.addArrangedSubview(makeRow(for: row))
         }
 
-        stack.addArrangedSubview(makeLabel(
-            "Anything you don't keep waits one more payday. Let go of it anytime from its page.",
-            font: ThawFont.body(13), color: Theme.inkSecondary))
-
+        cta.accessibilityIdentifier = "review.done"
         cta.addAction(UIAction { [weak self] _ in self?.presenter?.tapCTA() }, for: .touchUpInside)
         stack.addArrangedSubview(cta)
     }
 
-    private func makeMeterCard(budgetText: String) -> UIView {
-        let card = UIView()
-        card.backgroundColor = Theme.paydayCard
-        card.layer.cornerRadius = 20
-
-        let caption = makeLabel("Fun money this payday", font: ThawFont.body(14), color: Theme.paydayLabel)
-        amountLabel.text = budgetText
-        amountLabel.font = ThawFont.money(24, weight: .heavy)
-        amountLabel.textColor = .white
-        amountLabel.numberOfLines = 0
-        amountLabel.adjustsFontForContentSizeCategory = true
-        amountLabel.setContentHuggingPriority(.required, for: .horizontal)
-        statusLabel.font = ThawFont.body(14, weight: .semibold)
-        statusLabel.numberOfLines = 0
-        statusLabel.adjustsFontForContentSizeCategory = true
-
-        let top = AdaptiveStackView(arrangedSubviews: [caption, amountLabel])
-        top.compactAlignment = .firstBaseline
-        top.spacing = 8
-        let inner = UIStackView(arrangedSubviews: [top, meter, statusLabel])
-        inner.axis = .vertical
-        inner.spacing = 10
-        inner.translatesAutoresizingMaskIntoConstraints = false
-        card.addSubview(inner)
-        NSLayoutConstraint.activate([
-            inner.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 18),
-            inner.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -18),
-            inner.topAnchor.constraint(equalTo: card.topAnchor, constant: 16),
-            inner.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -16),
-        ])
-        return card
-    }
-
     private func makeRow(for model: ReviewRowViewModel) -> UIView {
         let card = CardView()
+        card.accessibilityIdentifier = "review.row"
         let name = makeLabel(model.name, font: ThawFont.body(16, weight: .semibold))
-        let reason = makeLabel(model.reasonText,
-                               font: ThawFont.body(13), color: Theme.inkSecondary)
-        reason.numberOfLines = 0
         let price = makeLabel(model.priceText, font: ThawFont.money(16))
         price.setContentHuggingPriority(.required, for: .horizontal)
         price.setContentCompressionResistancePriority(.required, for: .horizontal)
+        let heading = AdaptiveStackView(arrangedSubviews: [name, price])
+        heading.compactAlignment = .firstBaseline
+        heading.spacing = 12
 
-        let toggle = KeepToggleButton(isKeeping: model.isKeeping)
-        toggle.name = model.name
-        toggle.addAction(UIAction { [weak self, weak toggle] _ in
-            guard let self, let toggle else { return }
-            self.presenter?.setKeeping(id: model.id, keeping: toggle.isKeeping)
-        }, for: .valueChanged)
+        let reason = makeLabel(model.reasonText, font: ThawFont.body(14), color: Theme.inkSecondary)
+        reason.numberOfLines = traitCollection.preferredContentSizeCategory.isAccessibilityCategory ? 0 : 1
+        reason.lineBreakMode = .byTruncatingTail
 
-        let text = UIStackView(arrangedSubviews: [name, reason])
-        text.axis = .vertical
-        text.spacing = 3
-        let row = AdaptiveStackView(arrangedSubviews: [text, price, toggle])
-        row.compactAlignment = .center
-        row.spacing = 12
-        row.translatesAutoresizingMaskIntoConstraints = false
-        card.addSubview(row)
+        let summary = UIStackView(arrangedSubviews: [heading, reason])
+        summary.axis = .vertical
+        summary.spacing = 3
+        summary.isAccessibilityElement = true
+        summary.accessibilityLabel = model.spokenSummary
+
+        let control = ReviewChoiceControl(choice: model.choice, labels: model.choiceLabels)
+        control.onChange = { [weak self] choice in self?.presenter?.setChoice(id: model.id, choice: choice) }
+
+        let column = UIStackView(arrangedSubviews: [summary, control])
+        column.axis = .vertical
+        column.spacing = 12
+        column.translatesAutoresizingMaskIntoConstraints = false
+        card.addSubview(column)
         NSLayoutConstraint.activate([
-            row.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 16),
-            row.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -16),
-            row.topAnchor.constraint(equalTo: card.topAnchor, constant: 14),
-            row.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -14),
+            column.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 16),
+            column.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -16),
+            column.topAnchor.constraint(equalTo: card.topAnchor, constant: 14),
+            column.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -14),
         ])
         return card
     }
 
     func update(_ summary: PaydayReviewSummary, animated: Bool) {
-        meter.update(fraction: summary.fraction, isOver: summary.isOver, animated: animated)
-        statusLabel.textColor = summary.isOver ? Theme.paydaySubtext : Theme.cubeFill
-        statusLabel.text = summary.statusText
+        meterCard?.update(fraction: summary.fraction, isOver: summary.isOver,
+                          statusText: summary.statusText, animated: animated)
         cta.configuration?.title = summary.ctaTitle
     }
 
@@ -119,7 +84,7 @@ final class PaydayReviewViewController: ScrollStackViewController, PaydayReviewV
     }
 
     func showDiscardConfirmation() {
-        let sheet = UIAlertController(title: "Discard choices?", message: "Your Keep and Wait picks won't be applied.",
+        let sheet = UIAlertController(title: "Discard choices?", message: "Your picks won't be applied.",
                                       preferredStyle: .actionSheet)
         sheet.addAction(UIAlertAction(title: "Discard", style: .destructive) { [weak self] _ in
             self?.presenter?.confirmDiscard()

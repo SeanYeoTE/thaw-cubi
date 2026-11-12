@@ -14,6 +14,7 @@ final class MomentView: UIView {
         let label = UILabel()
         label.text = line
         label.font = ThawFont.display(26)
+        label.adjustsFontForContentSizeCategory = true
         label.textColor = Theme.ink
         label.textAlignment = .center
         label.numberOfLines = 0

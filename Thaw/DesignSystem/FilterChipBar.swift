@@ -98,6 +98,7 @@ final class FilterChipBar: UIView {
                 return updated
             }
             button.configuration = config
+            button.titleLabel?.adjustsFontForContentSizeCategory = true
             button.alpha = button.isHighlighted ? 0.7 : 1
         }
         chip.heightAnchor.constraint(greaterThanOrEqualToConstant: Self.chipHeight).isActive = true

@@ -1,17 +1,19 @@
 import UIKit
 
-/// Payday tab: countdown or ready count, fun money, Review, and read-only rows of what thaws this payday.
+/// Payday tab: countdown or ready count, how much of fun money is spoken for, Review, and read-only rows split by what fits.
 final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol {
     var presenter: PaydayPresenterProtocol?
 
-    private let titleLabel = UILabel()
+    private let titleLabel = ThawScreenTitleLabel()
     private let hero = UIView()
     private let cubi = CubiView(mood: .frozen, size: 96)
     private let valueLabel = UILabel()
     private let captionLabel = UILabel()
     private let budgetStack = UIStackView()
     private let meter = FunMoneyMeterView(fraction: 0, isOver: false)
+    private let budgetValueLabel = UILabel()
     private let budgetLabel = UILabel()
+    private let topRow = UIView()
     private let reviewButton = PillButton(title: "Review", style: .primary)
     private let remindButton = PillButton(title: "Remind me tonight", style: .quiet)
     private let content = UIStackView()
@@ -30,11 +32,6 @@ final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol 
         stack.spacing = 16
 
         titleLabel.text = "Payday"
-        titleLabel.font = ThawFont.display(36)
-        titleLabel.textColor = Theme.ink
-        titleLabel.numberOfLines = 0
-        titleLabel.adjustsFontForContentSizeCategory = true
-        titleLabel.accessibilityTraits = .header
 
         reviewButton.accessibilityIdentifier = "payday.review"
         reviewButton.addAction(UIAction { [weak self] _ in self?.presenter?.tapReview() }, for: .touchUpInside)
@@ -64,20 +61,28 @@ final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol 
     private func makeHero() -> UIView {
         hero.backgroundColor = Theme.paydayCard
         hero.layer.cornerRadius = Theme.Radius.pill
-        hero.isAccessibilityElement = true
-        hero.accessibilityIdentifier = "payday.hero"
+        topRow.isAccessibilityElement = true
+        topRow.accessibilityIdentifier = "payday.hero"
+        budgetStack.isAccessibilityElement = true
+        budgetStack.accessibilityIdentifier = "payday.budget"
 
         cubi.isAccessibilityElement = false
         cubi.setContentHuggingPriority(.required, for: .horizontal)
         cubi.setContentCompressionResistancePriority(.required, for: .horizontal)
 
         valueLabel.font = ThawFont.display(40)
+        valueLabel.adjustsFontForContentSizeCategory = true
         valueLabel.textColor = .white
         captionLabel.font = ThawFont.body(15)
+        captionLabel.adjustsFontForContentSizeCategory = true
         captionLabel.textColor = Theme.paydayLabel
+        budgetValueLabel.font = ThawFont.display(28)
+        budgetValueLabel.adjustsFontForContentSizeCategory = true
+        budgetValueLabel.textColor = .white
         budgetLabel.font = ThawFont.body(14, weight: .medium)
+        budgetLabel.adjustsFontForContentSizeCategory = true
         budgetLabel.textColor = Theme.paydayLabel
-        for label in [valueLabel, captionLabel, budgetLabel] {
+        for label in [valueLabel, captionLabel, budgetValueLabel, budgetLabel] {
             label.numberOfLines = 0
             label.adjustsFontForContentSizeCategory = true
         }
@@ -90,13 +95,24 @@ final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol 
 
         budgetStack.axis = .vertical
         budgetStack.spacing = 6
-        budgetStack.addArrangedSubview(meter)
-        budgetStack.addArrangedSubview(budgetLabel)
+        [budgetValueLabel, meter, budgetLabel].forEach(budgetStack.addArrangedSubview)
+        budgetStack.setCustomSpacing(10, after: budgetValueLabel)
+        budgetStack.setCustomSpacing(8, after: meter)
+        budgetStack.isUserInteractionEnabled = false
 
-        let column = UIStackView(arrangedSubviews: [top, budgetStack])
+        top.isUserInteractionEnabled = false
+        top.translatesAutoresizingMaskIntoConstraints = false
+        topRow.addSubview(top)
+        NSLayoutConstraint.activate([
+            top.leadingAnchor.constraint(equalTo: topRow.leadingAnchor),
+            top.trailingAnchor.constraint(equalTo: topRow.trailingAnchor),
+            top.topAnchor.constraint(equalTo: topRow.topAnchor),
+            top.bottomAnchor.constraint(equalTo: topRow.bottomAnchor),
+        ])
+
+        let column = UIStackView(arrangedSubviews: [topRow, budgetStack])
         column.axis = .vertical
         column.spacing = 16
-        column.isUserInteractionEnabled = false
         column.translatesAutoresizingMaskIntoConstraints = false
         hero.addSubview(column)
         NSLayoutConstraint.activate([
@@ -116,13 +132,15 @@ final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol 
         cubi.isHidden = !model.showsCubi
         valueLabel.text = model.heroValue
         captionLabel.text = model.heroCaption
-        hero.accessibilityLabel = model.heroSpoken
+        topRow.accessibilityLabel = model.heroSpoken
 
         budgetStack.isHidden = model.budget == nil
         if let budget = model.budget {
-            budgetLabel.text = budget.text
-            budgetLabel.textColor = budget.isOver ? Theme.paydaySubtext : Theme.paydayLabel
-            meter.update(fraction: budget.fraction, isOver: budget.isOver, animated: view.window != nil)
+            budgetValueLabel.text = budget.headline
+            budgetValueLabel.textColor = budget.isOver ? Theme.paydaySubtext : .white
+            budgetLabel.text = budget.caption
+            budgetStack.accessibilityLabel = budget.spoken
+            meter.update(fraction: budget.fillFraction, isOver: budget.isOver, marker: budget.markerFraction, animated: false)
         }
 
         reviewButton.isHidden = model.reviewTitle == nil
