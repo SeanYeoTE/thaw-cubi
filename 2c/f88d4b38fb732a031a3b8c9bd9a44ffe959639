@@ -1,0 +1,40 @@
+Thaw/DesignSystem/ThawListScreen.swift
+  s_6b712fecfca38a::t_f98041c74689aa 1-194,197,202-204
+  s_6b712fecfca38a::t_954868e509bb85 195-196,198-200,205-212
+Thaw.xcodeproj/project.pbxproj
+  s_6b712fecfca38a::t_7b317fb026fbb3 26,86,107,121,127,268,279,285,323,327,554,781,805,841,850,877
+Thaw/DesignSystem/Components.swift
+  s_6b712fecfca38a::t_e8b59ae6123bf5 207-208,211-212,225-227,241,243-245,259-265
+Thaw/DesignSystem/ScrollStackViewController.swift
+  s_6b712fecfca38a::t_29800874b587b5 36
+Thaw/Features/Home/HomeViewController.swift
+  s_6b712fecfca38a::t_d666d842b48f05 5,38-39,43,122-125,151-160,163-174,181,184-185,189,233
+Thaw/Features/Payday/PaydayViewController.swift
+  s_6b712fecfca38a::t_31bfaddc5766d3 7,13,139
+Thaw/Features/PaydaySetup/SettingsCells.swift
+  s_6b712fecfca38a::t_6bde5efce27e94 7
+Thaw/Features/PaydaySetup/SettingsPresenter.swift
+  s_6b712fecfca38a::t_cf6b339c3f52d6 129
+Thaw/Features/PaydaySetup/SettingsViewController.swift
+  s_6b712fecfca38a::t_8185047bc02de2 4,17-23,26,102,104-106
+Thaw/Features/Saved/SavedViewController.swift
+  s_6b712fecfca38a::t_87bbf2de53c476 7,54,114-122,125-139,149-150,160,172-173,179,186-187,209,213,220
+ThawTests/ThawColumnTests.swift
+  s_6b712fecfca38a::t_15f99a16d3c148 1-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2cf88d4b38fb732a031a3b8c9bd9a44ffe959639",
+  "prompts": {},
+  "sessions": {
+    "s_6b712fecfca38a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "adc458bb-085d-4363-8edf-b22fe90464e6",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
