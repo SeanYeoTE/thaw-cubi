@@ -6,7 +6,7 @@ final class EmptyStateView: UIView {
 
     init(mood: CubiMood, line: String, actionTitle: String?) {
         super.init(frame: .zero)
-        let cubi = CubiView(mood: mood, size: 96)
+        let cubi = CubiView(mood: mood, size: .feature)
         // The line is spoken through Cubi, so VoiceOver reads it once.
         cubi.spokenLine = line
 

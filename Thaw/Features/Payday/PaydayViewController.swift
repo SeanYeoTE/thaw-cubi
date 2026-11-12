@@ -5,8 +5,7 @@ final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol 
     var presenter: PaydayPresenterProtocol?
 
     private let titleLabel = ThawScreenTitleLabel()
-    private let hero = UIView()
-    private let cubi = CubiView(mood: .frozen, size: 96)
+    private let cubi = CubiView(mood: .frozen, size: .card)
     private let valueLabel = UILabel()
     private let captionLabel = UILabel()
     private let budgetStack = UIStackView()
@@ -59,8 +58,6 @@ final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol 
     }
 
     private func makeHero() -> UIView {
-        hero.backgroundColor = Theme.paydayCard
-        hero.layer.cornerRadius = Theme.Radius.pill
         topRow.isAccessibilityElement = true
         topRow.accessibilityIdentifier = "payday.hero"
         budgetStack.isAccessibilityElement = true
@@ -113,15 +110,7 @@ final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol 
         let column = UIStackView(arrangedSubviews: [topRow, budgetStack])
         column.axis = .vertical
         column.spacing = 16
-        column.translatesAutoresizingMaskIntoConstraints = false
-        hero.addSubview(column)
-        NSLayoutConstraint.activate([
-            column.leadingAnchor.constraint(equalTo: hero.leadingAnchor, constant: 18),
-            column.trailingAnchor.constraint(equalTo: hero.trailingAnchor, constant: -18),
-            column.topAnchor.constraint(equalTo: hero.topAnchor, constant: 18),
-            column.bottomAnchor.constraint(equalTo: hero.bottomAnchor, constant: -18),
-        ])
-        return hero
+        return HeroCardView(content: column)
     }
 
     // MARK: - PaydayViewProtocol
