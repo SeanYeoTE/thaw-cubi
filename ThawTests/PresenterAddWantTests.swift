@@ -4,7 +4,7 @@ import XCTest
 @MainActor
 final class PresenterAddWantTests: XCTestCase {
     private final class FakeView: AddWantViewProtocol {
-        var note: String?
+        var thawLine: String?
         var modal: [Bool] = []
         var errors: [String] = []
         var discardShown = 0
@@ -12,7 +12,7 @@ final class PresenterAddWantTests: XCTestCase {
         var momentCompletion: (() -> Void)?
         var screen: AddWantScreen?
         func configure(_ screen: AddWantScreen) { self.screen = screen }
-        func render(note: String) { self.note = note }
+        func render(thawLine: String?) { self.thawLine = thawLine }
         func setModalInPresentation(_ isModal: Bool) { modal.append(isModal) }
         func showError(_ message: String) { errors.append(message) }
         func showDiscardConfirmation() { discardShown += 1 }
@@ -45,15 +45,76 @@ final class PresenterAddWantTests: XCTestCase {
 
     private func make() -> (AddWantPresenter, FakeView, FakeInteractor, FakeRouter) {
         let view = FakeView(), interactor = FakeInteractor(), router = FakeRouter()
-        return (AddWantPresenter(view: view, interactor: interactor, router: router), view, interactor, router)
+        return (AddWantPresenter(view: view, interactor: interactor, router: router, now: { self.now }, calendar: calendar),
+                view, interactor, router)
+    }
+
+    private var calendar: Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Asia/Singapore")!
+        return calendar
+    }
+
+    /// 12 Nov 2026, 10:00 in Singapore; default settings put the next payday on 25 Nov.
+    private var now: Date {
+        calendar.date(from: DateComponents(year: 2026, month: 11, day: 12, hour: 10))!
     }
 
     private let empty = AddWantInput(name: "", price: "", reason: "")
 
-    func testNoteUsesSettings() {
+    private func line(for price: String, in presenter: AddWantPresenter, _ view: FakeView) -> String? {
+        presenter.inputChanged(AddWantInput(name: "Lamp", price: price, reason: ""))
+        return view.thawLine
+    }
+
+    func testThawLineForPaydayAndQuickThaw() {
         let (presenter, view, _, _) = make()
         presenter.viewDidLoad()
-        XCTAssertEqual(view.note, "Thaw will read this back to you when it thaws. Items under S$30 use a 2-day timer; the rest thaw on payday.")
+        XCTAssertNil(view.thawLine)
+        XCTAssertEqual(line(for: "45", in: presenter, view), "Thaws on payday · 25 Nov")
+        XCTAssertEqual(line(for: "30", in: presenter, view), "Thaws on payday · 25 Nov")
+        XCTAssertEqual(line(for: "29.99", in: presenter, view), "Quick thaw · 2 days")
+    }
+
+    func testThawLineHiddenForEmptyOrInvalidPrices() {
+        let (presenter, view, _, _) = make()
+        presenter.viewDidLoad()
+        _ = line(for: "45", in: presenter, view)
+        for price in ["", " ", "abc", "0", "-5"] {
+            XCTAssertNil(line(for: price, in: presenter, view), price)
+        }
+    }
+
+    func testThawLineIsHiddenForShareDrafts() {
+        let (presenter, view, _, _) = makeDraft()
+        XCTAssertNil(view.thawLine)
+        XCTAssertNil(line(for: "45", in: presenter, view))
+    }
+
+    func testEditingACoolingWantShowsItsDateThenTheNewOneWhenCrossingTheThreshold() {
+        let (presenter, view, interactor, _) = make()
+        var want = Fixture.want("Keyboard", 189, reason: "")
+        want.thawsAt = calendar.date(from: DateComponents(year: 2026, month: 11, day: 25, hour: 9))!
+        interactor.editing = want
+        presenter.viewDidLoad()
+        XCTAssertEqual(view.thawLine, "Thaws on payday · 25 Nov")
+        XCTAssertEqual(line(for: "250", in: presenter, view), "Thaws on payday · 25 Nov")
+        XCTAssertEqual(line(for: "20", in: presenter, view), "Moves to quick thaw · 14 Nov")
+        XCTAssertNil(line(for: "", in: presenter, view))
+    }
+
+    func testEditingATimerWantCrossingUpMovesToPayday() {
+        let (presenter, view, interactor, _) = make()
+        var want = Fixture.want("Pen", 10, reason: "")
+        want.thawsAt = calendar.date(from: DateComponents(year: 2026, month: 11, day: 14, hour: 10))!
+        interactor.editing = want
+        presenter.viewDidLoad()
+        XCTAssertEqual(view.thawLine, "Quick thaw · 2 days")
+        XCTAssertEqual(line(for: "80", in: presenter, view), "Moves to payday · 25 Nov")
+    }
+
+    func testDecidedWantsHaveNoThawLine() {
+        XCTAssertNil(makeEditing(status: .bought).1.thawLine)
     }
 
     func testValidationErrors() {
@@ -163,7 +224,6 @@ final class PresenterAddWantTests: XCTestCase {
         XCTAssertEqual(view.screen?.actionTitle, "Add to Thaw")
         XCTAssertEqual(view.screen?.initial, AddWantInput(name: "Brass desk lamp", price: "", reason: ""))
         XCTAssertEqual(view.screen?.caption, "From example.com")
-        XCTAssertEqual(view.note, "Thaw will read this back to you when it thaws. It joins your Cooling list the next time you open Thaw.")
     }
 
     func testDraftWithoutLinkHasNoCaption() {
@@ -235,43 +295,70 @@ final class PresenterAddWantTests: XCTestCase {
         return made
     }
 
-    private let keyboard = AddWantInput(name: "Keyboard", price: "189", reason: "Double-types")
-
-    func testActionsDependOnTheWantsStatus() {
-        XCTAssertEqual(makeEditing(status: .cooling).1.screen?.actions.map(\.kind), [.delete])
-        XCTAssertEqual(makeEditing(status: .skipped).1.screen?.actions.map(\.kind), [.moveBackToCooling, .markBought, .delete])
-        XCTAssertEqual(makeEditing(status: .bought).1.screen?.actions.map(\.kind), [.moveBackToCooling, .markSkipped, .delete])
-        XCTAssertEqual(make().1.screen?.actions ?? [], [])
+    func testStatusRowOnlyForDecidedWantsAndMatchesTheCurrentStatus() {
+        let cooling = makeEditing(status: .cooling).1.screen
+        XCTAssertEqual(cooling?.statusOptions, [])
+        XCTAssertNil(cooling?.initial?.status)
+        XCTAssertEqual(cooling?.deleteTitle, "Delete")
+        for status in [Want.Status.skipped, .bought] {
+            let screen = makeEditing(status: status).1.screen
+            XCTAssertEqual(screen?.statusOptions.map(\.title), ["Cooling", "Bought", "Let go"])
+            XCTAssertEqual(screen?.statusOptions.map(\.status), [.cooling, .bought, .skipped])
+            XCTAssertEqual(screen?.initial?.status, status)
+        }
+        let add = make()
+        add.0.viewDidLoad()
+        XCTAssertEqual(add.1.screen?.statusOptions, [])
+        XCTAssertNil(add.1.screen?.deleteTitle)
     }
 
-    func testMoveBackToCoolingAndSwitchDecisionDismiss() {
-        let (presenter, _, interactor, router) = makeEditing(status: .skipped)
-        presenter.tapAction(.moveBackToCooling, input: keyboard)
-        presenter.tapAction(.markBought, input: keyboard)
-        XCTAssertEqual(interactor.ops, ["reopen", "set-bought"])
-        XCTAssertEqual(router.dismissed, 2)
-        XCTAssertTrue(interactor.saved.isEmpty)
+    func testSaveAppliesTheChosenStatus() {
+        func run(from: Want.Status, to: Want.Status) -> [String] {
+            let (presenter, _, interactor, router) = makeEditing(status: from)
+            presenter.tapSave(AddWantInput(name: "Keyboard", price: "189", reason: "Double-types", status: to))
+            XCTAssertEqual(router.dismissed, 1)
+            XCTAssertEqual(interactor.saved.count, 1)
+            return interactor.ops
+        }
+        XCTAssertEqual(run(from: .skipped, to: .cooling), ["reopen"])
+        XCTAssertEqual(run(from: .skipped, to: .bought), ["set-bought"])
+        XCTAssertEqual(run(from: .bought, to: .skipped), ["set-skipped"])
+        XCTAssertEqual(run(from: .bought, to: .bought), [])
     }
 
-    func testActionKeepsValidEditsTypedBeforeIt() {
-        let (presenter, _, interactor, router) = makeEditing(status: .bought)
-        presenter.tapAction(.markSkipped, input: AddWantInput(name: "Keyboard Pro", price: "199", reason: "Double-types"))
+    func testSaveKeepsEditsTypedWithAStatusChange() {
+        let (presenter, _, interactor, _) = makeEditing(status: .bought)
+        presenter.tapSave(AddWantInput(name: "Keyboard Pro", price: "199", reason: "Double-types", status: .skipped))
         XCTAssertEqual(interactor.saved.first?.0, "Keyboard Pro")
         XCTAssertEqual(interactor.ops, ["set-skipped"])
-        XCTAssertEqual(router.dismissed, 1)
     }
 
-    func testActionWithInvalidEditsShowsErrorAndChangesNothing() {
+    func testInvalidEditsWithAStatusChangeChangeNothing() {
         let (presenter, view, interactor, router) = makeEditing(status: .skipped)
-        presenter.tapAction(.moveBackToCooling, input: AddWantInput(name: "", price: "189", reason: ""))
+        presenter.tapSave(AddWantInput(name: "", price: "189", reason: "", status: .cooling))
         XCTAssertEqual(view.errors.count, 1)
         XCTAssertTrue(interactor.ops.isEmpty)
+        XCTAssertTrue(interactor.saved.isEmpty)
+        XCTAssertEqual(router.dismissed, 0)
+    }
+
+    func testChangingOnlyTheStatusIsDirtyAndAsksBeforeDiscarding() {
+        let (presenter, view, _, router) = makeEditing(status: .skipped)
+        let unchanged = AddWantInput(name: "Keyboard", price: "189", reason: "Double-types", status: .skipped)
+        presenter.inputChanged(unchanged)
+        XCTAssertEqual(view.modal.last, false)
+        var changed = unchanged
+        changed.status = .bought
+        presenter.inputChanged(changed)
+        XCTAssertEqual(view.modal.last, true)
+        presenter.tapCancel(changed)
+        XCTAssertEqual(view.discardShown, 1)
         XCTAssertEqual(router.dismissed, 0)
     }
 
     func testDeleteAsksThenDeletesAndDismisses() {
         let (presenter, view, interactor, router) = makeEditing(status: .cooling)
-        presenter.tapAction(.delete, input: keyboard)
+        presenter.tapDelete()
         XCTAssertEqual(view.deleteConfirmation?.title, "Delete Keyboard?")
         XCTAssertTrue(interactor.ops.isEmpty)
         XCTAssertEqual(router.dismissed, 0)
@@ -280,11 +367,12 @@ final class PresenterAddWantTests: XCTestCase {
         XCTAssertEqual(router.dismissed, 1)
     }
 
-    func testActionsAreIgnoredOutsideEditMode() {
-        let (presenter, _, interactor, router) = make()
+    func testDeleteIsIgnoredOutsideEditMode() {
+        let (presenter, view, interactor, router) = make()
         presenter.viewDidLoad()
-        presenter.tapAction(.delete, input: keyboard)
+        presenter.tapDelete()
         presenter.confirmDelete()
+        XCTAssertNil(view.deleteConfirmation)
         XCTAssertTrue(interactor.ops.isEmpty)
         XCTAssertEqual(router.dismissed, 0)
     }

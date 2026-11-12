@@ -7,7 +7,7 @@ final class IntegrationEditTests: XCTestCase {
     private final class FakeAddView: AddWantViewProtocol {
         var screen: AddWantScreen?
         func configure(_ screen: AddWantScreen) { self.screen = screen }
-        func render(note: String) {}
+        func render(thawLine: String?) {}
         func setModalInPresentation(_ isModal: Bool) {}
         func showError(_ message: String) {}
         func showDiscardConfirmation() {}
@@ -72,9 +72,8 @@ final class IntegrationEditTests: XCTestCase {
 
         let router = FakeAddRouter(), view = FakeAddView()
         let presenter = editPresenter(store: store, id: grinder.id, router: router, view: view)
-        XCTAssertEqual(view.screen?.actions.map(\.kind), [.moveBackToCooling, .markBought, .delete])
-        presenter.tapAction(.moveBackToCooling,
-                            input: AddWantInput(name: "Grinder", price: "420", reason: "Better coffee"))
+        XCTAssertEqual(view.screen?.statusOptions.map(\.status), [.cooling, .bought, .skipped])
+        presenter.tapSave(AddWantInput(name: "Grinder", price: "420", reason: "Better coffee", status: .cooling))
 
         XCTAssertEqual(router.dismissed, 1)
         XCTAssertEqual(store.want(id: grinder.id)?.status, .cooling)
@@ -99,7 +98,7 @@ final class IntegrationEditTests: XCTestCase {
 
         let router = FakeAddRouter()
         let presenter = editPresenter(store: store, id: lamp.id, router: router, view: FakeAddView())
-        presenter.tapAction(.delete, input: AddWantInput(name: "Lamp", price: "45", reason: "Dim light"))
+        presenter.tapDelete()
         XCTAssertNotNil(store.want(id: lamp.id), "Asking first must not delete")
         presenter.confirmDelete()
 
