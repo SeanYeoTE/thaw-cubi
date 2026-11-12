@@ -126,7 +126,7 @@ final class SettingsPresenter: SettingsPresenterProtocol, PaydaySetupInteractorO
             ]),
             SettingsSectionViewModel(id: "quickThaws", header: "Quick thaws",
                                      footer: "Cheaper wants use a timer instead of waiting for payday.", rows: [
-                SettingsRowViewModel(id: .timerThreshold, title: "Under", value: threshold,
+                SettingsRowViewModel(id: .timerThreshold, title: "Timer for wants under", value: threshold,
                                      accessibilityLabel: "Use a timer for wants under",
                                      accessibilityValue: threshold,
                                      control: .amount(editText: Self.editText(settings.timerThreshold))),

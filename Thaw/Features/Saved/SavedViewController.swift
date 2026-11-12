@@ -4,7 +4,7 @@ import UIKit
 
 /// Stats tab: header (total, chips, chart, filter) and month-grouped History rows in a collection view list,
 /// so History rows get swipe actions. Visually matches the `ScrollStackViewController` screens.
-final class SavedViewController: UIViewController, SavedViewProtocol {
+final class SavedViewController: ThawListViewController, SavedViewProtocol {
     private nonisolated enum Section: Hashable, Sendable {
         case top
         case note
@@ -42,7 +42,6 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
     private var model: SavedViewModel?
     private var rows: [UUID: SavedHistoryRow] = [:]
     private var sections: [Date: SavedHistorySection] = [:]
-    private var collectionView: UICollectionView!
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
 
     init() {
@@ -52,29 +51,12 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
 
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
 
-    // Explicit deinit: the synthesized one on a MainActor class with weak refs corrupts the heap in the test host.
-    deinit {}
+    override var titleInsets: ThawListTitleInsets { ThawListTitleInsets(top: 16, bottom: Theme.Spacing.gap) }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = Theme.background
         navigationController?.navigationBar.prefersLargeTitles = true
-        // The system large title stays blank for a collection view until the first real scroll, so the header draws it.
-        navigationItem.largeTitleDisplayMode = .never
-        navigationItem.title = ""
-
-        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: makeLayout())
-        collectionView.backgroundColor = .clear
-        collectionView.alwaysBounceVertical = true
         collectionView.delegate = self
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(collectionView)
-        NSLayoutConstraint.activate([
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
         dataSource = makeDataSource()
     }
 
@@ -129,37 +111,32 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
 
     // MARK: - Layout
 
-    private func makeLayout() -> UICollectionViewLayout {
-        UICollectionViewCompositionalLayout { [weak self] index, environment in
-            guard let self else { return nil }
-            let snapshot = self.dataSource?.snapshot()
-            let section = self.dataSource?.sectionIdentifier(for: index) ?? .top
-            var config = UICollectionLayoutListConfiguration(appearance: .plain)
-            config.showsSeparators = false
-            config.backgroundColor = .clear
-            if case .month = section {
-                config.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath in
-                    self?.swipeActions(at: indexPath)
-                }
+    override func sectionLayout(at index: Int, environment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
+        let snapshot = dataSource?.snapshot()
+        let section = dataSource?.sectionIdentifier(for: index) ?? .top
+        var config = UICollectionLayoutListConfiguration(appearance: .plain)
+        config.showsSeparators = false
+        config.backgroundColor = .clear
+        if case .month = section {
+            config.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath in
+                self?.swipeActions(at: indexPath)
             }
-            let layoutSection = NSCollectionLayoutSection.list(using: config, layoutEnvironment: environment)
-            layoutSection.contentInsetsReference = .none
-            let top: CGFloat
-            switch section {
-            case .top:
-                top = 0
-            case .note:
-                top = Self.rowGap
-            case .month:
-                WantListStyle.applyRowSpacing(to: layoutSection)
-                top = 24
-            }
-            let isLast = index == (snapshot?.numberOfSections ?? 1) - 1
-            layoutSection.contentInsets = WantListStyle.contentInsets(
-                environment: environment, safeArea: self.collectionView?.safeAreaInsets ?? .zero,
-                top: top, bottom: isLast ? 24 : 0)
-            return layoutSection
         }
+        let layoutSection = NSCollectionLayoutSection.list(using: config, layoutEnvironment: environment)
+        layoutSection.contentInsetsReference = .none
+        let top: CGFloat
+        switch section {
+        case .top:
+            top = 0
+        case .note:
+            top = Self.rowGap
+        case .month:
+            WantListStyle.applyRowSpacing(to: layoutSection)
+            top = 24
+        }
+        let isLast = index == (snapshot?.numberOfSections ?? 1) - 1
+        layoutSection.contentInsets = columnInsets(environment: environment, top: top, bottom: isLast ? 24 : 0)
+        return layoutSection
     }
 
     private func makeDataSource() -> UICollectionViewDiffableDataSource<Section, Item> {
@@ -169,9 +146,8 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         }
         let noteRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Item> { [weak self] cell, _, _ in
             guard let self, let text = self.model?.history?.emptyText else { return }
-            self.prepare(cell)
-            let label = self.makeLabel(text, font: ThawFont.body(15), color: Theme.inkSecondary)
-            self.pin(label, in: cell.contentView, top: 0, bottom: 0)
+            cell.resetForReuse()
+            cell.embed(self.makeLabel(text, font: ThawFont.body(15), color: Theme.inkSecondary))
         }
         let headerRegistration = UICollectionView.CellRegistration<MonthHeaderCell, Date> { [weak self] cell, _, month in
             guard let self, let section = self.sections[month] else { return }
@@ -181,7 +157,7 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
             guard let self, let row = self.rows[id] else { return }
             self.configureRow(cell, row: row)
         }
-        return UICollectionViewDiffableDataSource(collectionView: collectionView) { collectionView, indexPath, item in
+        let dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) { collectionView, indexPath, item in
             switch item {
             case .top:
                 collectionView.dequeueConfiguredReusableCell(using: topRegistration, for: indexPath, item: item)
@@ -193,27 +169,25 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
                 collectionView.dequeueConfiguredReusableCell(using: rowRegistration, for: indexPath, item: id)
             }
         }
+        installTitle(on: dataSource)
+        return dataSource
     }
 
     // MARK: - Cells
 
     private func configureTop(_ cell: UICollectionViewListCell, model: SavedViewModel) {
-        prepare(cell)
+        cell.resetForReuse()
         let stack = UIStackView()
         stack.axis = .vertical
         stack.spacing = 20
-        let heading = makeLabel(title ?? "Stats", font: ThawFont.display(36))
-        heading.accessibilityTraits = .header
-        stack.addArrangedSubview(heading)
 
         if let empty = model.empty {
-            stack.setCustomSpacing(48, after: heading)
             stack.addArrangedSubview(EmptyStateView(mood: empty.mood, line: empty.line, actionTitle: nil))
-            pin(stack, in: cell.contentView, top: 16, bottom: 0)
+            // The empty state sits further below the title than the stats do.
+            cell.embed(stack, top: 48 - Theme.Spacing.gap)
             return
         }
 
-        stack.setCustomSpacing(Theme.Spacing.gap, after: heading)
         stack.addArrangedSubview(heroView(model.hero))
         if !model.chips.isEmpty {
             stack.addArrangedSubview(chipRow(model.chips))
@@ -232,18 +206,18 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
             filter.onChange = { [weak self] index in self?.presenter?.selectHistoryFilter(at: index) }
             stack.addArrangedSubview(filter)
         }
-        pin(stack, in: cell.contentView, top: 16, bottom: 0)
+        cell.embed(stack)
     }
 
     private func configureRow(_ cell: UICollectionViewListCell, row: SavedHistoryRow) {
-        prepare(cell)
+        cell.resetForReuse()
         let card = WantRowView(model: WantRowModel(
             title: row.name, priceText: row.priceText,
             leadingSymbol: row.isSkipped ? "xmark.circle" : "checkmark.circle",
             tone: row.isSkipped ? .accent : .neutral,
             accessibilityLabel: row.accessibilityLabel,
             accessibilityValue: row.accessibilityValue))
-        pin(card, in: cell.contentView, top: 0, bottom: 0)
+        cell.embed(card)
 
         let id = row.id
         cell.isAccessibilityElement = true
@@ -254,17 +228,6 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
         cell.accessibilityCustomActions = WantListStyle.accessibilityActions(
             onEdit: { [weak self] in self?.presenter?.tapEdit(id: id) },
             onDelete: { [weak self] in self?.presenter?.tapDelete(id: id) })
-    }
-
-    private func prepare(_ cell: UICollectionViewListCell) {
-        cell.contentView.subviews.forEach { $0.removeFromSuperview() }
-        cell.backgroundConfiguration = .clear()
-        cell.isAccessibilityElement = false
-        cell.accessibilityLabel = nil
-        cell.accessibilityValue = nil
-        cell.accessibilityTraits = []
-        cell.accessibilityHint = nil
-        cell.accessibilityCustomActions = nil
     }
 
     /// Cubi beside the total saved; stacks at accessibility sizes.
@@ -334,17 +297,6 @@ final class SavedViewController: UIViewController, SavedViewProtocol {
     }
 
     // MARK: - Helpers
-
-    private func pin(_ inner: UIView, in container: UIView, top: CGFloat, bottom: CGFloat) {
-        inner.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(inner)
-        NSLayoutConstraint.activate([
-            inner.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            inner.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-            inner.topAnchor.constraint(equalTo: container.topAnchor, constant: top),
-            inner.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -bottom),
-        ])
-    }
 
     private func makeLabel(_ text: String, font: UIFont, color: UIColor = Theme.ink) -> UILabel {
         let label = UILabel()

@@ -4,13 +4,13 @@ import UIKit
 final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol {
     var presenter: PaydayPresenterProtocol?
 
-    private let titleLabel = UILabel()
+    private let titleLabel = ThawScreenTitleLabel()
     private let hero = UIView()
     private let cubi = CubiView(mood: .frozen, size: 96)
     private let valueLabel = UILabel()
     private let captionLabel = UILabel()
     private let budgetStack = UIStackView()
-    private let meter = PaydayMeterView()
+    private let meter = FunMoneyMeterView(fraction: 0, isOver: false)
     private let budgetValueLabel = UILabel()
     private let budgetLabel = UILabel()
     private let topRow = UIView()
@@ -32,11 +32,6 @@ final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol 
         stack.spacing = 16
 
         titleLabel.text = "Payday"
-        titleLabel.font = ThawFont.display(36)
-        titleLabel.textColor = Theme.ink
-        titleLabel.numberOfLines = 0
-        titleLabel.adjustsFontForContentSizeCategory = true
-        titleLabel.accessibilityTraits = .header
 
         reviewButton.accessibilityIdentifier = "payday.review"
         reviewButton.addAction(UIAction { [weak self] _ in self?.presenter?.tapReview() }, for: .touchUpInside)
@@ -141,7 +136,7 @@ final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol 
             budgetValueLabel.textColor = budget.isOver ? Theme.paydaySubtext : .white
             budgetLabel.text = budget.caption
             budgetStack.accessibilityLabel = budget.spoken
-            meter.update(fill: budget.fillFraction, marker: budget.markerFraction, isOver: budget.isOver)
+            meter.update(fraction: budget.fillFraction, isOver: budget.isOver, marker: budget.markerFraction, animated: false)
         }
 
         reviewButton.isHidden = model.reviewTitle == nil
@@ -207,47 +202,5 @@ private final class PaydayRowControl: UIControl {
 
     override var isHighlighted: Bool {
         didSet { alpha = isHighlighted ? 0.6 : 1 }
-    }
-}
-
-/// Budget bar on the dark card: fill is spoken-for against fun money, the white tick marks 100% of fun money
-/// so "over" reads without colour.
-private final class PaydayMeterView: UIView {
-    private let fill = UIView()
-    private let marker = UIView()
-    private var fillFraction: CGFloat = 0
-    private var markerFraction: CGFloat = 1
-
-    init() {
-        super.init(frame: .zero)
-        backgroundColor = Theme.meterTrack
-        layer.cornerRadius = 5
-        fill.layer.cornerRadius = 5
-        marker.backgroundColor = .white
-        addSubview(fill)
-        addSubview(marker)
-        isAccessibilityElement = false
-    }
-
-    required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
-
-    override var intrinsicContentSize: CGSize { CGSize(width: UIView.noIntrinsicMetric, height: 10) }
-
-    func update(fill value: Double, marker position: Double, isOver: Bool) {
-        fillFraction = Self.clamp(value)
-        markerFraction = Self.clamp(position)
-        fill.backgroundColor = isOver ? Theme.warm : Theme.cubeStroke
-        setNeedsLayout()
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        fill.frame = CGRect(x: 0, y: 0, width: bounds.width * fillFraction, height: bounds.height)
-        let x = min(max(bounds.width * markerFraction - 1, 0), bounds.width - 2)
-        marker.frame = CGRect(x: x, y: 0, width: 2, height: bounds.height)
-    }
-
-    private static func clamp(_ value: Double) -> CGFloat {
-        value.isFinite ? CGFloat(max(0, min(1, value))) : 0
     }
 }

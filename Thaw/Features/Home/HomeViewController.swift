@@ -2,7 +2,7 @@ import UIKit
 
 /// Cooling tab: filter chips, sort menu and lean want rows in a collection view list, so wants get swipe
 /// Edit and Delete like Saved history. Tap opens the detail screen.
-final class HomeViewController: UIViewController, HomeViewProtocol, UICollectionViewDelegate {
+final class HomeViewController: ThawListViewController, HomeViewProtocol, UICollectionViewDelegate {
     private nonisolated enum Section: Hashable, Sendable {
         case header
         case empty
@@ -10,7 +10,6 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
     }
 
     private nonisolated enum Item: Hashable, Sendable {
-        case title
         case filters
         case empty
         case sectionHeader(Int)
@@ -26,7 +25,6 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
     private var sortButton: UIButton?
     /// One bar for the screen's lifetime, so a tap keeps its selection animation across renders.
     private var filterBar: FilterChipBar?
-    private var collectionView: UICollectionView!
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
     private var isLongPress = false
 
@@ -37,28 +35,13 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
 
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
 
+    override var titleInsets: ThawListTitleInsets { ThawListTitleInsets(top: 0, bottom: Self.rowGap / 2) }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = Theme.background
         navigationController?.navigationBar.prefersLargeTitles = true
-        // The system large title stays blank for a collection view until the first real scroll, so the list draws it.
-        navigationItem.largeTitleDisplayMode = .never
-        navigationItem.title = ""
-        navigationItem.rightBarButtonItems = [makeAddItem(), makeSortItem()]
-
-        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: makeLayout())
-        collectionView.backgroundColor = .clear
-        collectionView.alwaysBounceVertical = true
+        setTrailingBarItems([makeAddItem(), makeSortItem()])
         collectionView.delegate = self
-        collectionView.contentInsetAdjustmentBehavior = .automatic
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(collectionView)
-        NSLayoutConstraint.activate([
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
         dataSource = makeDataSource()
 
         // A long press must not count as a tap: swipe is the only way to reach Edit and Delete.
@@ -136,9 +119,10 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
         updateSortMenu(model)
         updateFilterBar(model)
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        snapshot.appendSections([.header])
-        let showsFilters = model.empty?.kind != .noWants
-        snapshot.appendItems(showsFilters ? [.title, .filters] : [.title], toSection: .header)
+        if model.empty?.kind != .noWants {
+            snapshot.appendSections([.header])
+            snapshot.appendItems([.filters], toSection: .header)
+        }
         if model.empty != nil {
             snapshot.appendSections([.empty])
             snapshot.appendItems([.empty], toSection: .empty)
@@ -164,70 +148,49 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
 
     // MARK: - Layout
 
-    private func makeLayout() -> UICollectionViewLayout {
-        UICollectionViewCompositionalLayout { [weak self] index, environment in
-            guard let self else { return nil }
-            let section = self.dataSource?.sectionIdentifier(for: index) ?? .header
-            let isWants: Bool
-            if case .wants = section { isWants = true } else { isWants = false }
-            var config = UICollectionLayoutListConfiguration(appearance: .plain)
-            config.showsSeparators = false
-            config.backgroundColor = .clear
-            if isWants {
-                config.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath in
-                    self?.swipeActions(at: indexPath)
-                }
+    override func sectionLayout(at index: Int, environment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
+        let section = dataSource?.sectionIdentifier(for: index) ?? .header
+        let isWants: Bool
+        if case .wants = section { isWants = true } else { isWants = false }
+        var config = UICollectionLayoutListConfiguration(appearance: .plain)
+        config.showsSeparators = false
+        config.backgroundColor = .clear
+        if isWants {
+            config.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath in
+                self?.swipeActions(at: indexPath)
             }
-            let layoutSection = NSCollectionLayoutSection.list(using: config, layoutEnvironment: environment)
-            layoutSection.contentInsetsReference = .none
-            if isWants { WantListStyle.applyRowSpacing(to: layoutSection) }
-            let isLast = index == (self.dataSource?.snapshot().numberOfSections ?? 1) - 1
-            let top: CGFloat
-            switch section {
-            case .header: top = 0
-            case .empty: top = Self.rowGap * 2
-            case .wants: top = Self.rowGap
-            }
-            layoutSection.contentInsets = WantListStyle.contentInsets(
-                environment: environment, safeArea: self.collectionView?.safeAreaInsets ?? .zero,
-                top: top, bottom: isLast ? 24 : 0)
-            return layoutSection
         }
+        let layoutSection = NSCollectionLayoutSection.list(using: config, layoutEnvironment: environment)
+        layoutSection.contentInsetsReference = .none
+        if isWants { WantListStyle.applyRowSpacing(to: layoutSection) }
+        let isLast = index == (dataSource?.snapshot().numberOfSections ?? 1) - 1
+        let top: CGFloat
+        switch section {
+        case .header: top = 0
+        case .empty: top = Self.rowGap * 2
+        case .wants: top = Self.rowGap
+        }
+        layoutSection.contentInsets = columnInsets(environment: environment, top: top, bottom: isLast ? 24 : 0)
+        return layoutSection
     }
 
     private func makeDataSource() -> UICollectionViewDiffableDataSource<Section, Item> {
         let registration = UICollectionView.CellRegistration<UICollectionViewListCell, Item> { [weak self] cell, _, item in
             self?.configure(cell, item: item)
         }
-        return UICollectionViewDiffableDataSource(collectionView: collectionView) { collectionView, indexPath, item in
+        let dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) { collectionView, indexPath, item in
             collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: item)
         }
+        installTitle(on: dataSource)
+        return dataSource
     }
 
     private func configure(_ cell: UICollectionViewListCell, item: Item) {
-        cell.contentView.subviews.forEach { $0.removeFromSuperview() }
-        cell.backgroundConfiguration = .clear()
-        cell.isAccessibilityElement = false
-        cell.accessibilityIdentifier = nil
-        cell.accessibilityTraits = []
-        cell.accessibilityLabel = nil
-        cell.accessibilityValue = nil
-        cell.accessibilityHint = nil
-        cell.accessibilityCustomActions = nil
+        cell.resetForReuse()
         let content: UIView
         var topGap = Self.rowGap / 2
         var bottomGap = Self.rowGap / 2
         switch item {
-        case .title:
-            let label = UILabel()
-            label.text = "Cooling"
-            label.font = ThawFont.display(36)
-            label.textColor = Theme.ink
-            label.numberOfLines = 0
-            label.adjustsFontForContentSizeCategory = true
-            label.accessibilityTraits = .header
-            content = label
-            topGap = 0
         case .filters:
             guard let filterBar else { return }
             content = filterBar
@@ -267,14 +230,7 @@ final class HomeViewController: UIViewController, HomeViewProtocol, UICollection
                 onEdit: { [weak self] in self?.presenter?.tapEdit(id: id) },
                 onDelete: { [weak self] in self?.presenter?.tapDelete(id: id) })
         }
-        content.translatesAutoresizingMaskIntoConstraints = false
-        cell.contentView.addSubview(content)
-        NSLayoutConstraint.activate([
-            content.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor),
-            content.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor),
-            content.topAnchor.constraint(equalTo: cell.contentView.topAnchor, constant: topGap),
-            content.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor, constant: -bottomGap),
-        ])
+        cell.embed(content, top: topGap, bottom: bottomGap)
     }
 
     private func makeEmptyView(_ empty: HomeEmptyViewModel) -> UIView {

@@ -1,17 +1,10 @@
 import UIKit
 
 enum SettingsListStyle {
-    static let maxContentWidth: CGFloat = 700
-
     /// Inset-grouped list section, capped to the content column on wide screens.
     static func section(_ configuration: UICollectionLayoutListConfiguration,
                         environment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
-        let section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: environment)
-        let width = environment.container.effectiveContentSize.width
-        let extra = max(0, (width - maxContentWidth) / 2)
-        section.contentInsets.leading += extra
-        section.contentInsets.trailing += extra
-        return section
+        ThawColumn.insetGroupedSection(configuration, environment: environment)
     }
 
     static func listConfiguration(footer: Bool) -> UICollectionLayoutListConfiguration {
