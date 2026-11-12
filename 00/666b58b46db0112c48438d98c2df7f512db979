@@ -1,0 +1,35 @@
+Thaw/Features/AddWant/AddWantContracts.swift
+  s_faa551e4ab5e0e::t_1f5dfccf58725a 7-8,11-12,31-34,45-46,63
+Thaw/Features/AddWant/AddWantPresenter.swift
+  s_7eb67a809c3ad5::t_73a02adecac2fb 8-9,14-17,28-30,35-36,45,50,54,70,77,79-83,111-147,149-160,179-180
+Thaw/Features/AddWant/AddWantViewController.swift
+  s_7eb67a809c3ad5::t_dda7b898946c47 9-15,40-46,48-62,68-76,78-79,91-105,108,114-128,132-173,190,196,217,272-277,282,286-288
+ThawTests/IntegrationEditTests.swift
+  s_faa551e4ab5e0e::t_26dd40a4569908 10,75-76,101
+ThawTests/PresenterAddWantTests.swift
+  s_faa551e4ab5e0e::t_9b42d503e2bf24 7,15,48-60,65-79,82-117,298-312,315-326,329-331,336,338,341-355,361,370-371,373,375
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "00666b58b46db0112c48438d98c2df7f512db979",
+  "prompts": {},
+  "sessions": {
+    "s_7eb67a809c3ad5": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "2d36e4d0-0f19-48f2-a33f-b02b7e1f8df9",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    },
+    "s_faa551e4ab5e0e": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "5f2f677d-af9a-4487-9663-c6e876a89ace",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
