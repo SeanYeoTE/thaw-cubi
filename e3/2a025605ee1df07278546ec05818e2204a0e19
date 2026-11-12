@@ -1,0 +1,19 @@
+Thaw.xcodeproj/project.pbxproj
+  s_125c29137e7cc0::t_0271dcee8cbf5a 43,68,104,118,235,243,259,280,299-300,382,384,776-777,815,817
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e32a025605ee1df07278546ec05818e2204a0e19",
+  "prompts": {},
+  "sessions": {
+    "s_125c29137e7cc0": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "245a1e4a-c933-467b-bf9f-5c89dcc9a315",
+        "model": "openrouter/OpenRouter/anthropic/claude-sonnet-5.5"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
