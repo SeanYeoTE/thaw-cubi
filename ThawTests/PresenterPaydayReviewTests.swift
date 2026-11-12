@@ -17,9 +17,9 @@ final class PresenterPaydayReviewTests: XCTestCase {
     private final class FakeInteractor: PaydayReviewInteractorProtocol {
         var wants: [Want]
         var budget: Decimal = 300
-        var applied: [Set<UUID>] = []
+        var applied: [[UUID: ReviewChoice]] = []
         init(wants: [Want]) { self.wants = wants }
-        func apply(keeping: Set<UUID>) { applied.append(keeping) }
+        func apply(choices: [UUID: ReviewChoice]) { applied.append(choices) }
     }
 
     private final class FakeRouter: PaydayReviewRouterProtocol {
@@ -38,40 +38,66 @@ final class PresenterPaydayReviewTests: XCTestCase {
         return (presenter, view, interactor, router)
     }
 
-    func testOnlyFirstFittingWantIsKeptByDefault() {
+    func testWantsAreKeptWhileTheyFitOtherwiseWait() {
         let (presenter, view, _, _) = make()
         presenter.viewDidLoad()
-        XCTAssertEqual(view.content?.rows.map(\.isKeeping), [true, false, false])
-        XCTAssertEqual(view.summaries.last?.statusText, "S$189 kept · S$111 left")
-        XCTAssertEqual(view.summaries.last?.ctaTitle, "Keep 1 · S$189")
+        XCTAssertEqual(view.content?.rows.map(\.choice), [.keep, .keep, .wait])
+        XCTAssertEqual(view.summaries.last?.statusText, "S$42 left")
+        XCTAssertEqual(view.summaries.last?.ctaTitle, "Done \u{00B7} keep 2")
     }
 
-    func testFirstWantOverBudgetIsNotKept() {
+    func testFirstWantOverBudgetWaits() {
         let (presenter, view, _, _) = make(wants: [grinder, shirt])
         presenter.viewDidLoad()
-        XCTAssertEqual(view.content?.rows.map(\.isKeeping), [false, false])
+        XCTAssertEqual(view.content?.rows.map(\.choice), [.wait, .keep])
+    }
+
+    func testAllOverBudgetWaitsOnAll() {
+        let (presenter, view, _, _) = make(wants: [grinder])
+        presenter.viewDidLoad()
+        XCTAssertEqual(view.content?.rows.map(\.choice), [.wait])
         XCTAssertEqual(view.summaries.last?.ctaTitle, "Wait on all")
     }
 
-    func testTogglingOverBudgetTurnsMeterWarm() {
+    func testKeepingOverBudgetTurnsMeterWarm() {
         let (presenter, view, _, _) = make()
         presenter.viewDidLoad()
-        presenter.setKeeping(id: grinder.id, keeping: true)
+        presenter.setChoice(id: grinder.id, choice: .keep)
         XCTAssertEqual(view.summaries.last?.isOver, true)
         XCTAssertEqual(view.summaries.last?.fraction, 1)
-        XCTAssertEqual(view.summaries.last?.statusText, "S$609 kept · S$309 over your fun money")
-        presenter.setKeeping(id: grinder.id, keeping: false)
+        XCTAssertEqual(view.summaries.last?.statusText, "S$378 over")
+        presenter.setChoice(id: grinder.id, choice: .wait)
         XCTAssertEqual(view.summaries.last?.isOver, false)
     }
 
-    func testCTAAppliesChoicesAndDismissesWithoutOnFinish() {
+    func testLetGoSpendsNothingAndShowsInCTA() {
+        let (presenter, view, _, _) = make()
+        presenter.viewDidLoad()
+        presenter.setChoice(id: shirt.id, choice: .letGo)
+        XCTAssertEqual(view.summaries.last?.statusText, "S$111 left")
+        XCTAssertEqual(view.summaries.last?.ctaTitle, "Done \u{00B7} keep 1, let go 1")
+        presenter.setChoice(id: keyboard.id, choice: .wait)
+        XCTAssertEqual(view.summaries.last?.statusText, "S$300 left")
+        XCTAssertEqual(view.summaries.last?.ctaTitle, "Done \u{00B7} let go 1")
+    }
+
+    func testCTAAppliesEveryChoiceAndDismissesWithoutOnFinish() {
         let (presenter, view, interactor, router) = make()
         presenter.viewDidLoad()
-        presenter.setKeeping(id: shirt.id, keeping: true)
+        presenter.setChoice(id: shirt.id, choice: .letGo)
         presenter.tapCTA()
-        XCTAssertEqual(interactor.applied, [[keyboard.id, shirt.id]])
+        XCTAssertEqual(interactor.applied, [[keyboard.id: .keep, shirt.id: .letGo, grinder.id: .wait]])
         XCTAssertEqual(view.feedback, 1)
         XCTAssertEqual(router.dismissed, 1)
+    }
+
+    func testWaitOnAllAppliesWaitToEveryWant() {
+        let (presenter, _, interactor, _) = make()
+        presenter.viewDidLoad()
+        presenter.setChoice(id: keyboard.id, choice: .wait)
+        presenter.setChoice(id: shirt.id, choice: .wait)
+        presenter.tapCTA()
+        XCTAssertEqual(interactor.applied.last?.values.allSatisfy { $0 == .wait }, true)
     }
 
     func testOnFinishReplacesDismiss() {
@@ -89,12 +115,22 @@ final class PresenterPaydayReviewTests: XCTestCase {
         presenter.tapClose()
         XCTAssertEqual(router.dismissed, 1)
         XCTAssertEqual(view.discardShown, 0)
-        presenter.setKeeping(id: shirt.id, keeping: true)
+        presenter.setChoice(id: shirt.id, choice: .letGo)
         presenter.tapClose()
         XCTAssertEqual(view.discardShown, 1)
         XCTAssertEqual(router.dismissed, 1)
         presenter.confirmDiscard()
         XCTAssertEqual(router.dismissed, 2)
+    }
+
+    func testRevertingAPickDoesNotAskToDiscard() {
+        let (presenter, view, _, router) = make()
+        presenter.viewDidLoad()
+        presenter.setChoice(id: shirt.id, choice: .letGo)
+        presenter.setChoice(id: shirt.id, choice: .keep)
+        presenter.tapClose()
+        XCTAssertEqual(view.discardShown, 0)
+        XCTAssertEqual(router.dismissed, 1)
     }
 
     func testEmptyQueueRendersNoRows() {
