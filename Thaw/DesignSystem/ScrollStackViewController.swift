@@ -2,9 +2,6 @@ import UIKit
 
 /// Base screen: a vertical stack inside a scroll view, on the Thaw background.
 class ScrollStackViewController: UIViewController {
-    /// Column cap for wide screens; larger than any iPhone width minus insets, so it never binds there.
-    private static let maxContentWidth: CGFloat = 700
-
     let stack = UIStackView()
     let scrollView = UIScrollView()
 
@@ -36,7 +33,7 @@ class ScrollStackViewController: UIViewController {
             trailing,
             stack.leadingAnchor.constraint(greaterThanOrEqualTo: guide.leadingAnchor, constant: inset),
             stack.trailingAnchor.constraint(lessThanOrEqualTo: guide.trailingAnchor, constant: -inset),
-            stack.widthAnchor.constraint(lessThanOrEqualToConstant: Self.maxContentWidth),
+            stack.widthAnchor.constraint(lessThanOrEqualToConstant: ThawColumn.maxWidth),
             stack.centerXAnchor.constraint(equalTo: guide.centerXAnchor),
             stack.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 16),
             stack.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -24),
