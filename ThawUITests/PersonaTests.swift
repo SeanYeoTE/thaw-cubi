@@ -17,12 +17,11 @@ final class PersonaTests: XCTestCase {
     }
 
     @MainActor func launch(_ args: [String]) {
-        continueAfterFailure = true
+        continueAfterFailure = false
         installAlertHandler()
         app = XCUIApplication()
         app.launchArguments = args
         app.launch()
-        sleep(1)
     }
 
     @MainActor func shot(_ name: String) {
@@ -37,29 +36,35 @@ final class PersonaTests: XCTestCase {
         app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", label)).firstMatch
     }
 
-    @MainActor func tap(_ label: String, wait: TimeInterval = 3) {
-        let b = button(label)
-        if b.waitForExistence(timeout: wait) { b.tap() } else { XCTFail("[\(persona)] missing button \(label)") }
-        usleep(600_000)
+    @MainActor func tap(_ label: String, wait: TimeInterval = 8) {
+        tapWhenReady(button(label), "button \(label)", timeout: wait)
     }
 
+    @MainActor func tapID(_ id: String, label: String? = nil, wait: TimeInterval = 8) {
+        tapWhenReady(app.element(id: id, label: label), "element \(id)", timeout: wait)
+    }
+
+    @MainActor func tapTab(_ name: String) { tapWhenReady(app.tab(name), "\(name) tab") }
+
     @MainActor func back() {
-        if app.buttons["BackButton"].exists { app.buttons["BackButton"].tap() }
-        usleep(600_000)
+        let b = app.buttons["BackButton"]
+        if b.waitForExistence(timeout: 3) { b.tap() } else { XCTFail("[\(persona)] missing back button") }
     }
 
     @MainActor func tapText(_ label: String) {
         let t = app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", label)).firstMatch
-        if t.waitForExistence(timeout: 3) { t.tap() } else { XCTFail("[\(persona)] missing text \(label)") }
-        usleep(600_000)
+        tapWhenReady(t, "text \(label)")
     }
 
+    /// Opens the Add sheet from Cooling and types the fields. Needs re-check after U4 (new Add/Edit sheet).
     @MainActor func addWant(name: String, price: String, reason: String = "") {
-        tap("Add a want")
+        tapID("home.add", label: "Add a want")
         let fields = app.textFields
-        if fields.count > 0 {
-            fields.element(boundBy: 0).tap(); fields.element(boundBy: 0).typeText(name)
-            if fields.count > 1, !price.isEmpty { fields.element(boundBy: 1).tap(); fields.element(boundBy: 1).typeText(price) }
+        XCTAssertTrue(fields.element(boundBy: 0).waitForExistence(timeout: 8), "[\(persona)] add sheet missing")
+        fields.element(boundBy: 0).tap(); fields.element(boundBy: 0).typeText(name)
+        if !price.isEmpty {
+            XCTAssertGreaterThan(fields.count, 1, "[\(persona)] price field missing")
+            fields.element(boundBy: 1).tap(); fields.element(boundBy: 1).typeText(price)
         }
         if !reason.isEmpty, app.textViews.count > 0 {
             app.textViews.element(boundBy: 0).tap(); app.textViews.element(boundBy: 0).typeText(reason)
@@ -67,9 +72,17 @@ final class PersonaTests: XCTestCase {
     }
 
     @MainActor func finishOnboarding() {
-        guard button("Save ·").waitForExistence(timeout: 2) else { return }
-        tap("Save ·")
-        sleep(1)
+        let cont = button("Continue ·")
+        XCTAssertTrue(cont.waitForExistence(timeout: 8), "[\(persona)] onboarding Continue button missing")
+        cont.tap()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10), "[\(persona)] tab bar missing after onboarding")
+    }
+
+    @MainActor func waitForCoolingCard(_ name: String) {
+        let card = app.element(id: "home.card")
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "[\(persona)] no cooling card")
+        XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", name)).firstMatch
+            .waitForExistence(timeout: 8), "[\(persona)] cooling card \(name) missing")
     }
 
     // MARK: Careful
@@ -83,31 +96,49 @@ final class PersonaTests: XCTestCase {
         app.buttons["Increment"].firstMatch.tapIfExists()
         shot("payday-adjusted")
         finishOnboarding()
-        shot("cooling-home")
-        tapText("Mechanical keyboard"); sleep(1); shot("item-detail-payday-wait")
+        waitForCoolingCard("Mechanical keyboard"); shot("cooling-home")
+        tapText("Mechanical keyboard")
+        XCTAssertTrue(app.buttons["BackButton"].waitForExistence(timeout: 8), "item detail did not open")
+        shot("item-detail-payday-wait")
         back()
+        // Needs re-check after U4 (Add/Edit sheet rework).
         addWant(name: "Film camera", price: "250", reason: "Want to take photos on my trip")
         shot("add-want-filled")
-        tap("Add to Thaw"); sleep(1)
-        shot("cooling-with-new-want")
-        tapText("Film camera"); sleep(1); shot("item-detail")
-        back(); sleep(1)
-        tap("Saved"); shot("saved-empty")
-        tap("Settings"); shot("settings")
-        tap("Cooling")
+        tap("Add to Thaw")
+        waitForCoolingCard("Film camera"); shot("cooling-with-new-want")
+        tapText("Film camera")
+        XCTAssertTrue(app.buttons["BackButton"].waitForExistence(timeout: 8), "new want detail did not open")
+        shot("item-detail")
+        back()
+        tapTab("Stats"); XCTAssertTrue(app.navigationBars.firstMatch.waitForExistence(timeout: 8)); shot("stats-empty")
+        tapTab("Settings")
+        XCTAssertTrue(app.staticTexts["Settings"].waitForExistence(timeout: 8), "Settings title missing"); shot("settings")
+        tapTab("Cooling")
+        XCTAssertTrue(app.element(id: "home.add").waitForExistence(timeout: 8), "Cooling did not return")
     }
 
+    /// Needs re-check after U1 (Payday budget block) and U2 (Keep, Wait, Let go review rows).
     @MainActor func testCarefulPaydayReview() {
         persona = "careful-review"
         launch(["-thawFixture", "thawed"])
+        XCTAssertTrue(app.element(id: "home.card").waitForExistence(timeout: 8), "thawed fixture shows no cards")
         shot("home-thawed")
-        tapText("Next payday"); sleep(1); shot("payday-preview")
-        tap("Review now"); sleep(1); shot("payday-review")
-        tap("Waiting on Linen"); shot("review-keep-two")
-        tap("Waiting on Espresso"); shot("review-over-budget")
-        tap("Keeping Espresso")
-        tap("Keep 2"); sleep(2); shot("after-review")
-        tap("Saved"); shot("saved-after-review")
+        tapTab("Payday")
+        XCTAssertTrue(app.element(id: "payday.hero").waitForExistence(timeout: 8), "payday hero missing")
+        shot("payday-ready")
+        tapID("payday.review", label: "Review"); shot("payday-review")
+        // U2 target: per-row Keep, Wait, Let go buttons.
+        let rows = app.descendants(matching: .any).matching(identifier: "review.row")
+        XCTAssertTrue(rows.firstMatch.waitForExistence(timeout: 8), "review rows missing")
+        XCTAssertGreaterThanOrEqual(rows.count, 2, "thawed fixture should list several wants to review")
+        tapID("review.wait"); shot("review-wait-one")
+        tapID("review.keep"); shot("review-keep-one")
+        let done = app.element(id: "review.done")
+        let cta = done.exists ? done : button("Keep")
+        tapWhenReady(cta, "review confirm button")
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10), "review did not dismiss")
+        shot("after-review")
+        tapTab("Stats"); shot("stats-after-review")
     }
 
     // MARK: Lazy
@@ -117,19 +148,20 @@ final class PersonaTests: XCTestCase {
         launch(["-thawReset"])
         shot("fresh-launch")
         finishOnboarding()
+        XCTAssertTrue(app.element(id: "home.empty").waitForExistence(timeout: 8), "empty state missing")
         shot("home-empty")
         addWant(name: "Sneakers", price: "")
         shot("add-want-no-price")
-        tap("Add to Thaw"); sleep(1)
-        shot("after-add-no-price")
-        if app.buttons["Keep editing"].exists || app.alerts.count > 0 { shot("alert") }
-        if app.navigationBars["Add to Thaw"].exists || app.textFields.count > 0 {
+        tap("Add to Thaw")
+        // Exploratory: a want without a price may prompt or be rejected.
+        sleep(1); shot("after-add-no-price")
+        if app.textFields.count > 1 {
             app.textFields.element(boundBy: 1).tap(); app.textFields.element(boundBy: 1).typeText("120")
-            tap("Add to Thaw"); sleep(1)
+            tap("Add to Thaw")
         }
-        shot("home-one-want")
-        tap("Saved"); shot("saved")
-        tap("Settings"); shot("settings")
+        waitForCoolingCard("Sneakers"); shot("home-one-want")
+        tapTab("Stats"); shot("stats")
+        tapTab("Settings"); shot("settings")
     }
 
     // MARK: Hardcore
@@ -137,41 +169,46 @@ final class PersonaTests: XCTestCase {
     @MainActor func testHardcoreUser() {
         persona = "hardcore"
         launch(["-thawFixture", "history"])
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10), "history fixture should skip onboarding")
         shot("launch-with-history")
-        finishOnboarding()
-        shot("home")
-        tap("Add a want")
-        tap("Add to Thaw"); sleep(1); shot("empty-submit")
+        tapID("home.add", label: "Add a want")
+        tap("Add to Thaw"); shot("empty-submit")
+        XCTAssertTrue(app.textFields.firstMatch.exists, "empty submit should keep the sheet open")
         app.textFields.element(boundBy: 0).tap()
         app.textFields.element(boundBy: 0).typeText(String(repeating: "Supercalifragilistic 🔥 ", count: 12))
         app.textFields.element(boundBy: 1).tap()
         app.textFields.element(boundBy: 1).typeText("99999999999999999999")
         shot("absurd-inputs")
         tap("Add to Thaw"); sleep(1); shot("absurd-submitted")
+        // Exploratory from here: outcomes of absurd input are not yet specified.
         if app.alerts.count > 0 { app.alerts.buttons.firstMatch.tap() }
-        if app.textFields.count > 0 {
+        if app.textFields.count > 1 {
             app.textFields.element(boundBy: 1).tap()
             app.textFields.element(boundBy: 1).typeText("-5abc!@#")
             shot("negative-price")
             tap("Add to Thaw"); sleep(1); shot("negative-price-submitted")
         }
-        // cancel/discard path
-        if app.textFields.count > 0 { app.swipeDown(); sleep(1); shot("swipe-dismiss-attempt")
-            if app.alerts.count > 0 { shot("discard-alert"); app.alerts.buttons["Discard"].tap() } }
-        // hammer tabs
-        for _ in 0..<15 { for t in ["Saved", "Settings", "Cooling"] where button(t).exists { button(t).tap() } }
+        if app.textFields.count > 0 {
+            app.swipeDown(); sleep(1); shot("swipe-dismiss-attempt")
+            if app.alerts.count > 0 { shot("discard-alert"); app.alerts.buttons["Discard"].tap() }
+        }
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 8), "tab bar missing after sheet")
+        for _ in 0..<15 { for t in ["Stats", "Settings", "Cooling"] where app.tab(t).exists { app.tab(t).tap() } }
         shot("after-tab-mashing")
-        tap("Saved"); shot("saved-with-history")
-        app.swipeUp(); shot("saved-scrolled")
-        tap("Settings")
+        tapTab("Stats"); shot("stats-with-history")
+        app.swipeUp(); shot("stats-scrolled")
+        tapTab("Settings")
+        XCTAssertTrue(app.staticTexts["Settings"].waitForExistence(timeout: 8), "Settings missing")
         for _ in 0..<25 { for b in app.buttons.matching(identifier: "Increment").allElementsBoundByIndex { b.tapIfExists() } }
         shot("settings-maxed")
         for _ in 0..<40 { for b in app.buttons.matching(identifier: "Decrement").allElementsBoundByIndex { b.tapIfExists() } }
         shot("settings-minned")
         XCUIDevice.shared.orientation = .landscapeLeft; sleep(1); shot("landscape-settings")
-        tap("Cooling"); shot("landscape-home")
+        tapTab("Cooling"); shot("landscape-home")
         XCUIDevice.shared.orientation = .portrait; sleep(1)
-        app.terminate(); app.launch(); sleep(1); shot("relaunch-persisted")
+        app.terminate(); app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10), "relaunch did not reach tabs (persistence)")
+        shot("relaunch-persisted")
     }
 }
 
