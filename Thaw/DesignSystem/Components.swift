@@ -75,6 +75,7 @@ final class PillButton: UIButton {
             return updated
         }
         configuration = config
+        titleLabel?.adjustsFontForContentSizeCategory = true
         heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
     }
 
