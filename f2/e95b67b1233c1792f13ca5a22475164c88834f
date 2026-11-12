@@ -1,0 +1,21 @@
+ThawUITests/NewScreensAuditTests.swift
+  s_6b712fecfca38a::t_2f2ccc91ad4a9b 1-78
+ThawUITests/ReviewFlowUITests.swift
+  s_6b712fecfca38a::t_eb5099b1372bfa 1-159
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f2e95b67b1233c1792f13ca5a22475164c88834f",
+  "prompts": {},
+  "sessions": {
+    "s_6b712fecfca38a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "adc458bb-085d-4363-8edf-b22fe90464e6",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
