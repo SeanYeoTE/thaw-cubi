@@ -230,15 +230,15 @@ final class SavedViewController: ThawListViewController, SavedViewProtocol {
             onDelete: { [weak self] in self?.presenter?.tapDelete(id: id) })
     }
 
-    /// Cubi beside the total saved; stacks at accessibility sizes.
+    /// Cubi beside the total saved, on the same dark card as Payday; stacks at accessibility sizes.
     private func heroView(_ hero: SavedHeroViewModel) -> UIView {
-        let avatar = CubiView(mood: hero.mood, size: 72)
+        let avatar = CubiView(mood: hero.mood, size: .card)
         avatar.spokenLine = hero.spokenLine
         avatar.setContentHuggingPriority(.required, for: .horizontal)
         avatar.setContentCompressionResistancePriority(.required, for: .horizontal)
 
-        let amount = makeLabel(hero.savedText, font: ThawFont.display(44))
-        let caption = makeLabel(hero.caption, font: ThawFont.body(15), color: Theme.inkSecondary)
+        let amount = makeLabel(hero.savedText, font: ThawFont.display(44), color: .white)
+        let caption = makeLabel(hero.caption, font: ThawFont.body(15), color: Theme.paydayLabel)
         let column = UIStackView(arrangedSubviews: [amount, caption])
         column.axis = .vertical
         column.spacing = 0
@@ -248,7 +248,7 @@ final class SavedViewController: ThawListViewController, SavedViewProtocol {
         let row = AdaptiveStackView(arrangedSubviews: [avatar, column])
         row.compactAlignment = .center
         row.spacing = 16
-        return row
+        return HeroCardView(content: row)
     }
 
     /// Three equal-width tiles in a row; they stack full width at accessibility sizes.

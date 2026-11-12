@@ -9,7 +9,7 @@ final class MomentView: UIView {
         super.init(frame: .zero)
         backgroundColor = Theme.background
 
-        let cubi = CubiView(mood: mood, size: 120)
+        let cubi = CubiView(mood: mood, size: .feature)
         cubi.spokenLine = line
         let label = UILabel()
         label.text = line
