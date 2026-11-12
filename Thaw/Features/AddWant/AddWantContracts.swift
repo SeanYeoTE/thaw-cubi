@@ -4,13 +4,12 @@ struct AddWantInput: Equatable {
     var name: String
     var price: String
     var reason: String
+    /// The status picked in the Status row; nil when the form has no such row.
+    var status: Want.Status? = nil
 }
 
-struct AddWantAction: Equatable {
-    enum Kind: Equatable {
-        case moveBackToCooling, markBought, markSkipped, delete
-    }
-    let kind: Kind
+struct AddWantStatusOption: Equatable {
+    let status: Want.Status
     let title: String
 }
 
@@ -29,8 +28,10 @@ struct AddWantScreen: Equatable {
     let initial: AddWantInput?
     /// Read-only line above the form, e.g. "From example.com" for a shared page.
     var caption: String? = nil
-    /// Extra buttons under the form when editing (move back to cooling, mark bought/skipped, delete).
-    var actions: [AddWantAction] = []
+    /// Choices for the Status row, only for decided wants being edited; empty hides the row.
+    var statusOptions: [AddWantStatusOption] = []
+    /// Title of the plain delete button at the bottom when editing; nil hides it.
+    var deleteTitle: String? = nil
 }
 
 /// Prefill for a want captured outside the app (the share sheet). The link is kept but not editable.
@@ -41,7 +42,8 @@ struct AddWantDraft: Equatable {
 
 protocol AddWantViewProtocol: AnyObject {
     func configure(_ screen: AddWantScreen)
-    func render(note: String)
+    /// The quiet line under the price; nil hides it.
+    func render(thawLine: String?)
     func setModalInPresentation(_ isModal: Bool)
     func showError(_ message: String)
     func showDiscardConfirmation()
@@ -58,7 +60,7 @@ protocol AddWantPresenterProtocol: AnyObject {
     func didAttemptDismiss(_ input: AddWantInput)
     func confirmDiscard()
     func tapSave(_ input: AddWantInput)
-    func tapAction(_ kind: AddWantAction.Kind, input: AddWantInput)
+    func tapDelete()
     func confirmDelete()
 }
 
