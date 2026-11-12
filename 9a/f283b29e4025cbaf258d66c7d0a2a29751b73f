@@ -1,0 +1,23 @@
+ThawUITests/AccessibilityAuditTests.swift
+  s_37c90a3f30ea60::t_882e5af28a37ff 1-83
+ThawUITests/PersonaTests.swift
+  s_37c90a3f30ea60::t_d063493f49ef77 20,39-40,43-48,50-51,56,59,61,63-67,75-85,99-102,104,107-117,120,124,126-141,151,155-158,160,162-164,172,174-176,183,185,191-196,198-201,207,209-211
+ThawUITests/UITestSupport.swift
+  s_37c90a3f30ea60::t_cb4a05196c56cf 1-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9af283b29e4025cbaf258d66c7d0a2a29751b73f",
+  "prompts": {},
+  "sessions": {
+    "s_37c90a3f30ea60": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "3c592bb8-da2d-4ab2-9b13-1149a49cec03",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
