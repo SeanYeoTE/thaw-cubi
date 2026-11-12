@@ -1,0 +1,55 @@
+Thaw/Features/PaydayReview/PaydayReviewContracts.swift
+  s_faa551e4ab5e0e::t_3df001e4e8a7df 3-14,20-23,27,48,57-58
+Thaw/Features/PaydayReview/PaydayReviewInteractor.swift
+  s_faa551e4ab5e0e::t_20b8cbced79361 16,18-22
+Thaw/Features/PaydayReview/PaydayReviewPresenter.swift
+  s_faa551e4ab5e0e::t_c1c52179141758 8-9,20-29,31-32,36-47,49,53-54,59,69,81-83,86-91
+Thaw/Features/PaydayReview/PaydayReviewViewController.swift
+  s_7eb67a809c3ad5::t_46e9d28bc8e6d5 3,7,25-27,33,40,45-66,68-71,77-78,87
+Thaw/Features/PaydayReview/ReviewChoiceControl.swift
+  s_7eb67a809c3ad5::t_32edea2092abc1 1-75
+Thaw/Features/PaydayReview/ReviewMeterCardView.swift
+  s_7eb67a809c3ad5::t_3e4a5791d52968 1-54
+Thaw/Features/StillWantIt/StillWantItContracts.swift
+  s_7eb67a809c3ad5::t_970ff323e66b12 5,8-16,27
+Thaw/Features/StillWantIt/StillWantItPresenter.swift
+  s_7eb67a809c3ad5::t_287e6cec35d691 29,65-67,69-70,72-83,86-92
+Thaw/Features/StillWantIt/StillWantItViewController.swift
+  s_7eb67a809c3ad5::t_0cadfa68e3fc4a 8,11-15,29-30,33-37,43,45-46,56-59,61,63-64,70-71,74-88
+ThawTests/PresenterPaydayReviewTests.swift
+  s_e048aea97b944a::t_4ca8667be8db8d 20,22,41,44-46,49,52-58,62,65,68-69,73-84,87,89,94-102,118,126-135
+ThawTests/PresenterStillWantItTests.swift
+  s_e048aea97b944a::t_29410892a4e562 48-56,64-65,72,74,76-85,90-98
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5ded53f8a8ddc9a65a705d3869b69534ff26600c",
+  "prompts": {},
+  "sessions": {
+    "s_7eb67a809c3ad5": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "2d36e4d0-0f19-48f2-a33f-b02b7e1f8df9",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    },
+    "s_e048aea97b944a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "fb770757-ff20-4c80-b42d-5f62f2dd0e8a",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    },
+    "s_faa551e4ab5e0e": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "5f2f677d-af9a-4487-9663-c6e876a89ace",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
