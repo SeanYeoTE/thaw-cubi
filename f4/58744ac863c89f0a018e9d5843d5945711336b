@@ -1,0 +1,25 @@
+Thaw/Features/ItemDetail/ItemDetailContracts.swift
+  s_2d046f089ea68e::t_3b5f12243159b5 5-6,8,14,21-22,28
+Thaw/Features/ItemDetail/ItemDetailPresenter.swift
+  s_2d046f089ea68e::t_a561c73753badc 25-28,32-33,55-63,65,74,77-78
+Thaw/Features/ItemDetail/ItemDetailViewController.swift
+  s_2d046f089ea68e::t_8fe285cf9891e3 18,26-27,31,52-55,57-58,61,63-67,96
+ThawTests/PresenterItemDetailTests.swift
+  s_2d046f089ea68e::t_fbb939a48692c7 9-19,26-27,34-35,97-177
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f458744ac863c89f0a018e9d5843d5945711336b",
+  "prompts": {},
+  "sessions": {
+    "s_2d046f089ea68e": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "00084644-9300-4630-a9c2-b5a00872f8dc",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
