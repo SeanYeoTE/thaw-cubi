@@ -2,28 +2,30 @@ import Foundation
 
 struct ItemDetailViewModel {
     let name: String
-    let subtitle: String
+    let priceText: String
+    let frozenText: String
     let daysText: String
-    let untilText: String
+    let captionText: String
     let progress: Double
     let isTimer: Bool
     let quote: String
-    let thawsText: String
     /// "Open link · example.com" when the want has a link.
     let linkText: String?
+    let letGoTitle: String
 }
 
 protocol ItemDetailViewProtocol: AnyObject {
     func render(_ model: ItemDetailViewModel)
     /// Plays the success haptic and the Cubi moment, then calls `completion` once.
     func showSkipMoment(line: String, completion: @escaping () -> Void)
+    /// Destructive-style alert; calls `onConfirm` only if the user confirms.
+    func showLetGoConfirmation(title: String, confirmTitle: String, cancelTitle: String, onConfirm: @escaping () -> Void)
 }
 
 protocol ItemDetailPresenterProtocol: AnyObject {
     func viewDidLoad()
-    func tapWait()
     func tapDecide()
-    func tapSkip()
+    func tapLetGo()
     func tapEdit()
     func tapLink()
     func didEdit()
@@ -34,7 +36,6 @@ protocol ItemDetailInteractorProtocol: AnyObject {
     /// False once the want was deleted (from the edit screen).
     var wantExists: Bool { get }
     var settings: PaydaySettings { get }
-    func waitOnePayday()
     func skip()
 }
 

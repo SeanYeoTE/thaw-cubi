@@ -17,12 +17,6 @@ final class ItemDetailInteractor: ItemDetailInteractorProtocol {
 
     var settings: PaydaySettings { store.effectiveSettings }
 
-    func waitOnePayday() {
-        store.decide(id: want.id, keep: false)
-        DataChange.post()
-        reminders.refresh(requestingPermission: false)
-    }
-
     func skip() {
         store.update(want.id, status: .skipped)
         DataChange.post()

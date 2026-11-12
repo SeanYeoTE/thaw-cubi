@@ -5,7 +5,6 @@ final class ItemDetailViewController: ScrollStackViewController, ItemDetailViewP
 
     init() {
         super.init(nibName: nil, bundle: nil)
-        title = "Item detail"
         hidesBottomBarWhenPushed = true
     }
 
@@ -16,6 +15,7 @@ final class ItemDetailViewController: ScrollStackViewController, ItemDetailViewP
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", primaryAction: UIAction { [weak self] _ in
             self?.presenter?.tapEdit()
         })
+        navigationItem.rightBarButtonItem?.accessibilityIdentifier = "detail.edit"
         stack.spacing = 18
         presenter?.viewDidLoad()
     }
@@ -23,11 +23,12 @@ final class ItemDetailViewController: ScrollStackViewController, ItemDetailViewP
     func render(_ model: ItemDetailViewModel) {
         clearContent()
         stack.addArrangedSubview(makeLabel(model.name, font: ThawFont.display(34)))
-        stack.addArrangedSubview(makeLabel(model.subtitle, font: ThawFont.body(15), color: Theme.inkSecondary))
+        stack.addArrangedSubview(makeLabel(model.priceText, font: ThawFont.money(28)))
+        stack.addArrangedSubview(makeLabel(model.frozenText, font: ThawFont.body(15), color: Theme.inkSecondary))
 
         let countdown = CardView()
         let days = makeLabel(model.daysText, font: ThawFont.display(36))
-        let until = makeLabel(model.untilText, font: ThawFont.body(14), color: Theme.inkSecondary)
+        let until = makeLabel(model.captionText, font: ThawFont.body(14), color: Theme.inkSecondary)
         let progress = ProgressBarView(fraction: CGFloat(model.progress), color: model.isTimer ? Theme.timer : Theme.accent)
         let countStack = UIStackView(arrangedSubviews: [days, until, progress])
         countStack.axis = .vertical
@@ -48,19 +49,22 @@ final class ItemDetailViewController: ScrollStackViewController, ItemDetailViewP
             stack.addArrangedSubview(linkRow(linkText))
         }
 
-        stack.addArrangedSubview(makeLabel(model.thawsText, font: ThawFont.body(14), color: Theme.inkSecondary))
+        let letGo = PillButton(title: model.letGoTitle, style: .primary)
+        letGo.accessibilityIdentifier = "detail.letGo"
+        letGo.addAction(UIAction { [weak self] _ in self?.presenter?.tapLetGo() }, for: .touchUpInside)
+        stack.addArrangedSubview(letGo)
 
-        let wait = PillButton(title: "Wait one more payday", style: .secondary)
-        wait.addAction(UIAction { [weak self] _ in self?.presenter?.tapWait() }, for: .touchUpInside)
-        stack.addArrangedSubview(wait)
-
-        let decide = PillButton(title: "Decide now", style: .quiet)
+        let decide = PillButton(title: "Decide now", style: .secondary)
+        decide.accessibilityIdentifier = "detail.decide"
         decide.addAction(UIAction { [weak self] _ in self?.presenter?.tapDecide() }, for: .touchUpInside)
         stack.addArrangedSubview(decide)
+    }
 
-        let skip = PillButton(title: "Skip it now", style: .quiet)
-        skip.addAction(UIAction { [weak self] _ in self?.presenter?.tapSkip() }, for: .touchUpInside)
-        stack.addArrangedSubview(skip)
+    func showLetGoConfirmation(title: String, confirmTitle: String, cancelTitle: String, onConfirm: @escaping () -> Void) {
+        let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
+        alert.addAction(UIAlertAction(title: confirmTitle, style: .destructive) { _ in onConfirm() })
+        present(alert, animated: true)
     }
 
     func showSkipMoment(line: String, completion: @escaping () -> Void) {
@@ -89,6 +93,7 @@ final class ItemDetailViewController: ScrollStackViewController, ItemDetailViewP
             self?.presenter?.tapLink()
         })
         button.contentHorizontalAlignment = .leading
+        button.accessibilityIdentifier = "detail.link"
         button.accessibilityTraits = .link
         button.accessibilityHint = "Opens in Safari"
         button.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
