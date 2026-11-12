@@ -5,13 +5,14 @@ final class StillWantItViewController: ScrollStackViewController, StillWantItVie
     var presenter: StillWantItPresenterProtocol?
 
     private let progressLabel = UILabel()
-    private let question = UILabel()
+    private let name = UILabel()
     private let price = UILabel()
     private let quote = UILabel()
-    private let funLabel = UILabel()
-    private let keep = PillButton(title: "", style: .secondary)
-    private let buy = PillButton(title: "Yes, I'll buy it", style: .primary)
-    private let unsure = PillButton(title: "Not sure? Wait one more payday", style: .quiet)
+    private let dateLabel = UILabel()
+    private var meterCard: ReviewMeterCardView?
+    private let letGo = PillButton(title: "", style: .primary)
+    private let buy = PillButton(title: "Buy it", style: .secondary)
+    private let wait = PillButton(title: "Wait a payday", style: .quiet)
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -25,23 +26,24 @@ final class StillWantItViewController: ScrollStackViewController, StillWantItVie
 
         progressLabel.font = ThawFont.body(13, weight: .medium)
         progressLabel.textColor = Theme.inkSecondary
-        question.font = ThawFont.display(28)
-        question.textColor = Theme.ink
+        name.font = ThawFont.display(28)
+        name.textColor = Theme.ink
         price.font = ThawFont.money(20)
         price.textColor = Theme.ink
-        quote.font = ThawFont.body(16)
-        quote.textColor = Theme.inkSecondary
-        funLabel.font = ThawFont.body(15)
-        funLabel.textColor = Theme.inkSecondary
-        for label in [progressLabel, question, price, quote, funLabel] {
+        quote.font = ThawFont.body(17)
+        quote.textColor = Theme.ink
+        dateLabel.font = ThawFont.body(13)
+        dateLabel.textColor = Theme.inkSecondary
+        for label in [progressLabel, name, price, quote, dateLabel] {
             label.numberOfLines = 0
             label.adjustsFontForContentSizeCategory = true
         }
 
         let card = CardView()
-        let inner = UIStackView(arrangedSubviews: [progressLabel, question, price, quote])
+        let inner = UIStackView(arrangedSubviews: [progressLabel, name, price, quote, dateLabel])
         inner.axis = .vertical
-        inner.spacing = 10
+        inner.spacing = 8
+        inner.setCustomSpacing(14, after: price)
         inner.translatesAutoresizingMaskIntoConstraints = false
         card.addSubview(inner)
         NSLayoutConstraint.activate([
@@ -51,22 +53,39 @@ final class StillWantItViewController: ScrollStackViewController, StillWantItVie
             inner.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -18),
         ])
 
-        keep.addAction(UIAction { [weak self] _ in self?.presenter?.tapSkip() }, for: .touchUpInside)
+        letGo.accessibilityIdentifier = "decide.letGo"
+        buy.accessibilityIdentifier = "decide.buy"
+        wait.accessibilityIdentifier = "decide.wait"
+        letGo.addAction(UIAction { [weak self] _ in self?.presenter?.tapLetGo() }, for: .touchUpInside)
         buy.addAction(UIAction { [weak self] _ in self?.presenter?.tapBuy() }, for: .touchUpInside)
-        unsure.addAction(UIAction { [weak self] _ in self?.presenter?.tapWait() }, for: .touchUpInside)
+        wait.addAction(UIAction { [weak self] _ in self?.presenter?.tapWait() }, for: .touchUpInside)
 
-        [card, funLabel, keep, buy, unsure].forEach(stack.addArrangedSubview)
-        stack.setCustomSpacing(18, after: funLabel)
+        [card, letGo, buy, wait].forEach(stack.addArrangedSubview)
+        stack.setCustomSpacing(18, after: card)
         presenter?.viewDidLoad()
     }
 
     func render(_ model: StillWantItViewModel) {
         progressLabel.text = model.progressText
-        question.text = model.question
+        progressLabel.isHidden = model.progressText.isEmpty
+        name.text = model.name
         price.text = model.priceText
         quote.text = model.quote
-        funLabel.text = model.funText
-        keep.configuration?.title = model.keepTitle
+        dateLabel.text = model.dateText
+        name.accessibilityTraits = .header
+        price.accessibilityLabel = model.priceText
+        dateLabel.accessibilityLabel = "Written on \(model.dateText)"
+
+        // The meter card is rebuilt per want because its budget text is fixed at creation.
+        meterCard?.removeFromSuperview()
+        let card = ReviewMeterCardView(caption: model.budgetCaption, amount: model.budgetText)
+        card.update(fraction: model.meterFraction, isOver: model.meterIsOver, statusText: model.meterText, animated: false)
+        stack.insertArrangedSubview(card, at: 1)
+        meterCard = card
+
+        letGo.configuration?.title = model.letGoTitle
+        buy.configuration?.title = model.buyTitle
+        wait.configuration?.title = model.waitTitle
     }
 
     func showSkipMoment(line: String, completion: @escaping () -> Void) {

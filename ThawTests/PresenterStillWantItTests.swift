@@ -45,10 +45,15 @@ final class PresenterStillWantItTests: XCTestCase {
     func testRendersFirstWant() {
         let (presenter, view, _, _) = make()
         presenter.viewDidLoad()
-        XCTAssertEqual(view.models.last?.progressText, "Payday review · 1 of 2")
-        XCTAssertEqual(view.models.last?.question, "Still want the keyboard?")
-        XCTAssertEqual(view.models.last?.funText, "Fun money if you buy: S$111 of S$300 left")
-        XCTAssertEqual(view.models.last?.keepTitle, "Skip and keep S$189")
+        let model = view.models.last
+        XCTAssertEqual(model?.progressText, "1 of 2")
+        XCTAssertEqual(model?.name, "Keyboard")
+        XCTAssertEqual(model?.priceText, "S$189")
+        XCTAssertEqual(model?.meterText, "S$111 left if you buy")
+        XCTAssertEqual(model?.meterIsOver, false)
+        XCTAssertEqual(model?.letGoTitle, "Let go \u{00B7} save S$189")
+        XCTAssertEqual(model?.buyTitle, "Buy it")
+        XCTAssertEqual(model?.waitTitle, "Wait a payday")
     }
 
     func testBuyReducesFunMoneyForNextWantAndFinishesAfterLast() {
@@ -56,23 +61,41 @@ final class PresenterStillWantItTests: XCTestCase {
         let (presenter, view, interactor, router) = make(onFinish: { finished += 1 })
         presenter.viewDidLoad()
         presenter.tapBuy()
-        XCTAssertEqual(view.models.last?.progressText, "Payday review · 2 of 2")
-        XCTAssertEqual(view.models.last?.funText, "Fun money if you buy: S$42 of S$300 left")
+        XCTAssertEqual(view.models.last?.progressText, "2 of 2")
+        XCTAssertEqual(view.models.last?.meterText, "S$42 left if you buy")
         presenter.tapWait()
         XCTAssertEqual(interactor.log, ["buy Keyboard", "publish", "wait Shirt", "publish"])
         XCTAssertEqual(router.dismissed, 1)
         XCTAssertEqual(finished, 1)
     }
 
-    func testSkipShowsMomentThenAdvances() {
+    func testMeterShowsOverWhenBuyingExceedsFunMoney() {
+        let (presenter, view, interactor, _) = make()
+        interactor.budget = 200
+        presenter.viewDidLoad()
+        presenter.tapBuy()
+        XCTAssertEqual(view.models.last?.meterText, "S$58 over if you buy")
+        XCTAssertEqual(view.models.last?.meterIsOver, true)
+        XCTAssertEqual(view.models.last?.meterFraction, 1)
+    }
+
+    func testLetGoShowsMomentThenAdvancesAndSpendsNothing() {
         let (presenter, view, interactor, _) = make()
         presenter.viewDidLoad()
-        presenter.tapSkip()
+        presenter.tapLetGo()
         XCTAssertEqual(view.momentLine, "S$189 stays with you.")
         XCTAssertEqual(interactor.log, ["skip Keyboard"])
         view.momentCompletion?()
         XCTAssertEqual(interactor.log, ["skip Keyboard", "publish"])
-        XCTAssertEqual(view.models.last?.progressText, "Payday review · 2 of 2")
+        XCTAssertEqual(view.models.last?.progressText, "2 of 2")
+        XCTAssertEqual(view.models.last?.meterText, "S$231 left if you buy")
+    }
+
+    func testSingleWantHidesProgress() {
+        let view = FakeView(), interactor = FakeInteractor(wants: [first]), router = FakeRouter()
+        let presenter = StillWantItPresenter(view: view, interactor: interactor, router: router, onFinish: nil)
+        presenter.viewDidLoad()
+        XCTAssertEqual(view.models.last?.progressText, "")
     }
 
     func testCloseDismissesWithoutFinishing() {
