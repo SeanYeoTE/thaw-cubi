@@ -1,6 +1,6 @@
 import UIKit
 
-/// Payday tab: countdown or ready count, fun money, Review, and read-only rows of what thaws this payday.
+/// Payday tab: countdown or ready count, how much of fun money is spoken for, Review, and read-only rows split by what fits.
 final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol {
     var presenter: PaydayPresenterProtocol?
 
@@ -10,8 +10,10 @@ final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol 
     private let valueLabel = UILabel()
     private let captionLabel = UILabel()
     private let budgetStack = UIStackView()
-    private let meter = FunMoneyMeterView(fraction: 0, isOver: false)
+    private let meter = PaydayMeterView()
+    private let budgetValueLabel = UILabel()
     private let budgetLabel = UILabel()
+    private let topRow = UIView()
     private let reviewButton = PillButton(title: "Review", style: .primary)
     private let remindButton = PillButton(title: "Remind me tonight", style: .quiet)
     private let content = UIStackView()
@@ -64,8 +66,10 @@ final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol 
     private func makeHero() -> UIView {
         hero.backgroundColor = Theme.paydayCard
         hero.layer.cornerRadius = Theme.Radius.pill
-        hero.isAccessibilityElement = true
-        hero.accessibilityIdentifier = "payday.hero"
+        topRow.isAccessibilityElement = true
+        topRow.accessibilityIdentifier = "payday.hero"
+        budgetStack.isAccessibilityElement = true
+        budgetStack.accessibilityIdentifier = "payday.budget"
 
         cubi.isAccessibilityElement = false
         cubi.setContentHuggingPriority(.required, for: .horizontal)
@@ -75,9 +79,11 @@ final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol 
         valueLabel.textColor = .white
         captionLabel.font = ThawFont.body(15)
         captionLabel.textColor = Theme.paydayLabel
+        budgetValueLabel.font = ThawFont.display(28)
+        budgetValueLabel.textColor = .white
         budgetLabel.font = ThawFont.body(14, weight: .medium)
         budgetLabel.textColor = Theme.paydayLabel
-        for label in [valueLabel, captionLabel, budgetLabel] {
+        for label in [valueLabel, captionLabel, budgetValueLabel, budgetLabel] {
             label.numberOfLines = 0
             label.adjustsFontForContentSizeCategory = true
         }
@@ -90,13 +96,24 @@ final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol 
 
         budgetStack.axis = .vertical
         budgetStack.spacing = 6
-        budgetStack.addArrangedSubview(meter)
-        budgetStack.addArrangedSubview(budgetLabel)
+        [budgetValueLabel, meter, budgetLabel].forEach(budgetStack.addArrangedSubview)
+        budgetStack.setCustomSpacing(10, after: budgetValueLabel)
+        budgetStack.setCustomSpacing(8, after: meter)
+        budgetStack.isUserInteractionEnabled = false
 
-        let column = UIStackView(arrangedSubviews: [top, budgetStack])
+        top.isUserInteractionEnabled = false
+        top.translatesAutoresizingMaskIntoConstraints = false
+        topRow.addSubview(top)
+        NSLayoutConstraint.activate([
+            top.leadingAnchor.constraint(equalTo: topRow.leadingAnchor),
+            top.trailingAnchor.constraint(equalTo: topRow.trailingAnchor),
+            top.topAnchor.constraint(equalTo: topRow.topAnchor),
+            top.bottomAnchor.constraint(equalTo: topRow.bottomAnchor),
+        ])
+
+        let column = UIStackView(arrangedSubviews: [topRow, budgetStack])
         column.axis = .vertical
         column.spacing = 16
-        column.isUserInteractionEnabled = false
         column.translatesAutoresizingMaskIntoConstraints = false
         hero.addSubview(column)
         NSLayoutConstraint.activate([
@@ -116,13 +133,15 @@ final class PaydayViewController: ScrollStackViewController, PaydayViewProtocol 
         cubi.isHidden = !model.showsCubi
         valueLabel.text = model.heroValue
         captionLabel.text = model.heroCaption
-        hero.accessibilityLabel = model.heroSpoken
+        topRow.accessibilityLabel = model.heroSpoken
 
         budgetStack.isHidden = model.budget == nil
         if let budget = model.budget {
-            budgetLabel.text = budget.text
-            budgetLabel.textColor = budget.isOver ? Theme.paydaySubtext : Theme.paydayLabel
-            meter.update(fraction: budget.fraction, isOver: budget.isOver, animated: view.window != nil)
+            budgetValueLabel.text = budget.headline
+            budgetValueLabel.textColor = budget.isOver ? Theme.paydaySubtext : .white
+            budgetLabel.text = budget.caption
+            budgetStack.accessibilityLabel = budget.spoken
+            meter.update(fill: budget.fillFraction, marker: budget.markerFraction, isOver: budget.isOver)
         }
 
         reviewButton.isHidden = model.reviewTitle == nil
@@ -188,5 +207,47 @@ private final class PaydayRowControl: UIControl {
 
     override var isHighlighted: Bool {
         didSet { alpha = isHighlighted ? 0.6 : 1 }
+    }
+}
+
+/// Budget bar on the dark card: fill is spoken-for against fun money, the white tick marks 100% of fun money
+/// so "over" reads without colour.
+private final class PaydayMeterView: UIView {
+    private let fill = UIView()
+    private let marker = UIView()
+    private var fillFraction: CGFloat = 0
+    private var markerFraction: CGFloat = 1
+
+    init() {
+        super.init(frame: .zero)
+        backgroundColor = Theme.meterTrack
+        layer.cornerRadius = 5
+        fill.layer.cornerRadius = 5
+        marker.backgroundColor = .white
+        addSubview(fill)
+        addSubview(marker)
+        isAccessibilityElement = false
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
+
+    override var intrinsicContentSize: CGSize { CGSize(width: UIView.noIntrinsicMetric, height: 10) }
+
+    func update(fill value: Double, marker position: Double, isOver: Bool) {
+        fillFraction = Self.clamp(value)
+        markerFraction = Self.clamp(position)
+        fill.backgroundColor = isOver ? Theme.warm : Theme.cubeStroke
+        setNeedsLayout()
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        fill.frame = CGRect(x: 0, y: 0, width: bounds.width * fillFraction, height: bounds.height)
+        let x = min(max(bounds.width * markerFraction - 1, 0), bounds.width - 2)
+        marker.frame = CGRect(x: x, y: 0, width: 2, height: bounds.height)
+    }
+
+    private static func clamp(_ value: Double) -> CGFloat {
+        value.isFinite ? CGFloat(max(0, min(1, value))) : 0
     }
 }
