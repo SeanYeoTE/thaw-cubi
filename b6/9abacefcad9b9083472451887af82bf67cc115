@@ -1,0 +1,23 @@
+Thaw/DesignSystem/CubiMotion.swift
+  s_125c29137e7cc0::t_7dcd145f324d1b 49-103
+Thaw/DesignSystem/CubiView.swift
+  s_125c29137e7cc0::t_85a0e0b4892806 56-59,82-86,107,119,122-123,151-161,163-164
+ThawTests/CubiMotionTests.swift
+  s_125c29137e7cc0::t_931ccbab90ff4f 21-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b69abacefcad9b9083472451887af82bf67cc115",
+  "prompts": {},
+  "sessions": {
+    "s_125c29137e7cc0": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "245a1e4a-c933-467b-bf9f-5c89dcc9a315",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
