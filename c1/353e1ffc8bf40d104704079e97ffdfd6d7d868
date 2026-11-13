@@ -1,0 +1,19 @@
+docs/demo-presentation.html
+  s_393f9f0b564115::t_e03d738c78ca94 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c1353e1ffc8bf40d104704079e97ffdfd6d7d868",
+  "prompts": {},
+  "sessions": {
+    "s_393f9f0b564115": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "04ac3ea0-086a-40bd-a797-fbebc01c05de",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
