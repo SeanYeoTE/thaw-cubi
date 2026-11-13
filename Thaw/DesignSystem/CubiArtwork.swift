@@ -47,7 +47,7 @@ enum CubiArtwork {
 
     static func face(for mood: CubiMood) -> Face {
         var result = Face()
-        let ink = Theme.ink
+        let ink = Theme.cubiInk
 
         switch mood {
         case .frozen:
@@ -104,8 +104,8 @@ enum CubiArtwork {
             }
             result.face = [stroke(eyes, ink, 6), dot(80, 112, 5, ink)]
             result.prop = [
-                stroke(line([(132, 14), (142, 14), (132, 26), (142, 26)]), Theme.accent, 3.5),
-                stroke(line([(144, 2), (151, 2), (144, 11), (151, 11)]), Theme.accent, 2.5),
+                stroke(line([(132, 14), (142, 14), (132, 26), (142, 26)]), Theme.cubiAccent, 3.5),
+                stroke(line([(144, 2), (151, 2), (144, 11), (151, 11)]), Theme.cubiAccent, 2.5),
             ]
         }
         return result

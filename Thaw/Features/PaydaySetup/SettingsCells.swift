@@ -15,6 +15,13 @@ enum SettingsListStyle {
         return configuration
     }
 
+    /// Grouped rows on the themed surface instead of the system's neutral grey in dark mode.
+    static func styleBackground(_ cell: UICollectionViewListCell) {
+        var background = UIBackgroundConfiguration.listGroupedCell()
+        background.backgroundColor = Theme.surface
+        cell.backgroundConfiguration = background
+    }
+
     static func style(_ content: inout UIListContentConfiguration) {
         content.textProperties.font = ThawFont.body(17)
         content.textProperties.adjustsFontForContentSizeCategory = true
@@ -60,6 +67,7 @@ class SettingsControlCell: UICollectionViewListCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        SettingsListStyle.styleBackground(self)
         textArea.accessibilityElementsHidden = true
         textArea.setContentHuggingPriority(.defaultLow, for: .horizontal)
         row.addArrangedSubview(textArea)
@@ -244,5 +252,34 @@ final class SettingsMenuCell: SettingsControlCell {
         }
         button.menu = UIMenu(children: actions)
         button.configuration?.title = model.valueText
+    }
+}
+
+/// Theme choice: System, Light or Dark.
+final class SettingsAppearanceCell: SettingsControlCell {
+    private let segments = UISegmentedControl(items: AppearanceMode.allCases.map(\.title))
+    var onChange: ((AppearanceMode) -> Void)?
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        let font = ThawFont.body(15, weight: .semibold)
+        segments.setTitleTextAttributes([.font: font, .foregroundColor: Theme.ink], for: .normal)
+        segments.setTitleTextAttributes([.font: font, .foregroundColor: Theme.onAccent], for: .selected)
+        segments.selectedSegmentTintColor = Theme.accent
+        segments.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
+        segments.addAction(UIAction { [weak self] _ in
+            guard let self, let mode = AppearanceMode(rawValue: self.segments.selectedSegmentIndex) else { return }
+            self.onChange?(mode)
+        }, for: .valueChanged)
+        install(segments)
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
+
+    func configure(_ model: SettingsRowViewModel, mode: AppearanceMode) {
+        setText(model.title)
+        segments.selectedSegmentIndex = mode.rawValue
+        segments.accessibilityLabel = model.accessibilityLabel
+        segments.accessibilityValue = model.accessibilityValue
     }
 }

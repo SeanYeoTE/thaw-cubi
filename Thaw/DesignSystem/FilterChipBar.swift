@@ -84,7 +84,7 @@ final class FilterChipBar: UIView {
             config.cornerStyle = .fixed
             if button.isSelected {
                 config.baseBackgroundColor = Theme.accent
-                config.baseForegroundColor = .white
+                config.baseForegroundColor = Theme.onAccent
                 config.background.strokeWidth = 0
             } else {
                 config.baseBackgroundColor = Theme.surface

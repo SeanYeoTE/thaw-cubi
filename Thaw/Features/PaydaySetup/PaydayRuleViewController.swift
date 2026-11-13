@@ -39,6 +39,7 @@ final class PaydayRuleViewController: UIViewController, PaydayRuleViewProtocol, 
     private func configureDataSource() {
         let option = UICollectionView.CellRegistration<UICollectionViewListCell, Int> { [weak self] cell, _, index in
             guard let model = self?.content?.options[index] else { return }
+            SettingsListStyle.styleBackground(cell)
             var configuration = UIListContentConfiguration.subtitleCell()
             SettingsListStyle.styleSubtitle(&configuration)
             configuration.text = model.title
@@ -55,6 +56,7 @@ final class PaydayRuleViewController: UIViewController, PaydayRuleViewProtocol, 
         }
         let next = UICollectionView.CellRegistration<UICollectionViewListCell, Item> { [weak self] cell, _, _ in
             guard let content = self?.content else { return }
+            SettingsListStyle.styleBackground(cell)
             var configuration = UIListContentConfiguration.valueCell()
             SettingsListStyle.style(&configuration)
             configuration.text = content.nextPaydayTitle

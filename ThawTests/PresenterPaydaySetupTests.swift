@@ -100,7 +100,9 @@ final class PresenterPaydaySetupTests: XCTestCase {
         var content: SettingsContent?
         var renders = 0
         var feedback = 0
+        var appearance: AppearanceMode?
         func render(_ content: SettingsContent) { self.content = content; renders += 1 }
+        func applyAppearance(_ mode: AppearanceMode) { appearance = mode }
         func playSaveFeedback() { feedback += 1 }
 
         @MainActor func row(_ id: SettingsRowID) -> SettingsRowViewModel? {
@@ -123,7 +125,7 @@ final class PresenterPaydaySetupTests: XCTestCase {
     func testSettingsContent() {
         let (_, view, _, _) = makeSettings()
         XCTAssertEqual(view.content?.title, "Settings")
-        XCTAssertEqual(view.content?.sections.map(\.header), ["Payday", "Budget", "Quick thaws", "Reminders"])
+        XCTAssertEqual(view.content?.sections.map(\.header), ["Payday", "Budget", "Quick thaws", "Appearance", "Reminders"])
         XCTAssertEqual(view.content?.sections[2].footer, "Cheaper wants use a timer instead of waiting for payday.")
         XCTAssertEqual(view.content?.sections.last?.footer,
                        "Entered by you, kept on this phone. Thaw never reads your bank.")
@@ -138,6 +140,19 @@ final class PresenterPaydaySetupTests: XCTestCase {
         XCTAssertEqual(view.row(.reviewTime)?.accessibilityValue, "9:00 am")
         let expected = PaydayRuleModel.nextPaydayText(.default)
         XCTAssertEqual(view.row(.nextPayday)?.value, expected)
+    }
+
+    func testAppearanceChangeIsSavedAndApplied() {
+        let original = AppearanceMode.saved
+        defer { AppearanceMode.saved = original }
+        AppearanceMode.saved = .system
+        let (presenter, view, interactor, _) = makeSettings()
+        XCTAssertEqual(view.row(.appearance)?.control, .appearance(.system))
+        presenter.appearanceChanged(.dark)
+        XCTAssertEqual(AppearanceMode.saved, .dark)
+        XCTAssertEqual(view.appearance, .dark)
+        XCTAssertEqual(view.row(.appearance)?.control, .appearance(.dark))
+        XCTAssertTrue(interactor.saved.isEmpty)
     }
 
     func testEachSettingsChangeSavesOnceWithoutPermission() {

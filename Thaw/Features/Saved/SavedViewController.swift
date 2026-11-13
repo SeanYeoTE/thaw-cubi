@@ -282,7 +282,7 @@ final class SavedViewController: ThawListViewController, SavedViewProtocol {
         picker.selectedSegmentIndex = chart.selectedRange
         let font = ThawFont.body(13, weight: .semibold)
         picker.setTitleTextAttributes([.font: font, .foregroundColor: Theme.ink], for: .normal)
-        picker.setTitleTextAttributes([.font: font, .foregroundColor: UIColor.white], for: .selected)
+        picker.setTitleTextAttributes([.font: font, .foregroundColor: Theme.onAccent], for: .selected)
         picker.selectedSegmentTintColor = Theme.accent
         picker.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
         picker.addAction(UIAction { [weak self, weak picker] _ in

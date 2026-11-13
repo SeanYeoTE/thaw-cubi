@@ -14,7 +14,7 @@ final class StatChipView: UIControl {
         backgroundColor = Theme.surface
         layer.cornerRadius = Theme.Radius.card
         layer.borderWidth = 1
-        layer.borderColor = Theme.controlBorder.cgColor
+        setBorderColor(Theme.controlBorder)
 
         symbolView.preferredSymbolConfiguration = UIImage.SymbolConfiguration(font: ThawFont.body(15, weight: .semibold))
         symbolView.adjustsImageSizeForAccessibilityContentSizeCategory = true
