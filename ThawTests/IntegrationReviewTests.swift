@@ -42,10 +42,10 @@ final class IntegrationReviewTests: XCTestCase {
         let store = WantStore(fileURL: fileURL)
         store.save(settings: .default)
         let now = Date.now
-        // Frozen long enough ago that every want has thawed.
-        store.add(name: "Keyboard", price: 189, reason: "Clicky", frozenOn: now.addingTimeInterval(-86_400 * 70))
-        store.add(name: "Grinder", price: 420, reason: "Coffee", frozenOn: now.addingTimeInterval(-86_400 * 69))
-        store.add(name: "Shirt", price: 69, reason: "Hot", frozenOn: now.addingTimeInterval(-86_400 * 68))
+        // Frozen long enough ago that every want has thawed, a month or more apart so each thaws on a different payday.
+        store.add(name: "Keyboard", price: 189, reason: "Clicky", frozenOn: now.addingTimeInterval(-86_400 * 130))
+        store.add(name: "Grinder", price: 420, reason: "Coffee", frozenOn: now.addingTimeInterval(-86_400 * 95))
+        store.add(name: "Shirt", price: 69, reason: "Hot", frozenOn: now.addingTimeInterval(-86_400 * 60))
         store.add(name: "Case", price: 24, reason: "Cracked", frozenOn: now.addingTimeInterval(-86_400 * 10))
         let wants = store.reviewQueue
         XCTAssertEqual(wants.count, 4)

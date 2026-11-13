@@ -23,11 +23,12 @@ final class Reminders {
     }
 
     /// Payday wants due by the next payday (D2: quick thaws are left out of the payday total).
-    // TODO(V5 wave 2): switch to V1's `FunMoneyPlan` so this matches the Payday tab badge and the review.
+    /// Uses the same budget rule as the Payday tab and the review, so every path quotes the same figures.
     func paydaySummary() -> PaydaySummary {
-        let threshold = store.effectiveSettings.timerThreshold
-        let wants = store.reviewQueue.filter { $0.price >= threshold }
-        return PaydaySummary(count: wants.count, total: wants.reduce(Decimal(0)) { $0 + $1.price })
+        let settings = store.effectiveSettings
+        let plan = FunMoneyPlan.make(wants: store.reviewQueue, funMoney: settings.funMoney,
+                                     timerThreshold: settings.timerThreshold)
+        return PaydaySummary(count: plan.payday.count, total: plan.paydayTotal)
     }
 
     /// Reschedules the payday review and timer thaws. Only removes the requests it owns, so a pending

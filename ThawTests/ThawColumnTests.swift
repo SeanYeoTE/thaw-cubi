@@ -52,20 +52,9 @@ final class ThawColumnTests: XCTestCase {
     func testTitleLinesUpWithInsetGroupedCards() {
         for size in Self.widths {
             let host = Host(width: size.width, safeArea: size.safeArea)
-            XCTAssertEqual(host.titleLeading(.insetGrouped), host.insetGroupedCardLeading(), accuracy: 0.5, size.name)
+            let card = host.insetGroupedCard()
+            XCTAssertEqual(host.titleLeading(.insetGrouped, listMargin: card.margin), card.leading, accuracy: 0.5, size.name)
         }
-    }
-
-    func testListAppearanceIsReadFromTheSection() {
-        let plain = NSCollectionLayoutSection(group: .vertical(
-            layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(44)),
-            subitems: [NSCollectionLayoutItem(layoutSize: .init(
-                widthDimension: .fractionalWidth(1), heightDimension: .absolute(44)))]))
-        plain.contentInsetsReference = .none
-        XCTAssertEqual(ThawListViewController.appearance(of: plain), .plain)
-
-        let host = Host(width: 402, safeArea: .zero)
-        XCTAssertEqual(host.insetGroupedAppearance(), .insetGrouped)
     }
 
     /// A window-hosted screen, so safe areas and system list margins are real.
@@ -84,31 +73,32 @@ final class ThawColumnTests: XCTestCase {
 
         deinit {}
 
-        private func title(_ appearance: ThawListAppearance) -> UIView {
+        private func title(_ appearance: ThawListAppearance, listMargin: CGFloat = Theme.Spacing.screen) -> UIView {
             let title = ThawListTitleView(frame: view.bounds)
-            title.configure(text: "Cooling", insets: .standard, appearance: appearance)
+            title.configure(text: "Cooling", insets: .standard, appearance: appearance, listMargin: listMargin)
             view.addSubview(title)
             title.layoutIfNeeded()
             return title.subviews[0]
         }
 
-        func titleLeading(_ appearance: ThawListAppearance) -> CGFloat {
-            title(appearance).frame.minX
+        func titleLeading(_ appearance: ThawListAppearance, listMargin: CGFloat = Theme.Spacing.screen) -> CGFloat {
+            title(appearance, listMargin: listMargin).frame.minX
         }
 
         func titleTrailing(_ appearance: ThawListAppearance) -> CGFloat {
             title(appearance).frame.maxX
         }
 
-        private var lastSection: NSCollectionLayoutSection?
         private var dataSources: [AnyObject] = []
+        private var cardMargin: CGFloat = -1
 
         private func insetGroupedList() -> UICollectionView {
             var configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
             configuration.headerMode = .none
+            let safeAreaLeading = view.safeAreaInsets.left
             let layout = UICollectionViewCompositionalLayout { [weak self] _, environment in
                 let section = ThawColumn.insetGroupedSection(configuration, environment: environment)
-                self?.lastSection = section
+                self?.cardMargin = ThawColumn.cardMargin(of: section, environment: environment, safeAreaLeading: safeAreaLeading)
                 return section
             }
             let list = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
@@ -126,14 +116,11 @@ final class ThawColumnTests: XCTestCase {
             return list
         }
 
-        func insetGroupedCardLeading() -> CGFloat {
+        /// Where an inset-grouped card starts, and the list margin the title is given in the app.
+        func insetGroupedCard() -> (leading: CGFloat, margin: CGFloat) {
             let list = insetGroupedList()
-            return list.layoutAttributesForItem(at: IndexPath(item: 0, section: 0))?.frame.minX ?? -1
-        }
-
-        func insetGroupedAppearance() -> ThawListAppearance? {
-            _ = insetGroupedList()
-            return lastSection.map(ThawListViewController.appearance(of:))
+            let leading = list.layoutAttributesForItem(at: IndexPath(item: 0, section: 0))?.frame.minX ?? -1
+            return (leading, cardMargin)
         }
     }
 }

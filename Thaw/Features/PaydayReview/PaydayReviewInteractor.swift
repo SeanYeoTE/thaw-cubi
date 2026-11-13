@@ -11,6 +11,9 @@ final class PaydayReviewInteractor: PaydayReviewInteractorProtocol {
         self.wants = wants
     }
 
+    // Explicit deinit: the synthesized one on this MainActor class corrupts the heap in the test host.
+    deinit {}
+
     var budget: Decimal { store.effectiveSettings.funMoney }
     var timerThreshold: Decimal { store.effectiveSettings.timerThreshold }
 
