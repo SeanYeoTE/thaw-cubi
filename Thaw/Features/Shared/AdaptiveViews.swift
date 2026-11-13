@@ -6,6 +6,11 @@ final class AdaptiveStackView: UIStackView {
         didSet { updateAxis() }
     }
 
+    /// Alignment once stacked at accessibility sizes. `.fill` gives each view the full width, which text fields need.
+    var largeAlignment: UIStackView.Alignment = .leading {
+        didSet { updateAxis() }
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUp()
@@ -31,6 +36,6 @@ final class AdaptiveStackView: UIStackView {
     private func updateAxis() {
         let large = traitCollection.preferredContentSizeCategory.isAccessibilityCategory
         axis = large ? .vertical : .horizontal
-        alignment = large ? .leading : compactAlignment
+        alignment = large ? largeAlignment : compactAlignment
     }
 }

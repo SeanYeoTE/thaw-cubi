@@ -2,16 +2,22 @@ import UIKit
 
 final class AddWantViewController: ScrollStackViewController, AddWantViewProtocol, UITextViewDelegate, UIAdaptivePresentationControllerDelegate {
     var presenter: AddWantPresenterProtocol?
-    private let nameField = UITextField()
+    /// A text view, not a field, so long names wrap instead of being clipped at large text sizes. Newlines are
+    /// kept out of it.
+    private let nameField = UITextView()
     private let priceField = UITextField()
     private let reasonView = UITextView()
     private let errorLabel = UILabel()
     private let thawLabel = UILabel()
     private let reasonPlaceholder = UILabel()
+    private let namePlaceholder = UILabel()
     private let statusRow = UIStackView()
     private let statusButton = UIButton(type: .system)
     private let saveButton = PillButton(title: "Save", style: .primary)
     private let deleteButton = PillButton(title: "Delete", style: .destructive)
+    /// Keeps the gap above Delete: custom spacing after a hidden view (the error label) is dropped.
+    private let deleteGap = UIView()
+    private var thawAnnouncement: Task<Void, Never>?
     private var statusOptions: [AddWantStatusOption] = []
     private var selectedStatus: Want.Status?
     private let captionLabel = UILabel()
@@ -25,6 +31,9 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
 
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
 
+    /// Space between the last field (or the error) and Delete.
+    static let deleteSpacing: CGFloat = 40
+
     override func buildContent() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(systemItem: .cancel, primaryAction: UIAction { [weak self] _ in
             self?.cancelTapped()
@@ -37,11 +46,12 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         captionLabel.isHidden = true
         stack.addArrangedSubview(captionLabel)
 
-        configure(nameField, placeholder: "What do you want?")
+        configureNameField()
         configure(priceField, placeholder: "0")
         nameField.accessibilityLabel = "Name"
         nameField.accessibilityIdentifier = "addwant.name"
         nameField.autocapitalizationType = .sentences
+        nameField.returnKeyType = .next
         priceField.accessibilityLabel = "Price in Singapore dollars"
         priceField.accessibilityIdentifier = "addwant.price"
         priceField.keyboardType = .decimalPad
@@ -58,9 +68,10 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
             prefix.bottomAnchor.constraint(lessThanOrEqualTo: prefixBox.bottomAnchor),
         ])
         priceField.leftView = prefixBox
-        priceField.widthAnchor.constraint(equalToConstant: 120).isActive = true
-        nameField.returnKeyType = .next
-        nameField.addAction(UIAction { [weak self] _ in self?.priceField.becomeFirstResponder() }, for: .editingDidEndOnExit)
+        // Below required, so the price takes the full width once the pair stacks at accessibility sizes.
+        let priceWidth = priceField.widthAnchor.constraint(equalToConstant: 120)
+        priceWidth.priority = .defaultHigh
+        priceWidth.isActive = true
         let doneBar = UIToolbar()
         doneBar.items = [UIBarButtonItem(systemItem: .flexibleSpace),
                          UIBarButtonItem(systemItem: .done, primaryAction: UIAction { [weak self] _ in self?.view.endEditing(true) })]
@@ -68,6 +79,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         priceField.inputAccessoryView = doneBar
         let nameAndPrice = AdaptiveStackView(arrangedSubviews: [nameField, priceField])
         nameAndPrice.compactAlignment = .top
+        nameAndPrice.largeAlignment = .fill
         nameAndPrice.spacing = 12
         nameAndPrice.distribution = .fill
         stack.addArrangedSubview(nameAndPrice)
@@ -106,6 +118,8 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
             reasonPlaceholder.topAnchor.constraint(equalTo: reasonView.topAnchor, constant: 12),
             reasonPlaceholder.leadingAnchor.constraint(equalTo: reasonView.leadingAnchor, constant: 17),
             reasonPlaceholder.trailingAnchor.constraint(equalTo: reasonView.frameLayoutGuide.trailingAnchor, constant: -17),
+            // Grows the box at large text sizes so the placeholder isn't cut off.
+            reasonPlaceholder.bottomAnchor.constraint(lessThanOrEqualTo: reasonView.frameLayoutGuide.bottomAnchor, constant: -12),
         ])
 
         buildStatusRow()
@@ -123,8 +137,11 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         deleteButton.accessibilityIdentifier = "addwant.delete"
         deleteButton.addAction(UIAction { [weak self] _ in self?.presenter?.tapDelete() }, for: .touchUpInside)
         deleteButton.isHidden = true
+        deleteGap.isHidden = true
+        deleteGap.heightAnchor.constraint(equalToConstant: Self.deleteSpacing - stack.spacing).isActive = true
+        stack.addArrangedSubview(deleteGap)
+        stack.setCustomSpacing(0, after: deleteGap)
         stack.addArrangedSubview(deleteButton)
-        stack.setCustomSpacing(Theme.Spacing.gap * 2, after: errorLabel)
         presenter?.viewDidLoad()
     }
 
@@ -154,7 +171,10 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         statusButton.accessibilityIdentifier = "addwant.status"
         statusButton.accessibilityLabel = "Status"
         statusButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true
-        statusRow.addArrangedSubview(makeLabel("Status", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
+        let caption = makeLabel("Status", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary)
+        // The button below is already labelled "Status", so VoiceOver would read it twice.
+        caption.isAccessibilityElement = false
+        statusRow.addArrangedSubview(caption)
         statusRow.addArrangedSubview(statusButton)
         stack.addArrangedSubview(statusRow)
     }
@@ -172,8 +192,44 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         })
     }
 
+    private func configureNameField() {
+        nameField.delegate = self
+        nameField.font = ThawFont.body(16)
+        nameField.adjustsFontForContentSizeCategory = true
+        nameField.textColor = Theme.ink
+        nameField.backgroundColor = Theme.surface
+        nameField.layer.cornerRadius = 12
+        nameField.layer.borderWidth = 1
+        nameField.layer.borderColor = Theme.controlBorder.cgColor
+        nameField.isScrollEnabled = false
+        // 14 pt to the text, like the price field: 9 pt inset plus the text container's 5 pt line padding.
+        nameField.textContainerInset = UIEdgeInsets(top: 15, left: 9, bottom: 15, right: 9)
+        nameField.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true
+        nameField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        nameField.setContentHuggingPriority(.defaultLow, for: .horizontal)
+
+        namePlaceholder.text = "What do you want?"
+        namePlaceholder.font = ThawFont.body(16)
+        namePlaceholder.adjustsFontForContentSizeCategory = true
+        namePlaceholder.textColor = Theme.inkSecondary
+        namePlaceholder.numberOfLines = 0
+        namePlaceholder.isAccessibilityElement = false
+        namePlaceholder.isUserInteractionEnabled = false
+        namePlaceholder.translatesAutoresizingMaskIntoConstraints = false
+        nameField.addSubview(namePlaceholder)
+        NSLayoutConstraint.activate([
+            namePlaceholder.leadingAnchor.constraint(equalTo: nameField.frameLayoutGuide.leadingAnchor, constant: 14),
+            namePlaceholder.trailingAnchor.constraint(lessThanOrEqualTo: nameField.frameLayoutGuide.trailingAnchor, constant: -14),
+            namePlaceholder.topAnchor.constraint(equalTo: nameField.frameLayoutGuide.topAnchor, constant: 15),
+            namePlaceholder.bottomAnchor.constraint(lessThanOrEqualTo: nameField.frameLayoutGuide.bottomAnchor, constant: -15),
+        ])
+    }
+
+    private func updateNamePlaceholder() {
+        namePlaceholder.isHidden = !(nameField.text ?? "").isEmpty
+    }
+
     private func configure(_ field: UITextField, placeholder: String) {
-        field.placeholder = placeholder
         field.addAction(UIAction { [weak self, weak field] _ in
             if let field { self?.scrollToVisible(field) }
         }, for: .editingDidBegin)
@@ -197,6 +253,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
 
     private func inputDidChange() {
         errorLabel.isHidden = true
+        updateNamePlaceholder()
         presenter?.inputChanged(input)
     }
 
@@ -214,8 +271,23 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
     }
 
     func textViewDidChange(_ textView: UITextView) {
-        reasonPlaceholder.isHidden = !textView.text.isEmpty
+        if textView === reasonView { reasonPlaceholder.isHidden = !textView.text.isEmpty }
         inputDidChange()
+    }
+
+    /// The name is one line of data even when it wraps: Return moves on to the price, pasted newlines become spaces.
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        guard textView === nameField, text.contains(where: \.isNewline) else { return true }
+        if text == "\n" {
+            priceField.becomeFirstResponder()
+            return false
+        }
+        let cleaned = text.components(separatedBy: .newlines).joined(separator: " ")
+        if let current = textView.text, let swap = Range(range, in: current) {
+            textView.text = current.replacingCharacters(in: swap, with: cleaned)
+            textViewDidChange(textView)
+        }
+        return false
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -275,8 +347,10 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         refreshStatusMenu()
         deleteButton.configuration?.title = screen.deleteTitle
         deleteButton.isHidden = screen.deleteTitle == nil
+        deleteGap.isHidden = deleteButton.isHidden
         if let initial = screen.initial {
             nameField.text = initial.name
+            updateNamePlaceholder()
             priceField.text = initial.price
             reasonView.text = initial.reason
             reasonPlaceholder.isHidden = !initial.reason.isEmpty
@@ -284,8 +358,20 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
     }
 
     func render(thawLine: String?) {
+        let changed = thawLine != thawLabel.text
         thawLabel.text = thawLine
         thawLabel.isHidden = thawLine == nil
+        if changed, isViewLoaded, view.window != nil { announceThawLine() }
+    }
+
+    /// Reads the thaw line out once typing settles, so VoiceOver doesn't speak every keystroke.
+    private func announceThawLine() {
+        thawAnnouncement?.cancel()
+        thawAnnouncement = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(1))
+            guard !Task.isCancelled, let self, let line = self.thawLabel.text, !self.thawLabel.isHidden else { return }
+            UIAccessibility.post(notification: .announcement, argument: line)
+        }
     }
 
     func showSavedMoment(line: String, completion: @escaping () -> Void) {
@@ -300,5 +386,6 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         errorLabel.text = message
         errorLabel.isHidden = false
         scrollToVisible(errorLabel)
+        UIAccessibility.post(notification: .announcement, argument: message)
     }
 }

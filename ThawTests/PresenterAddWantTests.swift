@@ -1,3 +1,4 @@
+import UIKit
 import XCTest
 @testable import Thaw
 
@@ -30,12 +31,16 @@ final class PresenterAddWantTests: XCTestCase {
         var draft: AddWantDraft?
         var added: [(String, Decimal, String)] = []
         var saved: [(String, Decimal, String)] = []
+        /// Every store change, in the order the presenter made them.
         var ops: [String] = []
         func moveBackToCooling() { ops.append("reopen") }
         func setDecision(_ status: Want.Status) { ops.append("set-\(status)") }
         func deleteWant() { ops.append("delete") }
         func add(name: String, price: Decimal, reason: String) { added.append((name, price, reason)) }
-        func save(name: String, price: Decimal, reason: String) { saved.append((name, price, reason)) }
+        func save(name: String, price: Decimal, reason: String) {
+            saved.append((name, price, reason))
+            ops.append("save")
+        }
     }
 
     private final class FakeRouter: AddWantRouterProtocol {
@@ -320,17 +325,17 @@ final class PresenterAddWantTests: XCTestCase {
             XCTAssertEqual(interactor.saved.count, 1)
             return interactor.ops
         }
-        XCTAssertEqual(run(from: .skipped, to: .cooling), ["reopen"])
-        XCTAssertEqual(run(from: .skipped, to: .bought), ["set-bought"])
-        XCTAssertEqual(run(from: .bought, to: .skipped), ["set-skipped"])
-        XCTAssertEqual(run(from: .bought, to: .bought), [])
+        XCTAssertEqual(run(from: .skipped, to: .cooling), ["save", "reopen"])
+        XCTAssertEqual(run(from: .skipped, to: .bought), ["save", "set-bought"])
+        XCTAssertEqual(run(from: .bought, to: .skipped), ["save", "set-skipped"])
+        XCTAssertEqual(run(from: .bought, to: .bought), ["save"])
     }
 
     func testSaveKeepsEditsTypedWithAStatusChange() {
         let (presenter, _, interactor, _) = makeEditing(status: .bought)
         presenter.tapSave(AddWantInput(name: "Keyboard Pro", price: "199", reason: "Double-types", status: .skipped))
         XCTAssertEqual(interactor.saved.first?.0, "Keyboard Pro")
-        XCTAssertEqual(interactor.ops, ["set-skipped"])
+        XCTAssertEqual(interactor.ops, ["save", "set-skipped"])
     }
 
     func testInvalidEditsWithAStatusChangeChangeNothing() {
@@ -354,6 +359,105 @@ final class PresenterAddWantTests: XCTestCase {
         presenter.tapCancel(changed)
         XCTAssertEqual(view.discardShown, 1)
         XCTAssertEqual(router.dismissed, 0)
+    }
+
+    // MARK: Reopening a decided want
+
+    private func makeDecided(_ status: Want.Status, price: Decimal = 189, thawsOn day: Int)
+        -> (AddWantPresenter, FakeView, FakeInteractor, FakeRouter) {
+        let made = make()
+        var want = Fixture.want("Keyboard", price, reason: "Double-types")
+        want.status = status
+        want.thawsAt = calendar.date(from: DateComponents(year: 2026, month: 11, day: day, hour: 9))!
+        made.2.editing = want
+        made.0.viewDidLoad()
+        return made
+    }
+
+    private func reopenLine(_ presenter: AddWantPresenter, _ view: FakeView, price: String = "189",
+                            status: Want.Status = .cooling) -> String? {
+        presenter.inputChanged(AddWantInput(name: "Keyboard", price: price, reason: "Double-types", status: status))
+        return view.thawLine
+    }
+
+    func testReopeningAPastDueWantSaysItIsReadyNow() {
+        let (presenter, view, _, _) = makeDecided(.skipped, thawsOn: 1)
+        XCTAssertNil(view.thawLine)
+        XCTAssertEqual(reopenLine(presenter, view), "Back to cooling · ready to review now")
+    }
+
+    func testReopeningAWantStillCoolingShowsItsOriginalDate() {
+        let (presenter, view, _, _) = makeDecided(.bought, thawsOn: 25)
+        XCTAssertEqual(reopenLine(presenter, view), "Back to cooling · thaws on payday · 25 Nov")
+        let quick = makeDecided(.skipped, price: 12, thawsOn: 14)
+        XCTAssertEqual(reopenLine(quick.0, quick.1, price: "12"), "Back to cooling · quick thaw · 14 Nov")
+    }
+
+    func testReopeningAcrossTheThresholdKeepsTheStoredDate() {
+        let (presenter, view, _, _) = makeDecided(.skipped, thawsOn: 25)
+        XCTAssertEqual(reopenLine(presenter, view, price: "20"), "Back to cooling · quick thaw · 25 Nov")
+        XCTAssertEqual(reopenLine(presenter, view, price: ""), "Back to cooling · thaws on payday · 25 Nov")
+    }
+
+    func testDecidedWantLeftDecidedHasNoThawLine() {
+        for status in [Want.Status.bought, .skipped] {
+            let (presenter, view, _, _) = makeDecided(status, thawsOn: 25)
+            XCTAssertNil(reopenLine(presenter, view, status: .bought), "\(status)")
+            XCTAssertNil(reopenLine(presenter, view, status: .skipped), "\(status)")
+            XCTAssertNotNil(reopenLine(presenter, view, status: .cooling), "\(status)")
+            XCTAssertNil(reopenLine(presenter, view, status: status), "switching back hides it again")
+        }
+    }
+
+    func testReopenSavesFieldsBeforeReopening() {
+        let (presenter, _, interactor, router) = makeDecided(.skipped, thawsOn: 1)
+        presenter.tapSave(AddWantInput(name: "Keyboard Pro", price: "20", reason: "Double-types", status: .cooling))
+        XCTAssertEqual(interactor.ops, ["save", "reopen"])
+        XCTAssertEqual(interactor.saved.first?.1, 20)
+        XCTAssertEqual(router.dismissed, 1)
+    }
+
+    // MARK: Edit sheet layout
+
+    func testDeleteKeepsItsGapWithAndWithoutAnError() {
+        for status in [Want.Status.cooling, .bought] {
+            let controller = AddWantViewController()
+            let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 402, height: 1400))
+            window.rootViewController = controller
+            window.isHidden = false
+            var want = Fixture.want("Keyboard", 189, reason: "")
+            want.status = status
+            controller.configure(AddWantScreen(
+                title: "Edit want", actionTitle: "Save", discardTitle: "", discardMessage: "",
+                initial: AddWantInput(name: "Keyboard", price: "189", reason: "", status: status == .cooling ? nil : status),
+                statusOptions: status == .cooling ? [] : [AddWantStatusOption(status: .cooling, title: "Cooling")],
+                deleteTitle: "Delete"))
+            XCTAssertEqual(deleteGap(in: controller), AddWantViewController.deleteSpacing, accuracy: 0.5, "\(status)")
+            controller.showError("Add a name for the item.")
+            XCTAssertEqual(deleteGap(in: controller), AddWantViewController.deleteSpacing, accuracy: 0.5,
+                           "\(status) with error")
+            window.isHidden = true
+        }
+    }
+
+    /// Distance from the bottom of the last visible view above Delete to Delete itself.
+    private func deleteGap(in controller: AddWantViewController) -> CGFloat {
+        controller.view.layoutIfNeeded()
+        guard let stack = Self.find(UIStackView.self, in: controller.view, where: { stack in
+            stack.arrangedSubviews.contains { $0.accessibilityIdentifier == "addwant.delete" }
+        }) else { return -1 }
+        let views = stack.arrangedSubviews
+        guard let index = views.firstIndex(where: { $0.accessibilityIdentifier == "addwant.delete" }),
+              // Skips hidden views and the plain spacer that makes up the gap.
+              let above = views[..<index].last(where: { !$0.isHidden && type(of: $0) != UIView.self })
+        else { return -1 }
+        return views[index].frame.minY - above.frame.maxY
+    }
+
+    private static func find<T: UIView>(_ type: T.Type, in view: UIView, where match: (T) -> Bool) -> T? {
+        if let view = view as? T, match(view) { return view }
+        for sub in view.subviews { if let found = find(type, in: sub, where: match) { return found } }
+        return nil
     }
 
     func testDeleteAsksThenDeletesAndDismisses() {

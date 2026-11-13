@@ -58,7 +58,7 @@ final class PaydayPresenter: PaydayPresenterProtocol, PaydayInteractorOutput {
     /// Quick thaws (price under the timer threshold) are decided whenever their timer ends, not at the
     /// payday review, so they never count against fun money. They get their own section instead.
     static func isQuickThaw(_ want: Want, settings: PaydaySettings) -> Bool {
-        want.price < settings.timerThreshold
+        FunMoneyPlan.isQuickThaw(want, timerThreshold: settings.timerThreshold)
     }
 
     private func refresh() {
@@ -69,28 +69,23 @@ final class PaydayPresenter: PaydayPresenterProtocol, PaydayInteractorOutput {
         let funMoney = snapshot.payday.funMoney
         let ready = readyWants(snapshot)
         let readyIDs = Set(ready.map(\.id))
-        let thawing = snapshot.cooling.enumerated()
-            .filter { !readyIDs.contains($0.element.id) && $0.element.thawsAt <= nextPayday }
-            .sorted { ($0.element.thawsAt, $0.offset) < ($1.element.thawsAt, $1.offset) }
-            .map(\.element)
+        let thawing = snapshot.cooling.filter { !readyIDs.contains($0.id) && $0.thawsAt <= nextPayday }
 
-        let readyPayday = ready.filter { !Self.isQuickThaw($0, settings: settings) }
-        let readyQuick = ready.filter { Self.isQuickThaw($0, settings: settings) }
-        let thawingPayday = thawing.filter { !Self.isQuickThaw($0, settings: settings) }
-        let thawingQuick = thawing.filter { Self.isQuickThaw($0, settings: settings) }
+        let readyPlan = FunMoneyPlan.make(wants: ready, funMoney: funMoney, timerThreshold: settings.timerThreshold)
+        let thawingPlan = FunMoneyPlan.make(wants: thawing, funMoney: funMoney,
+                                            timerThreshold: settings.timerThreshold)
 
         var sections: [PaydaySectionViewModel] = []
         let readyRows = { (want: Want) in self.readyRow(want, settings: settings) }
         let thawingRows = { (want: Want) in self.thawingRow(want, settings: settings, now: now) }
         if ready.isEmpty {
-            sections += Self.budgetSections(thawingPayday, funMoney: funMoney, underTitle: "Thawing this payday",
-                                            row: thawingRows)
+            sections += Self.budgetSections(thawingPlan, underTitle: "Thawing this payday", row: thawingRows)
         } else {
-            sections += Self.budgetSections(readyPayday, funMoney: funMoney, underTitle: "Ready", row: readyRows)
-            sections += Self.section("Quick thaws", readyQuick, row: readyRows)
-            sections += Self.section("Thawing this payday", thawingPayday, row: thawingRows)
+            sections += Self.budgetSections(readyPlan, underTitle: "Ready", row: readyRows)
+            sections += Self.section("Quick thaws", readyPlan.quickThaws, row: readyRows)
+            sections += Self.section("Thawing this payday", thawingPlan.payday.map(\.want), row: thawingRows)
         }
-        sections += Self.section("Quick thaws", thawingQuick, row: thawingRows)
+        sections += Self.section("Quick thaws", thawingPlan.quickThaws, row: thawingRows)
 
         let isEmpty = snapshot.cooling.isEmpty
         let state = reminderState(now: now)
@@ -103,8 +98,7 @@ final class PaydayPresenter: PaydayPresenterProtocol, PaydayInteractorOutput {
                 heroCaption: "to \(Formatting.paydayDate(nextPayday))",
                 heroSpoken: Self.countdownSpoken(days: days, payday: nextPayday, hasWants: !thawing.isEmpty),
                 showsCubi: !isEmpty,
-                budget: isEmpty ? nil : Self.budget(total: Self.total(thawingPayday), funMoney: funMoney,
-                                                    verb: "thawing"),
+                budget: isEmpty ? nil : Self.budget(thawingPlan, verb: "thawing"),
                 reviewTitle: nil, reminderTitle: "Remind me tonight", reminderState: state,
                 sections: sections, emptyLine: isEmpty ? "Nothing on ice." : nil)
         } else {
@@ -115,8 +109,7 @@ final class PaydayPresenter: PaydayPresenterProtocol, PaydayInteractorOutput {
                 heroSpoken: "\(ready.count) \(ready.count == 1 ? "want" : "wants") ready to decide, "
                     + "\(Formatting.sgd(Self.total(ready))).",
                 showsCubi: true,
-                budget: readyPayday.isEmpty ? nil : Self.budget(total: Self.total(readyPayday), funMoney: funMoney,
-                                                                verb: "ready"),
+                budget: readyPlan.payday.isEmpty ? nil : Self.budget(readyPlan, verb: "ready"),
                 reviewTitle: "Review",
                 reminderTitle: state == .set ? "Reminder set" : "Remind me tonight", reminderState: state,
                 sections: sections, emptyLine: nil)
@@ -126,36 +119,29 @@ final class PaydayPresenter: PaydayPresenterProtocol, PaydayInteractorOutput {
 
     // MARK: - Budget
 
-    /// Spoken-for against fun money. Exactly on budget still fits ("S$0 left").
-    static func budget(total: Decimal, funMoney: Decimal, verb: String) -> PaydayBudgetViewModel {
-        let isOver = total > funMoney
-        let headline = isOver
-            ? "\(Formatting.sgd(total - funMoney)) over"
-            : "\(Formatting.sgd(funMoney - total)) left"
+    /// Spoken-for against fun money: every payday want in the plan. Exactly on budget still fits ("S$0 left").
+    static func budget(_ plan: FunMoneyPlan, verb: String) -> PaydayBudgetViewModel {
+        let total = plan.paydayTotal
+        let funMoney = plan.funMoney
+        let headline = plan.isOver
+            ? "\(Formatting.sgd(plan.overBy)) over"
+            : "\(Formatting.sgd(plan.left)) left"
         let amounts = "\(Formatting.sgd(total)) \(verb) against \(Formatting.sgd(funMoney)) fun money"
         return PaydayBudgetViewModel(
             headline: headline,
             caption: "\(Formatting.sgd(total)) \(verb) · \(Formatting.sgd(funMoney)) fun money",
             spoken: "\(headline). \(amounts).",
             fillFraction: fraction(total, of: funMoney),
-            markerFraction: isOver ? fraction(funMoney, of: total) : 1,
-            isOver: isOver)
+            markerFraction: plan.isOver ? fraction(funMoney, of: total) : 1,
+            isOver: plan.isOver)
     }
 
-    /// Splits into "Fits" and "Over budget" by a running total in thaw order once the wants exceed fun money.
-    /// The cut-off is list order, not a recommendation: after the first want that crosses the line, the rest are over.
-    static func budgetSections(_ wants: [Want], funMoney: Decimal, underTitle: String,
+    /// One section when every payday want fits; otherwise "Fits" and "Over budget" by the plan's best fit
+    /// in thaw order, so a later, cheaper want can still fit after an earlier one overflowed (D5).
+    static func budgetSections(_ plan: FunMoneyPlan, underTitle: String,
                                row: (Want) -> PaydayRowViewModel) -> [PaydaySectionViewModel] {
-        guard total(wants) > funMoney else { return section(underTitle, wants, row: row) }
-        var running = Decimal(0)
-        var crossed = false
-        var fits: [Want] = []
-        var over: [Want] = []
-        for want in wants {
-            running += want.price
-            if !crossed, running <= funMoney { fits.append(want) } else { crossed = true; over.append(want) }
-        }
-        return section("Fits", fits, row: row) + section("Over budget", over, row: row)
+        guard plan.isOver else { return section(underTitle, plan.fits, row: row) }
+        return section("Fits", plan.fits, row: row) + section("Over budget", plan.over, row: row)
     }
 
     private static func section(_ title: String, _ wants: [Want],

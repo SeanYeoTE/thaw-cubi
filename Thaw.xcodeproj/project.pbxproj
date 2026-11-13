@@ -21,6 +21,7 @@
 		143C42978466B1B5EE8EAB15 /* ScrollStackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77B232B93745E1F8D0B2AD4 /* ScrollStackViewController.swift */; };
 		16275C32732610E31B21CDCD /* SavedInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 307E2E39C76493C1E0A39EB1 /* SavedInteractor.swift */; };
 		184971E35FE837FF8B22816A /* AddWantInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111ACEB2F1EFC192098B5CFE /* AddWantInteractor.swift */; };
+		19ED4346710F30AED608C215 /* ReviewRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C089C697A743C766D5B3308E /* ReviewRouterTests.swift */; };
 		1BED418734EE4CD5AC5FE304 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0893C400A63049F594E0D049 /* OFL.txt */; };
 		1E24F0240F5130F4500DC1FC /* ReviewFlowUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054769CDA1E6E41A1BA165E3 /* ReviewFlowUITests.swift */; };
 		25B513D0270B2694D9F2D9FA /* HomeInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC4EB9D10490EC015CA5A0C1 /* HomeInteractor.swift */; };
@@ -54,6 +55,7 @@
 		4DE5BB630CA4C34D6B3F5CD2 /* SavedRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BA3E0A24AC227FF2D00B2A /* SavedRouter.swift */; };
 		4F93E1F90EB2002BF34696C6 /* StepperSettingRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEF9D1B7B8B61ADE3133457 /* StepperSettingRow.swift */; };
 		4FAC5B1485E859BE510BA435 /* AddWantPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCADA6457FD2F82C40913C0 /* AddWantPresenter.swift */; };
+		52DE4C6CEB67DF582DF9E728 /* IntegrationReviewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2B149845ACCC6C053199D6 /* IntegrationReviewTests.swift */; };
 		53044846F6BE79392A10D335 /* Reminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11CF9F0D8CE38238BDC664E3 /* Reminders.swift */; };
 		5338520F971F0D94A908595C /* AdaptiveViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD5EDB6666C41A4E9A6D7A46 /* AdaptiveViews.swift */; };
 		53B60BCF546B08EFD8E5D17A /* PaydaySetupInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A257AE77FF4C4508CB0368AE /* PaydaySetupInteractor.swift */; };
@@ -106,6 +108,7 @@
 		9EBB3668C44C880491BC5B72 /* StillWantItViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4A8A25D66EDB6BFB83EEF4 /* StillWantItViewController.swift */; };
 		A022159D50147FA3B388E682 /* PaydayRulePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD2BF63E9482DEE61FF2254 /* PaydayRulePresenter.swift */; };
 		A0479563D43BB9B3041E3952 /* HeroCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525DE093B6AE65C535A9D753 /* HeroCardView.swift */; };
+		A056995FD310F573CBA5D7CB /* NotificationSchedulingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2503EEE4E05C081543DA2A48 /* NotificationSchedulingTests.swift */; };
 		A1509D4BA82C8B621F800BFE /* WantStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1675D89853A74544E7BBD5AE /* WantStore.swift */; };
 		A77C71C06CA2CD2063A84A27 /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3B4E3149C88147A66F9AC8 /* NotificationScheduler.swift */; };
 		A810B5B80CED64D88C599EC8 /* AddWantViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8046A6BE40C36BFCD77BF1 /* AddWantViewController.swift */; };
@@ -137,7 +140,9 @@
 		E9F960AC5988D46C0FA0AC18 /* IntegrationEditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F35AD59F2B5DAB5C622231 /* IntegrationEditTests.swift */; };
 		EAAC0C5F5A121346AA529DDC /* ThawListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F22C171623315590D411FC /* ThawListScreen.swift */; };
 		EAC5AA9276FAFC7EAF8CC628 /* ShareAddRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119F6EFF00D980089CC12ADD /* ShareAddRouter.swift */; };
+		ED3828805BF918C6C251DE89 /* FunMoneyPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B91248AFA0B9FD1F8E3FE3 /* FunMoneyPlan.swift */; };
 		EEBAFF1B878C47C2216E5586 /* CubiMood.swift in Sources */ = {isa = PBXBuildFile; fileRef = C240F2D3E6F98ACD2B1043F5 /* CubiMood.swift */; };
+		EF220415043CE653AAEAE0DB /* FunMoneyPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B91248AFA0B9FD1F8E3FE3 /* FunMoneyPlan.swift */; };
 		F09731979A4A95E50A8022FD /* BricolageGrotesque-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 41F4D283A05F4F0E6E80572E /* BricolageGrotesque-ExtraBold.ttf */; };
 		F0E0924C7B85276C7528DB4C /* PaydayReviewContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = F962C043E602E57B6D392495 /* PaydayReviewContracts.swift */; };
 		F0F4CDAF713BD8049D9FDAB8 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4318739D98FED8A71BB3D3 /* EmptyStateView.swift */; };
@@ -212,6 +217,7 @@
 		1F60B9A66E99A045535B8E72 /* PaydayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayViewController.swift; sourceTree = "<group>"; };
 		1F9F21BDCE727182904A5FBE /* PaydayRuleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydayRuleModel.swift; sourceTree = "<group>"; };
 		24BBF77E9F24367797A7DEC2 /* BackendProgressStatsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendProgressStatsTests.swift; sourceTree = "<group>"; };
+		2503EEE4E05C081543DA2A48 /* NotificationSchedulingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSchedulingTests.swift; sourceTree = "<group>"; };
 		2532136A0692F8F665B1FDE8 /* PersonaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonaTests.swift; sourceTree = "<group>"; };
 		295AF7CFCF3F362F41C48E78 /* ThawTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ThawTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C10947F3321B16679791C8B /* PresenterHomeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterHomeTests.swift; sourceTree = "<group>"; };
@@ -279,7 +285,10 @@
 		B72A3E201AF3FE94BC64FA50 /* AccessibilityAuditTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityAuditTests.swift; sourceTree = "<group>"; };
 		B7B2BCFCF1A33459661AD466 /* IntegrationSavedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationSavedTests.swift; sourceTree = "<group>"; };
 		B8F87B20F850551BFFC214B9 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		BF2B149845ACCC6C053199D6 /* IntegrationReviewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationReviewTests.swift; sourceTree = "<group>"; };
 		BFEF9D1B7B8B61ADE3133457 /* StepperSettingRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepperSettingRow.swift; sourceTree = "<group>"; };
+		C089C697A743C766D5B3308E /* ReviewRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRouterTests.swift; sourceTree = "<group>"; };
+		C0B91248AFA0B9FD1F8E3FE3 /* FunMoneyPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunMoneyPlan.swift; sourceTree = "<group>"; };
 		C103D93CB02B1ED17803292A /* CubiMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubiMotion.swift; sourceTree = "<group>"; };
 		C240F2D3E6F98ACD2B1043F5 /* CubiMood.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubiMood.swift; sourceTree = "<group>"; };
 		C2BC6DE142818862DBDE46A0 /* PaydaySetupPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaydaySetupPresenter.swift; sourceTree = "<group>"; };
@@ -541,6 +550,7 @@
 		B80F165FF0B009AFF8834F7B /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				C0B91248AFA0B9FD1F8E3FE3 /* FunMoneyPlan.swift */,
 				C54D29A74BA5C87FCB67B962 /* ProgressStats.swift */,
 				10507C7F0C9C40E5DC492E0B /* Want.swift */,
 			);
@@ -569,7 +579,9 @@
 				774410E8898607E96664E034 /* BackendStateTests.swift */,
 				025B3FF9FE410C5236A5B613 /* CubiMotionTests.swift */,
 				84F35AD59F2B5DAB5C622231 /* IntegrationEditTests.swift */,
+				BF2B149845ACCC6C053199D6 /* IntegrationReviewTests.swift */,
 				B7B2BCFCF1A33459661AD466 /* IntegrationSavedTests.swift */,
+				2503EEE4E05C081543DA2A48 /* NotificationSchedulingTests.swift */,
 				81CF5EBF2543A4CBD35772C3 /* PresenterAddWantTests.swift */,
 				2C10947F3321B16679791C8B /* PresenterHomeTests.swift */,
 				77BC7F55C8A9DD05C0E17709 /* PresenterItemDetailTests.swift */,
@@ -580,6 +592,7 @@
 				A81CEC060D6607930FB009C2 /* PresenterShareItemParserTests.swift */,
 				ECDFAF7888B797FD36C49B63 /* PresenterStillWantItTests.swift */,
 				940971CBFA2F6DAC2CAF2E59 /* PresenterTestSupport.swift */,
+				C089C697A743C766D5B3308E /* ReviewRouterTests.swift */,
 				E888A6B3132615036E6655BB /* ThawColumnTests.swift */,
 				6E8CF9D5B08FBDC17107454B /* ThawTests.swift */,
 			);
@@ -777,6 +790,7 @@
 				3046D58A607736E4024C45A4 /* EmptyStateView.swift in Sources */,
 				E0AF8DAC198DC4AEAFB48A1F /* FilterChipBar.swift in Sources */,
 				7257CC23CCDB2CC790723511 /* Formatting.swift in Sources */,
+				ED3828805BF918C6C251DE89 /* FunMoneyPlan.swift in Sources */,
 				A0479563D43BB9B3041E3952 /* HeroCardView.swift in Sources */,
 				0B8B78E10923BD0400D89BEB /* HomeContracts.swift in Sources */,
 				25B513D0270B2694D9F2D9FA /* HomeInteractor.swift in Sources */,
@@ -876,6 +890,7 @@
 				F0F4CDAF713BD8049D9FDAB8 /* EmptyStateView.swift in Sources */,
 				FD357CF226180D9D4F3B53F1 /* FilterChipBar.swift in Sources */,
 				94121236A3E661CB2F630CA7 /* Formatting.swift in Sources */,
+				EF220415043CE653AAEAE0DB /* FunMoneyPlan.swift in Sources */,
 				01027DF4F082339CDC00E4F1 /* HeroCardView.swift in Sources */,
 				4AEA4C8BBB4A7AE7E61BB7D0 /* MomentView.swift in Sources */,
 				FD8CE28BD9828C2307C3A078 /* ProgressStats.swift in Sources */,
@@ -905,7 +920,9 @@
 				41269E2C1BDB189CE71D8DE0 /* BackendStateTests.swift in Sources */,
 				F9E390F8C5A71E5254A7695E /* CubiMotionTests.swift in Sources */,
 				E9F960AC5988D46C0FA0AC18 /* IntegrationEditTests.swift in Sources */,
+				52DE4C6CEB67DF582DF9E728 /* IntegrationReviewTests.swift in Sources */,
 				53DF1FFA50A8F1A7E9D67AFB /* IntegrationSavedTests.swift in Sources */,
+				A056995FD310F573CBA5D7CB /* NotificationSchedulingTests.swift in Sources */,
 				677F55C5BE6EEBF0C42A1F9B /* PresenterAddWantTests.swift in Sources */,
 				95D64A331CCD37A628E39597 /* PresenterHomeTests.swift in Sources */,
 				F593CE7248FDCB28AE3DFE78 /* PresenterItemDetailTests.swift in Sources */,
@@ -916,6 +933,7 @@
 				6CBF12B7DF5EE4EEB82776E1 /* PresenterShareItemParserTests.swift in Sources */,
 				28270FCCBAAC6E80CC0084F7 /* PresenterStillWantItTests.swift in Sources */,
 				59581CF85DC3577A9E6DAE1A /* PresenterTestSupport.swift in Sources */,
+				19ED4346710F30AED608C215 /* ReviewRouterTests.swift in Sources */,
 				27E411DDC63245533BC49254 /* ThawColumnTests.swift in Sources */,
 				95CB4B0F39F73C632849D468 /* ThawTests.swift in Sources */,
 			);

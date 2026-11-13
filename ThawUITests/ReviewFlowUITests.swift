@@ -32,7 +32,12 @@ final class ReviewFlowUITests: XCTestCase {
     @MainActor func coolingCount() -> Int {
         tapWhenReady(app.tab("Cooling"), "Cooling tab")
         XCTAssertTrue(all("home.card").firstMatch.waitForExistence(timeout: 8), "no cooling cards")
-        return all("home.card").count
+        return cardCount()
+    }
+
+    /// Off-screen cells aren't in the accessibility tree, so scroll through the list to count every card.
+    @MainActor func cardCount() -> Int {
+        app.countAll(id: "home.card")
     }
 
     // MARK: Payday review
@@ -80,10 +85,19 @@ final class ReviewFlowUITests: XCTestCase {
         tapWhenReady(all("payday.review").firstMatch, "Review button")
         tapWhenReady(all("review.letGo").firstMatch, "Let go on row 1")
         tapWhenReady(closeButton, "Close")
-        tapWhenReady(app.alerts.buttons["Keep choosing"].firstMatch, "Keep choosing")
+        // The discard confirmation is an action sheet, not an alert. On iOS 26 it shows as a popover without its
+        // cancel button, so "Keep choosing" is a tap outside it.
+        XCTAssertTrue(app.dialogButton("Discard").waitForExistence(timeout: 8), "discard confirmation missing")
+        let keepChoosing = app.dialogButton("Keep choosing")
+        if keepChoosing.exists {
+            keepChoosing.tap()
+        } else {
+            tapWhenReady(app.otherElements["PopoverDismissRegion"], "outside the discard popover")
+        }
+        XCTAssertTrue(app.dialogButton("Discard").waitForNonExistence(timeout: 5), "discard confirmation stayed open")
         XCTAssertTrue(all("review.row").firstMatch.exists, "review should stay open")
         tapWhenReady(closeButton, "Close")
-        tapWhenReady(app.descendants(matching: .any).matching(identifier: "Discard").firstMatch, "Discard")
+        tapWhenReady(app.dialogButton("Discard"), "Discard")
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10), "review did not dismiss")
     }
 
@@ -99,7 +113,7 @@ final class ReviewFlowUITests: XCTestCase {
         tapWhenReady(all("detail.letGo").firstMatch, "Let go")
         tapWhenReady(app.alerts.buttons["Let go"], "Let go in confirm")
         XCTAssertTrue(all("home.card").firstMatch.waitForExistence(timeout: 12), "did not return to Cooling")
-        XCTAssertEqual(all("home.card").count, before - 1)
+        XCTAssertEqual(cardCount(), before - 1)
     }
 
     @MainActor func testDetailDecideNowOffersThreeChoices() {
@@ -120,7 +134,7 @@ final class ReviewFlowUITests: XCTestCase {
         tapWhenReady(all("detail.decide").firstMatch, "Decide now")
         tapWhenReady(all("decide.wait").firstMatch, "Wait a payday")
         XCTAssertTrue(all("home.card").firstMatch.waitForExistence(timeout: 12), "did not return to Cooling")
-        XCTAssertEqual(all("home.card").count, before, "waiting keeps the want cooling")
+        XCTAssertEqual(cardCount(), before, "waiting keeps the want cooling")
     }
 
     // MARK: Add and Edit sheet
@@ -138,7 +152,7 @@ final class ReviewFlowUITests: XCTestCase {
         XCTAssertFalse(all("addwant.delete").firstMatch.isHittable, "Delete must not show when adding")
         tapWhenReady(app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Add to Thaw")).firstMatch, "Add to Thaw")
         XCTAssertTrue(all("home.card").firstMatch.waitForExistence(timeout: 10), "did not return to Cooling")
-        XCTAssertEqual(all("home.card").count, before + 1)
+        XCTAssertEqual(cardCount(), before + 1)
     }
 
     @MainActor func testEditSheetOffersDeleteForCoolingWant() {
@@ -151,9 +165,8 @@ final class ReviewFlowUITests: XCTestCase {
         let delete = all("addwant.delete").firstMatch
         XCTAssertTrue(delete.exists, "Delete missing in edit")
         delete.tap()
-        let confirm = app.alerts.buttons["Delete"].exists ? app.alerts.buttons["Delete"] : app.sheets.buttons["Delete"]
-        tapWhenReady(confirm, "Delete confirm")
+        tapWhenReady(app.alerts.buttons["Delete"], "Delete confirm")
         XCTAssertTrue(all("home.card").firstMatch.waitForExistence(timeout: 12), "did not return to Cooling")
-        XCTAssertEqual(all("home.card").count, before - 1)
+        XCTAssertEqual(cardCount(), before - 1)
     }
 }

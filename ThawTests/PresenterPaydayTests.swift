@@ -194,7 +194,8 @@ final class PresenterPaydayTests: XCTestCase {
         XCTAssertEqual(model.budget?.headline, "S$0 left")
         XCTAssertEqual(model.budget?.caption, "S$300 ready · S$300 fun money")
         XCTAssertEqual(model.sections.map(\.title), ["Ready", "Quick thaws", "Thawing this payday"])
-        XCTAssertEqual(model.sections.first?.rows.map(\.id), [ready[0].id, ready[1].id])
+        // Thaw order: B thawed before A.
+        XCTAssertEqual(model.sections.first?.rows.map(\.id), [ready[1].id, ready[0].id])
         XCTAssertEqual(model.sections[1].rows.map(\.id), [ready[2].id])
         XCTAssertEqual(model.sections.last?.rows.map(\.id), [thawing.id])
 
@@ -281,4 +282,137 @@ final class PresenterPaydayTests: XCTestCase {
         XCTAssertNil(PaydayReadiness.badgeValue(readyCount: 0))
         XCTAssertEqual(PaydayReadiness.nextThaw(cooling: [thawed, payday], now: now), payday.thawsAt)
     }
+
+    func testLaterCheaperReadyWantStillFitsAfterOverflow() {
+        // D5: best fit in thaw order. 250 fits, 100 is over, 40 still fits.
+        let (presenter, view, interactor, _) = make()
+        let now = interactor.now
+        let a = want("A", 250, thawsIn: -3, from: now), b = want("B", 100, thawsIn: -2, from: now)
+        let c = want("C", 40, thawsIn: -1, from: now)
+        interactor.cooling = [c, b, a]
+        interactor.queue = [c, b, a]
+        presenter.viewWillAppear()
+        let model = try! XCTUnwrap(view.models.last)
+        XCTAssertEqual(model.budget?.headline, "S$90 over")
+        XCTAssertEqual(model.sections.map(\.title), ["Fits", "Over budget"])
+        XCTAssertEqual(model.sections[0].rows.map(\.id), [a.id, c.id])
+        XCTAssertEqual(model.sections[1].rows.map(\.id), [b.id])
+    }
+
+    // MARK: - Same budget on the Payday tab and in the review
+
+    private final class FakeReviewView: PaydayReviewViewProtocol {
+        var summaries: [PaydayReviewSummary] = []
+        func render(_ content: PaydayReviewContent) {}
+        func update(_ summary: PaydayReviewSummary, animated: Bool) { summaries.append(summary) }
+        func showDiscardConfirmation() {}
+        func playSuccessFeedback() {}
+        func setCTAEnabled(_ enabled: Bool) {}
+    }
+
+    private final class FakeReviewInteractor: PaydayReviewInteractorProtocol {
+        let wants: [Want]
+        let budget: Decimal
+        let timerThreshold = PaydaySettings.default.timerThreshold
+        init(wants: [Want], budget: Decimal) { self.wants = wants; self.budget = budget }
+        func apply(choices: [UUID: ReviewChoice]) {}
+    }
+
+    private final class FakeReviewRouter: PaydayReviewRouterProtocol {
+        func dismiss() {}
+    }
+
+    func testPaydayTabAndReviewAgreeOnLeftWithAQuickThaw() {
+        // S$300 fun money; a S$24 quick thaw and a S$280 payday want are ready. Both screens say S$20 left.
+        let (presenter, view, interactor, router) = make()
+        let now = interactor.now
+        let quick = want("Case", 24, thawsIn: -2, from: now)
+        let lamp = want("Lamp", 280, thawsIn: -1, from: now)
+        interactor.cooling = [quick, lamp]
+        interactor.queue = [quick, lamp]
+        presenter.viewWillAppear()
+        XCTAssertEqual(view.models.last?.budget?.headline, "S$20 left")
+
+        presenter.tapReview()
+        let routed = router.reviewed.last ?? []
+        let reviewWants = interactor.queue.filter { routed.contains($0.id) }
+        let reviewView = FakeReviewView()
+        let review = PaydayReviewPresenter(view: reviewView,
+                                           interactor: FakeReviewInteractor(wants: reviewWants, budget: interactor.funMoney),
+                                           router: FakeReviewRouter(), onFinish: nil)
+        review.viewDidLoad()
+        XCTAssertEqual(reviewView.summaries.last?.statusText, "S$20 left")
+        XCTAssertEqual(reviewView.summaries.last?.isOver, false)
+    }
+}
+
+final class FunMoneyPlanTests: XCTestCase {
+    private let start = Date(timeIntervalSince1970: 1_800_000_000)
+
+    private func want(_ name: String, _ price: Decimal, day: Double) -> Want {
+        Want(id: UUID(), name: name, price: price, reason: "", frozenOn: start, progress: 1,
+             status: .cooling, thawsAt: start.addingTimeInterval(86_400 * day))
+    }
+
+    private func plan(_ wants: [Want], _ funMoney: Decimal) -> FunMoneyPlan {
+        FunMoneyPlan.make(wants: wants, funMoney: funMoney, timerThreshold: 30)
+    }
+
+    func testExactlyOnBudgetFitsWithNothingLeft() {
+        let plan = plan([want("A", 100, day: 1), want("B", 200, day: 2)], 300)
+        XCTAssertEqual(plan.payday.map(\.fits), [true, true])
+        XCTAssertFalse(plan.isOver)
+        XCTAssertEqual(plan.left, 0)
+        XCTAssertEqual(plan.overBy, 0)
+        XCTAssertEqual(plan.paydayTotal, 300)
+        XCTAssertEqual(plan.fitsTotal, 300)
+    }
+
+    func testZeroFunMoneyEverythingIsOver() {
+        let plan = plan([want("A", 100, day: 1), want("B", 50, day: 2)], 0)
+        XCTAssertEqual(plan.payday.map(\.fits), [false, false])
+        XCTAssertTrue(plan.isOver)
+        XCTAssertEqual(plan.overBy, 150)
+        XCTAssertEqual(plan.left, 0)
+        XCTAssertEqual(plan.fitsTotal, 0)
+    }
+
+    func testOnlyQuickThawsSpendNothing() {
+        let a = want("A", 24, day: 2), b = want("B", 12, day: 1)
+        let plan = plan([a, b], 300)
+        XCTAssertTrue(plan.payday.isEmpty)
+        XCTAssertEqual(plan.quickThaws.map(\.id), [b.id, a.id])
+        XCTAssertEqual(plan.quickTotal, 36)
+        XCTAssertEqual(plan.paydayTotal, 0)
+        XCTAssertEqual(plan.left, 300)
+        XCTAssertFalse(plan.isOver)
+    }
+
+    func testCheaperWantAfterOverflowStillFits() {
+        let a = want("A", 189, day: 1), b = want("B", 420, day: 2), c = want("C", 69, day: 3)
+        let plan = plan([a, b, c], 300)
+        XCTAssertEqual(plan.payday.map(\.fits), [true, false, true])
+        XCTAssertEqual(plan.fits.map(\.id), [a.id, c.id])
+        XCTAssertEqual(plan.over.map(\.id), [b.id])
+        XCTAssertEqual(plan.fitsTotal, 258)
+        XCTAssertEqual(plan.overBy, 378)
+    }
+
+    func testMixedOrderIsSortedByThawDate() {
+        let late = want("Late", 200, day: 5), early = want("Early", 150, day: 1)
+        let quick = want("Quick", 20, day: 0), middle = want("Middle", 100, day: 3)
+        let plan = plan([late, quick, middle, early], 300)
+        XCTAssertEqual(plan.payday.map(\.want.id), [early.id, middle.id, late.id])
+        XCTAssertEqual(plan.payday.map(\.fits), [true, true, false])
+        XCTAssertEqual(plan.ordered.map(\.id), [early.id, middle.id, late.id, quick.id])
+    }
+
+    func testSummaryCountsOnlyKeptPaydayWants() {
+        let quick = want("Quick", 20, day: 0), lamp = want("Lamp", 280, day: 1)
+        let plan = plan([quick, lamp], 300)
+        let summary = plan.summary(keeping: [quick.id, lamp.id])
+        XCTAssertEqual(summary.kept, 280)
+        XCTAssertEqual(summary.remaining, 20)
+    }
+
 }

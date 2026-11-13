@@ -20,6 +20,8 @@ protocol StillWantItViewProtocol: AnyObject {
     func render(_ model: StillWantItViewModel)
     /// Plays the success haptic and the Cubi moment, then calls `completion` once.
     func showSkipMoment(line: String, completion: @escaping () -> Void)
+    /// Disables Let go, Buy it and Wait a payday while a decision is applied or the screen is leaving.
+    func setActionsEnabled(_ enabled: Bool)
 }
 
 protocol StillWantItPresenterProtocol: AnyObject {
@@ -33,6 +35,7 @@ protocol StillWantItPresenterProtocol: AnyObject {
 protocol StillWantItInteractorProtocol: AnyObject {
     var wants: [Want] { get }
     var budget: Decimal { get }
+    var timerThreshold: Decimal { get }
     func skip(_ want: Want)
     func buy(_ want: Want)
     func wait(_ want: Want)

@@ -8,15 +8,18 @@ final class PresenterPaydayReviewTests: XCTestCase {
         var summaries: [PaydayReviewSummary] = []
         var discardShown = 0
         var feedback = 0
+        var ctaEnabled: [Bool] = []
         func render(_ content: PaydayReviewContent) { self.content = content }
         func update(_ summary: PaydayReviewSummary, animated: Bool) { summaries.append(summary) }
         func showDiscardConfirmation() { discardShown += 1 }
         func playSuccessFeedback() { feedback += 1 }
+        func setCTAEnabled(_ enabled: Bool) { ctaEnabled.append(enabled) }
     }
 
     private final class FakeInteractor: PaydayReviewInteractorProtocol {
         var wants: [Want]
         var budget: Decimal = 300
+        var timerThreshold: Decimal = 30
         var applied: [[UUID: ReviewChoice]] = []
         init(wants: [Want]) { self.wants = wants }
         func apply(choices: [UUID: ReviewChoice]) { applied.append(choices) }
@@ -27,9 +30,16 @@ final class PresenterPaydayReviewTests: XCTestCase {
         func dismiss() { dismissed += 1 }
     }
 
-    private let keyboard = Fixture.want("Keyboard", 189)
-    private let shirt = Fixture.want("Shirt", 69)
-    private let grinder = Fixture.want("Grinder", 420)
+    private static let start = Date(timeIntervalSince1970: 1_800_000_000)
+    private let keyboard = want("Keyboard", 189, hour: 1)
+    private let shirt = want("Shirt", 69, hour: 2)
+    private let grinder = want("Grinder", 420, hour: 3)
+
+    /// A want that thawed `hour` hours after a fixed start, so thaw order is explicit.
+    private static func want(_ name: String, _ price: Decimal, hour: Double) -> Want {
+        Want(id: UUID(), name: name, price: price, reason: "Because", frozenOn: start, progress: 1,
+             status: .cooling, thawsAt: start.addingTimeInterval(3_600 * hour))
+    }
 
     private func make(wants: [Want]? = nil, onFinish: (() -> Void)? = nil)
         -> (PaydayReviewPresenter, FakeView, FakeInteractor, FakeRouter) {
@@ -46,10 +56,63 @@ final class PresenterPaydayReviewTests: XCTestCase {
         XCTAssertEqual(view.summaries.last?.ctaTitle, "Done \u{00B7} keep 2")
     }
 
+    func testRowsFollowThawOrderNotQueueOrder() {
+        let (presenter, view, _, _) = make(wants: [grinder, shirt, keyboard])
+        presenter.viewDidLoad()
+        XCTAssertEqual(view.content?.rows.map(\.id), [keyboard.id, shirt.id, grinder.id])
+        XCTAssertEqual(view.content?.rows.map(\.choice), [.keep, .keep, .wait])
+    }
+
     func testFirstWantOverBudgetWaits() {
-        let (presenter, view, _, _) = make(wants: [grinder, shirt])
+        let big = Self.want("Big", 420, hour: 0)
+        let (presenter, view, _, _) = make(wants: [big, shirt])
         presenter.viewDidLoad()
         XCTAssertEqual(view.content?.rows.map(\.choice), [.wait, .keep])
+    }
+
+    func testLaterCheaperWantStillDefaultsToKeepAfterOverflow() {
+        // D5: best fit in thaw order. 189 fits, 420 doesn't, 69 still fits (S$42 left).
+        let (presenter, view, _, _) = make(wants: [keyboard, Self.want("Grinder", 420, hour: 1.5), shirt])
+        presenter.viewDidLoad()
+        XCTAssertEqual(view.content?.rows.map(\.choice), [.keep, .wait, .keep])
+        XCTAssertEqual(view.summaries.last?.statusText, "S$42 left")
+    }
+
+    func testQuickThawsHaveOwnGroupAndDontMoveTheMeter() {
+        let quick = Self.want("Case", 24, hour: 0)
+        let lamp = Self.want("Lamp", 280, hour: 1)
+        let (presenter, view, interactor, _) = make(wants: [quick, lamp])
+        presenter.viewDidLoad()
+        XCTAssertEqual(view.content?.rows.map(\.id), [lamp.id])
+        XCTAssertEqual(view.content?.rows.map(\.choice), [.keep])
+        XCTAssertEqual(view.content?.quickTitle, "Quick thaws")
+        XCTAssertEqual(view.content?.quickRows.map(\.id), [quick.id])
+        XCTAssertEqual(view.content?.quickRows.map(\.choice), [.keep])
+        XCTAssertEqual(view.summaries.last?.statusText, "S$20 left")
+        XCTAssertEqual(view.summaries.last?.ctaTitle, "Done \u{00B7} keep 2")
+
+        presenter.setChoice(id: quick.id, choice: .wait)
+        XCTAssertEqual(view.summaries.last?.statusText, "S$20 left")
+        presenter.setChoice(id: quick.id, choice: .letGo)
+        XCTAssertEqual(view.summaries.last?.ctaTitle, "Done \u{00B7} keep 1, let go 1")
+        presenter.tapCTA()
+        XCTAssertEqual(interactor.applied, [[lamp.id: .keep, quick.id: .letGo]])
+    }
+
+    func testDoneTwiceAppliesOnce() {
+        var finished = 0
+        let (presenter, view, interactor, router) = make(onFinish: { finished += 1 })
+        presenter.viewDidLoad()
+        presenter.tapCTA()
+        presenter.tapCTA()
+        XCTAssertEqual(interactor.applied.count, 1)
+        XCTAssertEqual(finished, 1)
+        XCTAssertEqual(view.feedback, 1)
+        XCTAssertEqual(view.ctaEnabled, [false])
+        presenter.setChoice(id: shirt.id, choice: .letGo)
+        presenter.tapClose()
+        XCTAssertEqual(view.discardShown, 0)
+        XCTAssertEqual(router.dismissed, 0)
     }
 
     func testAllOverBudgetWaitsOnAll() {

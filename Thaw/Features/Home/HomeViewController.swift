@@ -25,7 +25,7 @@ final class HomeViewController: ThawListViewController, HomeViewProtocol, UIColl
     private var sortButton: UIButton?
     /// One bar for the screen's lifetime, so a tap keeps its selection animation across renders.
     private var filterBar: FilterChipBar?
-    private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
+    private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     private var isLongPress = false
 
     init() {
@@ -115,7 +115,10 @@ final class HomeViewController: ThawListViewController, HomeViewProtocol, UIColl
 
     func render(_ model: HomeViewModel) {
         self.model = model
-        cards = Dictionary(uniqueKeysWithValues: model.sections.flatMap(\.cards).map { ($0.id, $0) })
+        cards = Dictionary(model.sections.flatMap(\.cards).map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        // Home may not be on screen yet (a launch on another tab, or a decision made before the first visit):
+        // its data changes still arrive. `viewWillAppear` asks the presenter to render once the view has loaded.
+        guard let dataSource else { return }
         updateSortMenu(model)
         updateFilterBar(model)
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
@@ -276,7 +279,7 @@ final class HomeViewController: ThawListViewController, HomeViewProtocol, UIColl
     // MARK: - Swipe actions
 
     private func swipeActions(at indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard case .want(let id) = dataSource.itemIdentifier(for: indexPath) else { return nil }
+        guard case .want(let id) = dataSource?.itemIdentifier(for: indexPath) else { return nil }
         return WantListStyle.swipeActions(
             onEdit: { [weak self] in self?.presenter?.tapEdit(id: id) },
             onDelete: { [weak self] in self?.presenter?.tapDelete(id: id) }
@@ -286,13 +289,13 @@ final class HomeViewController: ThawListViewController, HomeViewProtocol, UIColl
     // MARK: - Delegate
 
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        guard !isLongPress, case .want = dataSource.itemIdentifier(for: indexPath) else { return false }
+        guard !isLongPress, case .want = dataSource?.itemIdentifier(for: indexPath) else { return false }
         return true
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: false)
-        if case .want(let id) = dataSource.itemIdentifier(for: indexPath) { presenter?.tapWant(id: id) }
+        if case .want(let id) = dataSource?.itemIdentifier(for: indexPath) { presenter?.tapWant(id: id) }
     }
 
     @objc private func holdChanged(_ recognizer: UILongPressGestureRecognizer) {
