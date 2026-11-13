@@ -16,15 +16,16 @@ Static marketing site for the App Store listing: plain HTML and CSS, no build st
 
 ## Demo loops (`media/`)
 
-Simulator recordings on iPhone 17 Pro with seeded sample data (no real data), default text size, status bar overridden to 9:41. 540 px wide H.264, muted, under 1 MB each. `main.js` plays a loop only while it's on screen and never autoplays when Reduce Motion is on.
+Simulator recordings on iPhone 17 Pro with seeded sample data (no real data), default text size, status bar overridden to 9:41. 540×1174 H.264 at ~600 kbps, muted, under 1 MB each. `main.js` plays a loop only while it's on screen and never autoplays when Reduce Motion is on.
 
 | File | Shows | Launch arguments |
 |---|---|---|
 | `freeze.mp4` | Adding a want, Cubi freezes it | `-thawFixture sprint1` |
+| `cool.mp4` | Payday tab before payday: countdown, frozen Cubi, quick thaw | `-thawFixture sprint1 -thawTab payday` |
 | `payday.mp4` | Payday review: Keep, Let go, Wait | `-thawFixture thawed -thawTab payday` |
 | `saved.mp4` | Stats: saved total, chart, filters | `-thawFixture history -thawTab stats` |
 
-To re-record: `xcrun simctl io booted recordVideo --codec=h264 out.mp4`, then trim and scale to 540 px wide. Each `.jpg` beside a clip is its poster frame.
+To re-record: `xcrun simctl io booted recordVideo --codec=h264 out.mp4`, then trim and scale to 540 px wide with a fixed bitrate (AVFoundation's Medium export preset silently drops to 220×480, so don't use it). Each `.jpg` beside a clip is its poster frame.
 
 ## Preview locally
 
