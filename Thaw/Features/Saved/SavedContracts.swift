@@ -52,6 +52,11 @@ struct SavedChartViewModel: Equatable {
     let showsRangePicker: Bool
     let showsChart: Bool
     let accessibilityLabel: String
+
+    /// Every month, oldest first: "October 2026, S$320 saved; November 2026, S$0 saved".
+    var accessibilityValue: String {
+        months.map { "\($0.spokenMonth), \($0.spokenAmount)" }.joined(separator: "; ")
+    }
 }
 
 struct SavedEmptyViewModel: Equatable {

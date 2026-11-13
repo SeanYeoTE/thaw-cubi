@@ -21,8 +21,10 @@ final class AccessibilityAuditTests: XCTestCase {
     @MainActor func audit(_ screen: String) {
         do {
             try app.performAccessibilityAudit { issue in
-                // Add narrowly scoped exclusions here, each with a comment saying why. Never a whole category.
-                _ = issue
+                // Add narrowly scoped exclusions here (by element identifier and audit type), each with a comment
+                // saying why. Never a whole category or screen. None are needed so far.
+                let e = issue.element
+                print("AUDITISSUE [\(screen)] \(issue.auditType.rawValue) | \(issue.compactDescription) | id=\(e?.identifier ?? "-") type=\(e?.elementType.rawValue ?? 0) label=\(e?.label ?? "-")")
                 return false
             }
         } catch {
@@ -41,10 +43,14 @@ final class AccessibilityAuditTests: XCTestCase {
         XCTAssertTrue(app.textFields.firstMatch.waitForExistence(timeout: 8), "edit sheet fields missing")
     }
 
+    /// The first Settings row, "Payday".
+    @MainActor var paydayRow: XCUIElement {
+        app.collectionViews.cells.matching(NSPredicate(format: "label BEGINSWITH %@", "Payday")).firstMatch
+    }
+
     @MainActor func openPaydayRule() {
         goTo("Settings")
-        let row = app.collectionViews.cells.matching(NSPredicate(format: "label BEGINSWITH %@", "Payday")).firstMatch
-        tapWhenReady(row, "Payday rule row")
+        tapWhenReady(paydayRow, "Payday rule row")
         XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "label BEGINSWITH %@", "Same date")).firstMatch.waitForExistence(timeout: 8), "payday rule screen missing")
     }
 
@@ -66,11 +72,18 @@ final class AccessibilityAuditTests: XCTestCase {
     }
 
     @MainActor func testStatsAudit() {
-        run("Stats", fixture: "history") { goTo("Stats") }
+        run("Stats", fixture: "history") {
+            goTo("Stats")
+            XCTAssertTrue(app.element(id: "stats.hero").waitForExistence(timeout: 8), "Stats hero missing")
+            XCTAssertTrue(app.element(id: "stats.filter").waitForExistence(timeout: 8), "Stats history filter missing")
+        }
     }
 
     @MainActor func testSettingsAudit() {
-        run("Settings") { goTo("Settings") }
+        run("Settings") {
+            goTo("Settings")
+            XCTAssertTrue(paydayRow.waitForExistence(timeout: 8), "Settings first row missing")
+        }
     }
 
     @MainActor func testEditSheetAudit() {
