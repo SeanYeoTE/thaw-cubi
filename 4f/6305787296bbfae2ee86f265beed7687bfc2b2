@@ -1,0 +1,39 @@
+Thaw/DesignSystem/Theme.swift
+  s_cfc4f71efec98b::t_8454b952f41c38 59-61,63
+Thaw/Features/Saved/SavedContracts.swift
+  s_cfc4f71efec98b::t_21d9ad796fcab0 55-59
+Thaw/Features/Saved/SavedViewController.swift
+  s_cfc4f71efec98b::t_28347ae425d5c8 61-72,218,260,297,406,422,440-443,445-465
+ThawUITests/AccessibilityAuditTests.swift
+  s_cfc4f71efec98b::t_9514f911448054 24-27,46-50,53,75-79,83-86
+ThawUITests/PersonaTests.swift
+  s_1effe6bbf23eb5::t_4b85614e321846 59-62,65-83,108,120,149,167-174,188-196,198-209,211,213-223,236,238
+ThawUITests/ReviewFlowUITests.swift
+  s_cfc4f71efec98b::t_9f6a51c37868ce 35-40,88-89,92,108,129,147,160,162
+ThawUITests/UITestSupport.swift
+  s_cfc4f71efec98b::t_ef20584636fd24 15-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4f6305787296bbfae2ee86f265beed7687bfc2b2",
+  "prompts": {},
+  "sessions": {
+    "s_1effe6bbf23eb5": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "79f3bb86-2618-467d-a775-e382daa7723d",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    },
+    "s_cfc4f71efec98b": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "2a84cb04-b701-493d-ba53-103e5f0510a3",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
