@@ -13,7 +13,8 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
     private let namePlaceholder = UILabel()
     private let statusRow = UIStackView()
     private let statusButton = UIButton(type: .system)
-    private let deleteButton = UIButton(type: .system)
+    private let saveButton = PillButton(title: "Save", style: .primary)
+    private let deleteButton = PillButton(title: "Delete", style: .destructive)
     /// Keeps the gap above Delete: custom spacing after a hidden view (the error label) is dropped.
     private let deleteGap = UIView()
     private var thawAnnouncement: Task<Void, Never>?
@@ -37,13 +38,11 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         navigationItem.leftBarButtonItem = UIBarButtonItem(systemItem: .cancel, primaryAction: UIAction { [weak self] _ in
             self?.cancelTapped()
         })
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add to Thaw", style: .done, target: self, action: #selector(saveTapped))
 
         captionLabel.font = ThawFont.body(13, weight: .medium)
         captionLabel.adjustsFontForContentSizeCategory = true
         captionLabel.textColor = Theme.inkSecondary
         captionLabel.numberOfLines = 0
-        captionLabel.adjustsFontForContentSizeCategory = true
         captionLabel.isHidden = true
         stack.addArrangedSubview(captionLabel)
 
@@ -73,6 +72,11 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         let priceWidth = priceField.widthAnchor.constraint(equalToConstant: 120)
         priceWidth.priority = .defaultHigh
         priceWidth.isActive = true
+        let doneBar = UIToolbar()
+        doneBar.items = [UIBarButtonItem(systemItem: .flexibleSpace),
+                         UIBarButtonItem(systemItem: .done, primaryAction: UIAction { [weak self] _ in self?.view.endEditing(true) })]
+        doneBar.sizeToFit()
+        priceField.inputAccessoryView = doneBar
         let nameAndPrice = AdaptiveStackView(arrangedSubviews: [nameField, priceField])
         nameAndPrice.compactAlignment = .top
         nameAndPrice.largeAlignment = .fill
@@ -84,12 +88,10 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         thawLabel.adjustsFontForContentSizeCategory = true
         thawLabel.textColor = Theme.inkSecondary
         thawLabel.numberOfLines = 0
-        thawLabel.adjustsFontForContentSizeCategory = true
         thawLabel.accessibilityIdentifier = "addwant.thaw"
         thawLabel.isHidden = true
         stack.addArrangedSubview(thawLabel)
 
-        stack.addArrangedSubview(makeLabel("Why?", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
         reasonView.delegate = self
         reasonView.accessibilityLabel = "Why?"
         reasonView.accessibilityIdentifier = "addwant.reason"
@@ -102,15 +104,13 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         reasonView.layer.borderColor = Theme.controlBorder.cgColor
         reasonView.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
         reasonView.heightAnchor.constraint(greaterThanOrEqualToConstant: 120).isActive = true
-        reasonView.adjustsFontForContentSizeCategory = true
         stack.addArrangedSubview(reasonView)
 
-        reasonPlaceholder.text = "In your words. Thaw reads it back when it thaws."
+        reasonPlaceholder.text = "Why?"
         reasonPlaceholder.font = ThawFont.body(16)
         reasonPlaceholder.adjustsFontForContentSizeCategory = true
         reasonPlaceholder.textColor = Theme.inkSecondary
         reasonPlaceholder.numberOfLines = 0
-        reasonPlaceholder.adjustsFontForContentSizeCategory = true
         reasonPlaceholder.isAccessibilityElement = false
         reasonPlaceholder.translatesAutoresizingMaskIntoConstraints = false
         reasonView.addSubview(reasonPlaceholder)
@@ -128,21 +128,13 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         errorLabel.adjustsFontForContentSizeCategory = true
         errorLabel.textColor = Theme.destructive
         errorLabel.numberOfLines = 0
-        errorLabel.adjustsFontForContentSizeCategory = true
         errorLabel.isHidden = true
         stack.addArrangedSubview(errorLabel)
 
-        var deleteConfig = UIButton.Configuration.plain()
-        deleteConfig.baseForegroundColor = Theme.destructive
-        deleteConfig.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16)
-        deleteConfig.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attrs in
-            var attrs = attrs
-            attrs.font = ThawFont.body(16, weight: .semibold)
-            return attrs
-        }
-        deleteButton.configuration = deleteConfig
+        saveButton.accessibilityIdentifier = "addwant.save"
+        saveButton.addAction(UIAction { [weak self] _ in self?.saveTapped() }, for: .touchUpInside)
+        stack.addArrangedSubview(saveButton)
         deleteButton.accessibilityIdentifier = "addwant.delete"
-        deleteButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
         deleteButton.addAction(UIAction { [weak self] _ in self?.presenter?.tapDelete() }, for: .touchUpInside)
         deleteButton.isHidden = true
         deleteGap.isHidden = true
@@ -253,7 +245,6 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         field.leftViewMode = .always
         field.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [.foregroundColor: Theme.inkSecondary])
         field.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true
-        field.adjustsFontForContentSizeCategory = true
     }
 
     private var input: AddWantInput {
@@ -261,6 +252,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
     }
 
     private func inputDidChange() {
+        errorLabel.isHidden = true
         updateNamePlaceholder()
         presenter?.inputChanged(input)
     }
@@ -338,13 +330,13 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         return true
     }
 
-    @objc private func saveTapped() {
+    private func saveTapped() {
         presenter?.tapSave(input)
     }
 
     func configure(_ screen: AddWantScreen) {
         title = screen.title
-        navigationItem.rightBarButtonItem?.title = screen.actionTitle
+        saveButton.configuration?.title = screen.actionTitle
         discardTitle = screen.discardTitle
         discardMessage = screen.discardMessage
         captionLabel.text = screen.caption
@@ -385,7 +377,8 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
     func showSavedMoment(line: String, completion: @escaping () -> Void) {
         view.endEditing(true)
         navigationItem.leftBarButtonItem?.isEnabled = false
-        navigationItem.rightBarButtonItem?.isEnabled = false
+        saveButton.isEnabled = false
+        deleteButton.isEnabled = false
         MomentView.present(on: view, mood: .frozen, line: line, completion: completion)
     }
 
