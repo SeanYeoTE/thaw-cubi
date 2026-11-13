@@ -1,78 +1,33 @@
 # Thaw
 
-iOS UIKit app (VIPER per screen) for the "Wishlist Cooldown" design. Sprint 1 built the core flow; sprint 2 adds payday setup, the Keep/Wait review, Cubi, Dynamic Type, persistence and local notifications.
+Thaw is an iPhone app that puts impulse purchases on ice until payday. You add something you want with its price and your reason. It cools until your next payday, and then you decide whether to **Keep** it, **Wait** another payday, or **Let go**, with your fun-money budget in view. Cubi, a small ice cube, reacts to your choices along the way.
 
-## Screens (sprint 1)
+**Website:** [seanyeote.github.io/thaw-cubi](https://seanyeote.github.io/thaw-cubi/) · [Privacy policy](https://seanyeote.github.io/thaw-cubi/privacy.html) · [Support](https://seanyeote.github.io/thaw-cubi/support.html)
 
-| Screen | File |
-|---|---|
-| Cooling home (payday card + wants) | `Thaw/Features/Home/HomeViewController.swift` |
-| Add a want (sheet) | `Thaw/Features/AddWant/AddWantViewController.swift` |
-| Item detail | `Thaw/Features/ItemDetail/ItemDetailViewController.swift` |
-| Payday notification (sheet) | `Thaw/Features/PaydayPreview/PaydayPreviewViewController.swift` |
-| Still want it? (payday review) | `Thaw/Features/StillWantIt/StillWantItViewController.swift` |
-| Saved total + history | `Thaw/Features/Saved/SavedViewController.swift` |
+| Stats | Freeze it | Let it cool | Decide on payday |
+|---|---|---|---|
+| <img src="site/media/saved.jpg" width="180" alt="Stats tab: Cubi over S$648 saved"> | <img src="site/media/freeze.jpg" width="180" alt="Cubi after adding a want"> | <img src="site/media/cool.jpg" width="180" alt="Payday tab counting down to payday"> | <img src="site/media/payday.jpg" width="180" alt="Payday review with Keep, Wait and Let go"> |
 
-| Payday setup (onboarding + Settings tab) | `Thaw/Features/PaydaySetup/PaydaySetupViewController.swift` |
-| Payday review (Keep/Wait vs fun money) | `Thaw/Features/PaydayReview/PaydayReviewViewController.swift` |
+## Features
 
-Sprint 2 contract: `docs/contracts/sprint-2.md`. QA reports: `docs/qa/`.
+- **Payday rules:** same date every month, last working day, twice a month, or a fixed wait when pay isn't regular.
+- **Fun-money budget:** the Payday tab and the review show what fits and what goes over.
+- **Quick thaws:** wants under a set price wait a few days instead of a full pay cycle.
+- **Share from Safari:** a Share extension adds the page as a want, keeping its link.
+- **Stats:** total saved, payday streak, let-go rate, monthly chart and decision history.
+- **Reminders:** local notifications when wants thaw, plus "Remind me tonight".
+- **Accessibility:** Dynamic Type throughout, VoiceOver custom actions on list rows, and Cubi's animation respects Reduce Motion.
+- **Privacy:** no accounts, servers or analytics. All data stays on the device.
 
-## Architecture
+Requires iOS 17 or later. Light mode only.
 
-- VIPER per screen (contract: `docs/contracts/sprint-4-viper.md`). A shared `WantStore` is persisted as JSON in Application Support and reached only through interactors.
+## Requirements and setup
 
-### VIPER modules
+1. Xcode 26 at `/Applications/Xcode.app`.
+2. [XcodeGen](https://github.com/yonaskolb/XcodeGen): `brew install xcodegen`. The project is generated from `project.yml`; run `xcodegen generate` after editing it.
+3. Open `Thaw.xcodeproj` and use the `Thaw` scheme.
 
-Home, AddWant, ItemDetail, PaydayPreview, PaydayReview, StillWantIt, Saved, PaydaySetup, each in `Thaw/Features/<Name>/`:
-
-| File | Role |
-|---|---|
-| `<Name>Contracts.swift` | View, Presenter, Interactor, InteractorOutput and Router protocols plus plain view-model structs |
-| `<Name>ViewController.swift` | UIKit only; forwards events to the presenter and renders view models; no `WantStore` access |
-| `<Name>Presenter.swift` | Foundation only (no `import UIKit`); screen logic, validation, guards, copy; weak view |
-| `<Name>Interactor.swift` | Wraps `WantStore`, `PaydaySettings` and `Reminders`; no UIKit |
-| `<Name>Router.swift` | `static func createModule(...) -> UIViewController` wires the module; instance methods navigate and dismiss only what the router presented |
-
-`DataChange` notifications flow interactor -> presenter -> view. `App/` (`SceneDelegate`, `RootTabBarController`, `ReviewRouter`) builds screens through `createModule`; `ReviewRouter` remains the notification entry point. Shared views live in `Thaw/Features/Shared` and `Thaw/DesignSystem`.
-
-### Testing presenters
-
-Presenters are tested without UIKit by injecting fake view, router and interactor objects. Tests are `@MainActor` and live in `ThawTests/Presenter*Tests.swift` (Home, AddWant, PaydayReview, PaydaySetup, StillWantIt), with shared helpers in `PresenterTestSupport.swift`.
-- Design tokens and components live in `Thaw/DesignSystem/`.
-- Display type uses Bricolage Grotesque ExtraBold (`Thaw/Resources/Fonts/`, SIL OFL 1.1, licence in `OFL.txt`). Body text uses the system font.
-- Payday rules, fun money and notification scheduling live in `Thaw/Models` and `Thaw/Services`. Notification permission is asked on first Add or first Save of settings, never at launch.
-- Cubi (`CubiView`) shows at Home status, Add success, review header, Skip and the top of Saved. On Saved the presenter picks the mood from the progress stats: frozen with nothing decided, proud during a payday streak, snoozing once the streak is broken.
-- Fonts scale with Dynamic Type; the app is light mode only.
-
-## Share sheet capture
-
-`ThawShare` is a Share extension (bundle id `com.tinkercademy.thaw.share`). Sharing a page from Safari to Thaw opens the Add form with the name prefilled from the page title and a read-only "From <host>" caption; you type the price and reason. The extension never touches `WantStore`: it appends a `SharedDraft` to `inbox.json` in the app group `group.com.tinkercademy.thaw` (`ShareInbox`). The app drains the inbox at launch and on foreground (`AppDelegate.ingestSharedDrafts`); each draft keeps its own `createdAt` as the freeze date and is ingested once (`ingestedDraftIDs`). Item detail shows the saved link as a tappable row.
-
-The extension compiles a subset of app files (see `ThawShare` in `project.yml`); anything added to that list must be extension-safe (no `UIApplication`). A device build needs the app group registered once (build from Xcode, or `xcodebuild -allowProvisioningUpdates`).
-
-## Editing, undoing and deleting
-
-One edit screen (the Add form in edit mode, `AddWantRouter.createModule(editing:)`) serves every list:
-
-- **Cooling:** long-press a row for Edit or Delete (Delete asks first). Tapping a row opens its detail, which has an Edit button.
-- **Stats (History):** swipe a row, then Edit or Delete.
-- The edit screen shows Name and Price side by side, the reason, and buttons under the form: **Delete** for any want, plus **Move back to cooling** (keeps the original thaw date) and **Mark as bought/skipped** for decided wants. Details typed before pressing an action are saved first if valid. Deleting from a detail screen pops back to the list.
-
-Cooling and History rows share one component (`WantRowView` / `WantRowModel` in `Thaw/Features/Shared`): title and price on the first line, status and time on the second, progress as a thin strip on the card's bottom edge. Lists refresh through `DataChange`. Actions are also exposed as VoiceOver custom actions.
-
-## Launch arguments
-
-- `-thawReset` clears saved state (shows onboarding).
-- `-thawFixture sprint1` seeds the four sample wants.
-- `-thawFixture history` seeds decided wants across three months and default settings (skips onboarding).
-- Debug builds seed sample wants and default settings on the very first launch (no saved state file). Use `-thawReset` for a clean start.
-
-## Setup
-
-1. Install Xcode 26 at `/Applications/Xcode.app`.
-2. `brew install xcodegen`, then run `xcodegen generate` after editing `project.yml`.
-3. Open `Thaw.xcodeproj`, scheme `Thaw`.
+A device build needs the app group `group.com.tinkercademy.thaw` registered once. Build from Xcode, or pass `-allowProvisioningUpdates` to `xcodebuild`.
 
 ## Build and test
 
@@ -82,4 +37,73 @@ xcodebuild -project Thaw.xcodeproj -scheme Thaw -sdk iphonesimulator -derivedDat
 xcodebuild -project Thaw.xcodeproj -scheme Thaw -destination 'platform=iOS Simulator,name=iPhone 17' -derivedDataPath .build/dd test
 ```
 
-Unit tests (131) cover payday rules, fun money, the store, persistence round-trips (skip, buy, wait, reopen, delete, edit, link, settings, share inbox and ingest), presenters with fakes, and an integration test that Saved reflects store changes. Notification scheduling is compile-checked only.
+- **Unit tests (`ThawTests`)** cover:
+  - payday rules and fun money;
+  - store state and persistence round-trips;
+  - progress stats;
+  - notification scheduling;
+  - Cubi motion;
+  - every presenter, tested with fakes;
+  - integration tests for editing and for Saved.
+- **UI tests (`ThawUITests`)** cover the review flow, persona walkthroughs and the accessibility audits.
+
+## Launch arguments
+
+For simulator checks, screenshots and UI tests:
+
+| Argument | Effect |
+|---|---|
+| `-thawReset` | Clears saved state and shows onboarding |
+| `-thawFixture sprint1` | Four sample wants still cooling. Onboarding still shows. |
+| `-thawFixture thawed` | Three wants ready to review, with default settings |
+| `-thawFixture history` | Decided wants across three months, with default settings |
+| `-thawTab cooling\|payday\|stats\|settings` | Opens on that tab (debug builds only) |
+
+On the very first launch, debug builds seed sample wants and default settings. Use `-thawReset` for a clean start.
+
+## Architecture
+
+UIKit with one VIPER module per screen (contract: `docs/contracts/sprint-4-viper.md`). Modules live in `Thaw/Features/<Name>/`: AddWant, Home, ItemDetail, Payday, PaydayReview, PaydaySetup, Saved and StillWantIt.
+
+| File | Role |
+|---|---|
+| `<Name>Contracts.swift` | View, Presenter, Interactor, InteractorOutput and Router protocols, plus plain view-model structs |
+| `<Name>ViewController.swift` | UIKit only. Forwards events to the presenter and renders view models; no `WantStore` access. |
+| `<Name>Presenter.swift` | Foundation only. Screen logic, validation and copy; holds the view weakly. |
+| `<Name>Interactor.swift` | Wraps `WantStore`, `PaydaySettings` and `Reminders`; no UIKit |
+| `<Name>Router.swift` | `createModule(...)` wires the module. Instance methods present and dismiss only what the router itself presented. |
+
+- **State:** a single `WantStore`, persisted as JSON in Application Support and reached only through interactors. Changes reach presenters as `DataChange` notifications (interactor → presenter → view).
+- **App shell:** `Thaw/App` (`SceneDelegate`, `RootTabBarController`, `ReviewRouter`) builds screens through `createModule`. `ReviewRouter` is the entry point for notification taps.
+- **Domain:** payday rules, fun money and progress stats are in `Thaw/Models`. Persistence, the share inbox and notification scheduling are in `Thaw/Services`. Notification permission is requested on the first Add or the first settings save, never at launch.
+- **Design system:** tokens and shared components are in `Thaw/DesignSystem`, shared list views in `Thaw/Features/Shared`. Display type is Bricolage Grotesque ExtraBold (`Thaw/Resources/Fonts`, SIL OFL 1.1); body text uses the system font.
+- **Cubi:** `CubiArtwork` (drawing), `CubiMotion` (per-mood idle loops) and `CubiView`, with moods `frozen`, `thawing`, `thawed`, `proud` and `snoozing`. On Stats, the mood follows progress: frozen before any decision, proud during a payday streak, snoozing once the streak breaks.
+
+### Share extension
+
+`ThawShare` (`com.tinkercademy.thaw.share`) opens the Add form with the page title as the name and a read-only "From <host>" caption. It never touches `WantStore`. Instead it appends a `SharedDraft` to `inbox.json` in the app group. The app drains the inbox at launch and on returning to the foreground (`AppDelegate.ingestSharedDrafts`). Each draft keeps its own creation date as the freeze date and is ingested once.
+
+The extension compiles a subset of app files (see `ThawShare` in `project.yml`). Anything added to that list must be extension-safe, so no `UIApplication`.
+
+### Editing and deleting
+
+One edit screen, the Add form in edit mode (`AddWantRouter.createModule(editing:)`), serves every list:
+
+- **Cooling:** long-press a row for Edit or Delete, or open the detail and tap Edit.
+- **Stats history:** swipe a row for Edit or Delete.
+- **Decided wants:** these also offer **Move back to cooling** (which keeps the original thaw date) and **Mark as bought/skipped**.
+
+List rows share `WantRowView` and `WantRowModel`, and every row action is also available as a VoiceOver custom action.
+
+## Website
+
+The marketing site is in [`site/`](site/): static HTML and CSS with no build step. It has the landing page, the privacy policy and the support page used for App Store Connect, plus short demo loops recorded from the simulator. [`.github/workflows/pages.yml`](.github/workflows/pages.yml) deploys it to GitHub Pages on every push to `main` that changes `site/`. See [`site/README.md`](site/README.md) to preview it locally, re-record the loops, or do the pre-launch steps.
+
+## Project docs
+
+| Path | Contents |
+|---|---|
+| `docs/contracts/` | Sprint contracts: scope, architecture and share/undo |
+| `docs/qa/` | QA reports by sprint |
+| `docs/design/` | Design handover and task briefs for the current round |
+| `docs/screenshots/` | Persona walkthrough screenshots from the UI tests |
