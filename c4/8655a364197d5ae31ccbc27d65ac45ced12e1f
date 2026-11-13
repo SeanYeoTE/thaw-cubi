@@ -1,0 +1,23 @@
+Thaw/Features/AddWant/AddWantViewController.swift
+  s_d1f75f2d3885ab::t_fd5ecb1c14bed2 71
+ThawUITests/ReviewFlowUITests.swift
+  s_d1f75f2d3885ab::t_305ec546128f6d 88-97
+Thaw/Features/Shared/AdaptiveViews.swift
+  s_d1f75f2d3885ab::t_4cd564ce5bed5b 9-13,39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c48655a364197d5ae31ccbc27d65ac45ced12e1f",
+  "prompts": {},
+  "sessions": {
+    "s_d1f75f2d3885ab": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "5d181abe-2f88-40d0-91b8-deab55040ff8",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
