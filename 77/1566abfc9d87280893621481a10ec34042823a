@@ -1,0 +1,47 @@
+Thaw/DesignSystem/CubiMotion.swift
+  s_cfc4f71efec98b::t_a7989e85011d64 49-50,95-97
+Thaw/DesignSystem/ThawListScreen.swift
+  s_c7efbe40038418::t_354cfbbc909405 26-34,47-54,76,82,86,88,97,99,123-125,155,164-169,186-190
+Thaw/Features/AddWant/AddWantPresenter.swift
+  s_cfc4f71efec98b::t_dad738e826c531 126-129,151-166
+Thaw/Features/AddWant/AddWantViewController.swift
+  s_c7efbe40038418::t_91bd35aa77a4be 14-16,30-32,138-141,172-175,296,306,309-319,333
+ThawTests/CubiMotionTests.swift
+  s_cfc4f71efec98b::t_0520fc0f4994ff 31-35,40-55
+ThawTests/PresenterAddWantTests.swift
+  s_c7efbe40038418::t_550b5d7537e3ea 1,34,40-43,328-331,338,364-462
+ThawTests/ThawColumnTests.swift
+  s_744feab2daf1a9::t_4323e7ef840999 33-138
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "771566abfc9d87280893621481a10ec34042823a",
+  "prompts": {},
+  "sessions": {
+    "s_744feab2daf1a9": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6d4421bb-7eab-4f5e-a8e6-28f36d0ee4a4",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    },
+    "s_c7efbe40038418": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "f536e1e2-f153-4028-8fd5-5f7a2187a2c7",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    },
+    "s_cfc4f71efec98b": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "2a84cb04-b701-493d-ba53-103e5f0510a3",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
