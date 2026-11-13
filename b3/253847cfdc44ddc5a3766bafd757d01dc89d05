@@ -1,0 +1,47 @@
+Thaw/Models/FunMoneyPlan.swift
+  s_0a1e7f651b0afb::t_3794fca398a0c5 1-69
+ThawTests/IntegrationReviewTests.swift
+  s_0a1e7f651b0afb::t_c0b490e0442cd8 1-97
+Thaw/Features/Payday/PaydayPresenter.swift
+  s_0a1e7f651b0afb::t_8b1138059a307d 61,72,74-76,82,84-86,88,101,112,122-128,135-136,139-141,143-144
+Thaw/Features/PaydayReview/PaydayReviewContracts.swift
+  s_0a1e7f651b0afb::t_f568045415f2d4 29,31-33,48-49,63
+Thaw/Features/PaydayReview/PaydayReviewInteractor.swift
+  s_0a1e7f651b0afb::t_207d071b73f4ae 15
+Thaw/Features/PaydayReview/PaydayReviewPresenter.swift
+  s_0a1e7f651b0afb::t_1d5baa6aa620dc 8,11,22-26,28-29,35-39,44,50-52,63,72,76-89,91,94
+Thaw/Features/PaydayReview/PaydayReviewViewController.swift
+  s_0a1e7f651b0afb::t_da3401002ecb05 32-39,57,89-92
+Thaw/Features/PaydayReview/ReviewChoiceControl.swift
+  s_0a1e7f651b0afb::t_1065fc27f4c3e5 26,46,58-59,61
+Thaw/Features/StillWantIt/StillWantItContracts.swift
+  s_0a1e7f651b0afb::t_d0b7d5914570b9 23-24,38
+Thaw/Features/StillWantIt/StillWantItInteractor.swift
+  s_0a1e7f651b0afb::t_2a701399664f91 15
+Thaw/Features/StillWantIt/StillWantItPresenter.swift
+  s_0a1e7f651b0afb::t_64c3c4f732e317 9-12,25-30,38,40-41,47,49-50,55-57,62,66-74,77,81-82,87,90-93
+Thaw/Features/StillWantIt/StillWantItViewController.swift
+  s_0a1e7f651b0afb::t_346dcc9da021c1 105-108
+ThawTests/PresenterPaydayReviewTests.swift
+  s_0a1e7f651b0afb::t_730f1d8056805f 11,16,22,33-42,59-65,67-68,73-117
+ThawTests/PresenterPaydayTests.swift
+  s_0a1e7f651b0afb::t_f92ff54c02da43 197-198,285-417
+ThawTests/PresenterStillWantItTests.swift
+  s_0a1e7f651b0afb::t_14c34797f238f1 10,16,22,90-92,95,100-146
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b3253847cfdc44ddc5a3766bafd757d01dc89d05",
+  "prompts": {},
+  "sessions": {
+    "s_0a1e7f651b0afb": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "cabbb80a-25b3-4a0e-9519-d4d06bcb0758",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
