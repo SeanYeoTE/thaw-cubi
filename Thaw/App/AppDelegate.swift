@@ -11,14 +11,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         let router = router
-        let handler = NotificationActionHandler(
-            scheduler: UserNotificationScheduler(funMoney: store.effectiveSettings.funMoney),
-            store: store,
-            onRoute: { _ in router.requestReview() }
-        )
+        let handler = NotificationActionHandler(reminders: reminders, onRoute: { router.request($0) })
         actionHandler = handler
         UNUserNotificationCenter.current().delegate = handler
         ingestSharedDrafts()
+#if DEBUG
+        Task { await UserNotificationScheduler().logPending(context: "launch") }
+#endif
         return true
     }
 

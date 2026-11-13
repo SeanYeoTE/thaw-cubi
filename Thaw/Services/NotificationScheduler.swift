@@ -7,7 +7,17 @@ protocol NotificationScheduling: Sendable {
     func schedulePaydayReview(at: Date, thawingCount: Int, total: Decimal) async
     func scheduleTimerThaw(wantID: UUID, name: String, at: Date) async
     func scheduleReminder(at: Date, thawingCount: Int, total: Decimal) async
-    func cancelAll() async
+    /// Identifiers of every pending (not yet delivered) request.
+    func pendingIdentifiers() async -> [String]
+    func cancel(identifiers: [String]) async
+    /// DEBUG builds log every pending request so simulator QA can check what is scheduled.
+    func logPending(context: String) async
+}
+
+extension NotificationScheduling {
+    func pendingIdentifiers() async -> [String] { [] }
+    func cancel(identifiers: [String]) async {}
+    func logPending(context: String) async {}
 }
 
 nonisolated enum ThawNotification {
@@ -17,6 +27,8 @@ nonisolated enum ThawNotification {
     static let paydayIdentifier = "thaw.payday.review"
     static let reminderIdentifier = "thaw.payday.reminder"
     static let timerPrefix = "thaw.timer."
+    /// `userInfo` key on timer-thaw notifications holding the want's UUID string (D7).
+    static let wantIDKey = "wantID"
 
     static func paydayTitle(count: Int) -> String {
         "Payday. \(count) \(count == 1 ? "want has" : "wants have") thawed."
@@ -47,7 +59,8 @@ nonisolated final class UserNotificationScheduler: NotificationScheduling, @unch
             return false
         case .notDetermined:
             do {
-                let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
+                // No `.badge`: the app never sets an icon badge (D8); the Payday tab badge is enough.
+                let granted = try await center.requestAuthorization(options: [.alert, .sound])
                 if granted { registerCategories() }
                 return granted
             } catch {
@@ -82,11 +95,30 @@ nonisolated final class UserNotificationScheduler: NotificationScheduling, @unch
         content.title = "\(name) has thawed."
         content.body = "Still on your mind? It's your call."
         content.sound = .default
+        content.userInfo = [ThawNotification.wantIDKey: wantID.uuidString]
         await add(identifier: ThawNotification.timerPrefix + wantID.uuidString, content: content, at: date)
     }
 
-    func cancelAll() async {
-        center.removeAllPendingNotificationRequests()
+    func pendingIdentifiers() async -> [String] {
+        await center.pendingNotificationRequests().map(\.identifier)
+    }
+
+    func cancel(identifiers: [String]) async {
+        guard !identifiers.isEmpty else { return }
+        center.removePendingNotificationRequests(withIdentifiers: identifiers)
+    }
+
+    func logPending(context: String) async {
+#if DEBUG
+        let requests = await center.pendingNotificationRequests().sorted { $0.identifier < $1.identifier }
+        Self.logger.notice("Pending after \(context, privacy: .public): \(requests.count, privacy: .public) request(s)")
+        for request in requests {
+            let fire = (request.trigger as? UNCalendarNotificationTrigger)?.nextTriggerDate()
+            let when = fire.map { $0.formatted(.iso8601) } ?? "none"
+            let id = request.identifier, content = request.content
+            Self.logger.notice("Pending \(id, privacy: .public) at \(when, privacy: .public) category=\(content.categoryIdentifier, privacy: .public) title=\(content.title, privacy: .public) body=\(content.body, privacy: .public)")
+        }
+#endif
     }
 
     private func registerCategories() {
@@ -112,7 +144,34 @@ nonisolated final class UserNotificationScheduler: NotificationScheduling, @unch
     }
 }
 
-nonisolated enum NotificationRoute: Equatable, Sendable { case review }
+/// Where a tapped notification should go.
+nonisolated enum NotificationRoute: Equatable, Sendable {
+    /// The Payday review (payday notification, its reminder, "Review now").
+    case review
+    /// A timer thaw: that want's "Still want it?", or Item detail once decided (D7).
+    case want(UUID)
+
+    /// The route for a notification response, or nil when the action needs no navigation ("Remind me tonight", dismiss).
+    static func from(actionIdentifier: String, requestIdentifier: String,
+                     userInfo: [AnyHashable: Any]) -> NotificationRoute? {
+        switch actionIdentifier {
+        case ThawNotification.reviewNowAction:
+            return .review
+        case UNNotificationDefaultActionIdentifier:
+            if let id = timerWantID(requestIdentifier: requestIdentifier, userInfo: userInfo) { return .want(id) }
+            return .review
+        default:
+            return nil
+        }
+    }
+
+    /// The want id of a timer thaw, from `userInfo` or, for requests scheduled before it was added, the identifier.
+    static func timerWantID(requestIdentifier: String, userInfo: [AnyHashable: Any]) -> UUID? {
+        if let string = userInfo[ThawNotification.wantIDKey] as? String, let id = UUID(uuidString: string) { return id }
+        guard requestIdentifier.hasPrefix(ThawNotification.timerPrefix) else { return nil }
+        return UUID(uuidString: String(requestIdentifier.dropFirst(ThawNotification.timerPrefix.count)))
+    }
+}
 
 enum NotificationReminder {
     /// 20:00 today, or one hour from now when it is already 20:00 or later.
@@ -124,31 +183,31 @@ enum NotificationReminder {
 }
 
 nonisolated final class NotificationActionHandler: NSObject, UNUserNotificationCenterDelegate, @unchecked Sendable {
-    private let scheduler: any NotificationScheduling
-    private let store: WantStore
+    private let reminders: Reminders
     private let onRoute: @MainActor @Sendable (NotificationRoute) -> Void
 
-    init(scheduler: any NotificationScheduling, store: WantStore,
-         onRoute: @escaping @MainActor @Sendable (NotificationRoute) -> Void) {
-        self.scheduler = scheduler
-        self.store = store
+    /// Fun money and counts are read from `reminders` when an action runs, never captured at launch.
+    init(reminders: Reminders, onRoute: @escaping @MainActor @Sendable (NotificationRoute) -> Void) {
+        self.reminders = reminders
         self.onRoute = onRoute
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse) async {
-        switch response.actionIdentifier {
-        case UNNotificationDefaultActionIdentifier, ThawNotification.reviewNowAction:
-            let route = onRoute
-            await MainActor.run { route(.review) }
-        case ThawNotification.remindTonightAction:
-            let thawed = store.thawedWants
-            let total = thawed.reduce(Decimal(0)) { $0 + $1.price }
-            let date = NotificationReminder.tonightDate(now: .now, calendar: .current)
-            await scheduler.scheduleReminder(at: date, thawingCount: thawed.count, total: total)
-        default:
-            break
+        let request = response.notification.request
+        await handle(actionIdentifier: response.actionIdentifier, requestIdentifier: request.identifier,
+                     userInfo: request.content.userInfo)
+    }
+
+    func handle(actionIdentifier: String, requestIdentifier: String, userInfo: [AnyHashable: Any]) async {
+        if actionIdentifier == ThawNotification.remindTonightAction {
+            await reminders.scheduleTonightReminder(requestingPermission: false)
+            return
         }
+        guard let route = NotificationRoute.from(actionIdentifier: actionIdentifier,
+                                                 requestIdentifier: requestIdentifier, userInfo: userInfo) else { return }
+        let onRoute = onRoute
+        await MainActor.run { onRoute(route) }
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter,
