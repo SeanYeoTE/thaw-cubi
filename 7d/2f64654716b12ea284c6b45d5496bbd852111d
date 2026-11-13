@@ -1,0 +1,19 @@
+Thaw/Features/AddWant/AddWantViewController.swift
+  s_c124f67767db50::t_56dfebf92bf22e 62-71,208-216,218
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7d2f64654716b12ea284c6b45d5496bbd852111d",
+  "prompts": {},
+  "sessions": {
+    "s_c124f67767db50": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "s_c124f67767db50",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
