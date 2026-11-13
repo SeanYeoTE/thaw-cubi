@@ -1,0 +1,60 @@
+Thaw/DesignSystem/FilterChipBar.swift
+  s_09a950b1f87644::t_34e85e39c1c925 87
+Thaw/DesignSystem/CubiArtwork.swift
+  s_09a950b1f87644::t_34e85e39c1c925 50,107-108
+Thaw/Features/PaydaySetup/SettingsPresenter.swift
+  s_09a950b1f87644::t_0ff8be3cb660db 147-151
+  s_09a950b1f87644::t_1d7a0f680261af 67-73,119
+Thaw/App/SceneDelegate.swift
+  s_09a950b1f87644::t_34e85e39c1c925 15
+Thaw/DesignSystem/StatChipView.swift
+  s_09a950b1f87644::t_34e85e39c1c925 17
+Thaw/Features/AddWant/AddWantViewController.swift
+  s_09a950b1f87644::t_34e85e39c1c925 104,169,203,243
+Thaw/Features/Shared/WantListStyle.swift
+  s_09a950b1f87644::t_1d7a0f680261af 30
+ThawTests/PresenterPaydaySetupTests.swift
+  s_09a950b1f87644::t_53dc0ec2f46d85 103,105
+  s_09a950b1f87644::t_0ff8be3cb660db 128,145-155
+  s_09a950b1f87644::t_a310f42d7ea821 156-157
+Thaw/Features/PaydaySetup/PaydayRuleViewController.swift
+  s_09a950b1f87644::t_0459cb299f3c83 42,59
+Thaw/Features/PaydaySetup/SettingsViewController.swift
+  s_09a950b1f87644::t_0459cb299f3c83 60
+  s_09a950b1f87644::t_d2b73b21acbe9d 138
+  s_09a950b1f87644::t_1d7a0f680261af 87-91,97,137
+  s_09a950b1f87644::t_ffbefe7c11952e 139-140
+Thaw/Features/PaydaySetup/PaydaySetupContracts.swift
+  s_09a950b1f87644::t_1d7a0f680261af 66,78-79,105,116
+Thaw/Features/PaydayReview/ReviewChoiceControl.swift
+  s_09a950b1f87644::t_34e85e39c1c925 30
+Thaw/Features/Home/HomeViewController.swift
+  s_09a950b1f87644::t_34e85e39c1c925 64
+Thaw/DesignSystem/Components.swift
+  s_09a950b1f87644::t_34e85e39c1c925 35,51,120
+Thaw/Features/Saved/SavedViewController.swift
+  s_09a950b1f87644::t_34e85e39c1c925 285
+Thaw/DesignSystem/Theme.swift
+  s_09a950b1f87644::t_34e85e39c1c925 4-5,7,9-16,19-22,25,29-30,34,37-39,87-91,102-142,145-146
+  s_09a950b1f87644::t_d2b73b21acbe9d 143-144
+  s_09a950b1f87644::t_d6cd3e017be374 147
+Thaw/Features/PaydaySetup/SettingsCells.swift
+  s_09a950b1f87644::t_1d7a0f680261af 257-285
+  s_09a950b1f87644::t_0459cb299f3c83 18-24,70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1e20a3feb9b0235239db2f6e1a9a68a694174ba3",
+  "prompts": {},
+  "sessions": {
+    "s_09a950b1f87644": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "fda69a5c-d108-42e6-954a-be261ecdfff5",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
