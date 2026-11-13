@@ -31,7 +31,7 @@ final class AddWantPresenter: AddWantPresenterProtocol {
             initial = input
             isEditing = true
             view?.configure(AddWantScreen(title: "Edit want", actionTitle: "Save", discardTitle: "Discard changes?",
-                                          discardMessage: "Your edits won't be saved.", initial: input,
+                                          discardMessage: "Edits won't be saved.", initial: input,
                                           statusOptions: decided ? Self.statusOptions : [], deleteTitle: "Delete"))
             view?.render(thawLine: thawLine(for: input))
             return
@@ -39,14 +39,14 @@ final class AddWantPresenter: AddWantPresenterProtocol {
         if let draft = interactor.draft {
             let input = AddWantInput(name: draft.name, price: "", reason: "")
             initial = input
-            view?.configure(AddWantScreen(title: "Add to Thaw", actionTitle: "Add to Thaw", discardTitle: "Discard this want?",
-                                          discardMessage: "What you typed won't be saved.", initial: input,
+            view?.configure(AddWantScreen(title: "Add to Thaw", actionTitle: "Add to Thaw", discardTitle: "Discard?",
+                                          discardMessage: "Nothing will be saved.", initial: input,
                                           caption: draft.link.map { "From \(ShareItemParser.displayHost($0))" }))
             view?.render(thawLine: nil)
             return
         }
-        view?.configure(AddWantScreen(title: "Add to Thaw", actionTitle: "Add to Thaw", discardTitle: "Discard this want?",
-                                      discardMessage: "What you typed won't be saved.", initial: nil))
+        view?.configure(AddWantScreen(title: "Add to Thaw", actionTitle: "Add to Thaw", discardTitle: "Discard?",
+                                      discardMessage: "Nothing will be saved.", initial: nil))
         view?.render(thawLine: nil)
     }
 
@@ -79,7 +79,7 @@ final class AddWantPresenter: AddWantPresenterProtocol {
         let name = interactor.editing?.name ?? "this want"
         view?.showDeleteConfirmation(AddWantDeleteConfirmation(
             title: "Delete \(name)?",
-            message: "It will be removed from Thaw, including your history and savings total.",
+            message: "This can't be undone.",
             deleteTitle: "Delete", cancelTitle: "Cancel"))
     }
 

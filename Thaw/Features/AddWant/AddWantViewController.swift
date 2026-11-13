@@ -10,7 +10,8 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
     private let reasonPlaceholder = UILabel()
     private let statusRow = UIStackView()
     private let statusButton = UIButton(type: .system)
-    private let deleteButton = UIButton(type: .system)
+    private let saveButton = PillButton(title: "Save", style: .primary)
+    private let deleteButton = PillButton(title: "Delete", style: .destructive)
     private var statusOptions: [AddWantStatusOption] = []
     private var selectedStatus: Want.Status?
     private let captionLabel = UILabel()
@@ -28,7 +29,6 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         navigationItem.leftBarButtonItem = UIBarButtonItem(systemItem: .cancel, primaryAction: UIAction { [weak self] _ in
             self?.cancelTapped()
         })
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add to Thaw", style: .done, target: self, action: #selector(saveTapped))
 
         captionLabel.font = ThawFont.body(13, weight: .medium)
         captionLabel.adjustsFontForContentSizeCategory = true
@@ -66,9 +66,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
                          UIBarButtonItem(systemItem: .done, primaryAction: UIAction { [weak self] _ in self?.view.endEditing(true) })]
         doneBar.sizeToFit()
         priceField.inputAccessoryView = doneBar
-        let nameColumn = labeledColumn("Name", nameField)
-        let priceColumn = labeledColumn("Price", priceField)
-        let nameAndPrice = AdaptiveStackView(arrangedSubviews: [nameColumn, priceColumn])
+        let nameAndPrice = AdaptiveStackView(arrangedSubviews: [nameField, priceField])
         nameAndPrice.compactAlignment = .top
         nameAndPrice.spacing = 12
         nameAndPrice.distribution = .fill
@@ -82,7 +80,6 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         thawLabel.isHidden = true
         stack.addArrangedSubview(thawLabel)
 
-        stack.addArrangedSubview(makeLabel("Why?", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
         reasonView.delegate = self
         reasonView.accessibilityLabel = "Why?"
         reasonView.accessibilityIdentifier = "addwant.reason"
@@ -97,7 +94,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         reasonView.heightAnchor.constraint(greaterThanOrEqualToConstant: 120).isActive = true
         stack.addArrangedSubview(reasonView)
 
-        reasonPlaceholder.text = "In your words. Thaw reads it back when it thaws."
+        reasonPlaceholder.text = "Why?"
         reasonPlaceholder.font = ThawFont.body(16)
         reasonPlaceholder.adjustsFontForContentSizeCategory = true
         reasonPlaceholder.textColor = Theme.inkSecondary
@@ -120,21 +117,14 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         errorLabel.isHidden = true
         stack.addArrangedSubview(errorLabel)
 
-        var deleteConfig = UIButton.Configuration.plain()
-        deleteConfig.baseForegroundColor = Theme.destructive
-        deleteConfig.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16)
-        deleteConfig.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attrs in
-            var attrs = attrs
-            attrs.font = ThawFont.body(16, weight: .semibold)
-            return attrs
-        }
-        deleteButton.configuration = deleteConfig
+        saveButton.accessibilityIdentifier = "addwant.save"
+        saveButton.addAction(UIAction { [weak self] _ in self?.saveTapped() }, for: .touchUpInside)
+        stack.addArrangedSubview(saveButton)
         deleteButton.accessibilityIdentifier = "addwant.delete"
-        deleteButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
         deleteButton.addAction(UIAction { [weak self] _ in self?.presenter?.tapDelete() }, for: .touchUpInside)
         deleteButton.isHidden = true
         stack.addArrangedSubview(deleteButton)
-        stack.setCustomSpacing(40, after: errorLabel)
+        stack.setCustomSpacing(Theme.Spacing.gap * 2, after: errorLabel)
         presenter?.viewDidLoad()
     }
 
@@ -205,15 +195,6 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         AddWantInput(name: nameField.text ?? "", price: priceField.text ?? "", reason: reasonView.text ?? "", status: selectedStatus)
     }
 
-    private func labeledColumn(_ title: String, _ field: UITextField) -> UIStackView {
-        let label = makeLabel(title, font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary)
-        label.isAccessibilityElement = false
-        let column = UIStackView(arrangedSubviews: [label, field])
-        column.axis = .vertical
-        column.spacing = 6
-        return column
-    }
-
     private func inputDidChange() {
         errorLabel.isHidden = true
         presenter?.inputChanged(input)
@@ -277,13 +258,13 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         return true
     }
 
-    @objc private func saveTapped() {
+    private func saveTapped() {
         presenter?.tapSave(input)
     }
 
     func configure(_ screen: AddWantScreen) {
         title = screen.title
-        navigationItem.rightBarButtonItem?.title = screen.actionTitle
+        saveButton.configuration?.title = screen.actionTitle
         discardTitle = screen.discardTitle
         discardMessage = screen.discardMessage
         captionLabel.text = screen.caption
@@ -310,7 +291,8 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
     func showSavedMoment(line: String, completion: @escaping () -> Void) {
         view.endEditing(true)
         navigationItem.leftBarButtonItem?.isEnabled = false
-        navigationItem.rightBarButtonItem?.isEnabled = false
+        saveButton.isEnabled = false
+        deleteButton.isEnabled = false
         MomentView.present(on: view, mood: .frozen, line: line, completion: completion)
     }
 
