@@ -46,7 +46,8 @@ enum CubiMotion {
         }
     }
 
-    /// Slow loops that keep Cubi alive while he sits on a screen. Additive, so they never fight the one-shot motion.
+    /// Slow loops that keep Cubi alive while he sits on a screen. Movement is additive, so it never fights the
+    /// one-shot motion; fades use absolute values, because an additive fade on a fully opaque layer clamps to 1.
     static func idleSteps(for mood: CubiMood, reduceMotion: Bool = UIAccessibility.isReduceMotionEnabled) -> [Step] {
         guard !reduceMotion else { return [] }
         switch mood {
@@ -91,7 +92,9 @@ enum CubiMotion {
         animation.repeatCount = .infinity
         animation.autoreverses = autoreverses
         let parts = (animation as? CAAnimationGroup)?.animations ?? [animation]
-        for case let property as CAPropertyAnimation in parts { property.isAdditive = true }
+        for case let property as CAPropertyAnimation in parts {
+            property.isAdditive = property.keyPath?.hasPrefix("transform") == true || property.keyPath?.hasPrefix("position") == true
+        }
         return animation
     }
 

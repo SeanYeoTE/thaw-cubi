@@ -123,13 +123,12 @@ final class AddWantPresenter: AddWantPresenterProtocol {
     private func thawLine(for input: AddWantInput) -> String? {
         guard interactor.draft == nil else { return nil }
         let want = interactor.editing
-        if let want, want.status != .cooling { return nil }
-        guard let typed = Decimal(string: input.price.trimmingCharacters(in: .whitespacesAndNewlines)), typed > 0 else { return nil }
+        if let want, want.status != .cooling {
+            return input.status == .cooling ? reopenLine(for: want, price: Self.price(in: input) ?? want.price) : nil
+        }
+        guard let rounded = Self.price(in: input) else { return nil }
         let settings = interactor.settings
         let now = self.now()
-        var rounded = Decimal()
-        var value = typed
-        NSDecimalRound(&rounded, &value, 2, .plain)
         let isTimer = rounded < settings.timerThreshold
         let timerEnd = calendar.date(byAdding: .day, value: settings.timerDays, to: now) ?? now
         let payday = { settings.nextPayday(after: now, calendar: self.calendar) }
@@ -147,6 +146,22 @@ final class AddWantPresenter: AddWantPresenterProtocol {
             return Self.quickThaw(days: max(days, 1))
         }
         return "Thaws on payday · \(Self.shortDate(want.thawsAt))"
+    }
+
+    /// `WantStore.reopen` keeps the original `thawsAt`, and `edit` doesn't move it for decided wants, so this
+    /// shows that date even when the new price crosses the timer threshold.
+    private func reopenLine(for want: Want, price: Decimal) -> String {
+        guard want.thawsAt > now() else { return "Back to cooling · ready to review now" }
+        let kind = price < interactor.settings.timerThreshold ? "quick thaw" : "thaws on payday"
+        return "Back to cooling · \(kind) · \(Self.shortDate(want.thawsAt))"
+    }
+
+    /// The typed price rounded to cents, as `WantStore` stores it; nil when empty or not above zero.
+    private static func price(in input: AddWantInput) -> Decimal? {
+        guard var typed = Decimal(string: input.price.trimmingCharacters(in: .whitespacesAndNewlines)), typed > 0 else { return nil }
+        var rounded = Decimal()
+        NSDecimalRound(&rounded, &typed, 2, .plain)
+        return rounded
     }
 
     private static func quickThaw(days: Int) -> String {
