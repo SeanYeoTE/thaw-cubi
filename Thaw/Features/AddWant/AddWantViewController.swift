@@ -34,7 +34,6 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         captionLabel.adjustsFontForContentSizeCategory = true
         captionLabel.textColor = Theme.inkSecondary
         captionLabel.numberOfLines = 0
-        captionLabel.adjustsFontForContentSizeCategory = true
         captionLabel.isHidden = true
         stack.addArrangedSubview(captionLabel)
 
@@ -60,7 +59,16 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         ])
         priceField.leftView = prefixBox
         priceField.widthAnchor.constraint(equalToConstant: 120).isActive = true
-        let nameAndPrice = AdaptiveStackView(arrangedSubviews: [nameField, priceField])
+        nameField.returnKeyType = .next
+        nameField.addAction(UIAction { [weak self] _ in self?.priceField.becomeFirstResponder() }, for: .editingDidEndOnExit)
+        let doneBar = UIToolbar()
+        doneBar.items = [UIBarButtonItem(systemItem: .flexibleSpace),
+                         UIBarButtonItem(systemItem: .done, primaryAction: UIAction { [weak self] _ in self?.view.endEditing(true) })]
+        doneBar.sizeToFit()
+        priceField.inputAccessoryView = doneBar
+        let nameColumn = labeledColumn("Name", nameField)
+        let priceColumn = labeledColumn("Price", priceField)
+        let nameAndPrice = AdaptiveStackView(arrangedSubviews: [nameColumn, priceColumn])
         nameAndPrice.compactAlignment = .top
         nameAndPrice.spacing = 12
         nameAndPrice.distribution = .fill
@@ -70,7 +78,6 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         thawLabel.adjustsFontForContentSizeCategory = true
         thawLabel.textColor = Theme.inkSecondary
         thawLabel.numberOfLines = 0
-        thawLabel.adjustsFontForContentSizeCategory = true
         thawLabel.accessibilityIdentifier = "addwant.thaw"
         thawLabel.isHidden = true
         stack.addArrangedSubview(thawLabel)
@@ -88,7 +95,6 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         reasonView.layer.borderColor = Theme.controlBorder.cgColor
         reasonView.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
         reasonView.heightAnchor.constraint(greaterThanOrEqualToConstant: 120).isActive = true
-        reasonView.adjustsFontForContentSizeCategory = true
         stack.addArrangedSubview(reasonView)
 
         reasonPlaceholder.text = "In your words. Thaw reads it back when it thaws."
@@ -96,7 +102,6 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         reasonPlaceholder.adjustsFontForContentSizeCategory = true
         reasonPlaceholder.textColor = Theme.inkSecondary
         reasonPlaceholder.numberOfLines = 0
-        reasonPlaceholder.adjustsFontForContentSizeCategory = true
         reasonPlaceholder.isAccessibilityElement = false
         reasonPlaceholder.translatesAutoresizingMaskIntoConstraints = false
         reasonView.addSubview(reasonPlaceholder)
@@ -112,7 +117,6 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         errorLabel.adjustsFontForContentSizeCategory = true
         errorLabel.textColor = Theme.destructive
         errorLabel.numberOfLines = 0
-        errorLabel.adjustsFontForContentSizeCategory = true
         errorLabel.isHidden = true
         stack.addArrangedSubview(errorLabel)
 
@@ -195,14 +199,23 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         field.leftViewMode = .always
         field.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [.foregroundColor: Theme.inkSecondary])
         field.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true
-        field.adjustsFontForContentSizeCategory = true
     }
 
     private var input: AddWantInput {
         AddWantInput(name: nameField.text ?? "", price: priceField.text ?? "", reason: reasonView.text ?? "", status: selectedStatus)
     }
 
+    private func labeledColumn(_ title: String, _ field: UITextField) -> UIStackView {
+        let label = makeLabel(title, font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary)
+        label.isAccessibilityElement = false
+        let column = UIStackView(arrangedSubviews: [label, field])
+        column.axis = .vertical
+        column.spacing = 6
+        return column
+    }
+
     private func inputDidChange() {
+        errorLabel.isHidden = true
         presenter?.inputChanged(input)
     }
 
