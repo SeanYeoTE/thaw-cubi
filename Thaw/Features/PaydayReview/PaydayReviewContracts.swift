@@ -26,7 +26,11 @@ struct ReviewRowViewModel: Equatable {
 struct PaydayReviewContent {
     let budgetCaption: String
     let budgetText: String
+    /// Payday wants in thaw order. They count against fun money.
     let rows: [ReviewRowViewModel]
+    /// "Quick thaws": their choices apply but they don't move the meter (D4).
+    let quickTitle: String
+    let quickRows: [ReviewRowViewModel]
 }
 
 struct PaydayReviewSummary: Equatable {
@@ -41,6 +45,8 @@ protocol PaydayReviewViewProtocol: AnyObject {
     func update(_ summary: PaydayReviewSummary, animated: Bool)
     func showDiscardConfirmation()
     func playSuccessFeedback()
+    /// Disables Done once the choices are applied, so a second tap can't apply them again.
+    func setCTAEnabled(_ enabled: Bool)
 }
 
 protocol PaydayReviewPresenterProtocol: AnyObject {
@@ -54,6 +60,7 @@ protocol PaydayReviewPresenterProtocol: AnyObject {
 protocol PaydayReviewInteractorProtocol: AnyObject {
     var wants: [Want] { get }
     var budget: Decimal { get }
+    var timerThreshold: Decimal { get }
     /// Buys Keep wants, moves Wait wants to the next payday and skips Let go wants.
     func apply(choices: [UUID: ReviewChoice])
 }

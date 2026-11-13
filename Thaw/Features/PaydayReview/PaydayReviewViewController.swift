@@ -29,6 +29,14 @@ final class PaydayReviewViewController: ScrollStackViewController, PaydayReviewV
         for row in content.rows {
             stack.addArrangedSubview(makeRow(for: row))
         }
+        if !content.quickRows.isEmpty {
+            let header = SectionHeaderView(title: content.quickTitle)
+            stack.addArrangedSubview(header)
+            stack.setCustomSpacing(8, after: header)
+            for row in content.quickRows {
+                stack.addArrangedSubview(makeRow(for: row))
+            }
+        }
 
         cta.accessibilityIdentifier = "review.done"
         cta.addAction(UIAction { [weak self] _ in self?.presenter?.tapCTA() }, for: .touchUpInside)
@@ -46,9 +54,8 @@ final class PaydayReviewViewController: ScrollStackViewController, PaydayReviewV
         heading.compactAlignment = .firstBaseline
         heading.spacing = 12
 
+        // Wraps rather than truncating: a one-line quote was reported as clipped text by the accessibility audit.
         let reason = makeLabel(model.reasonText, font: ThawFont.body(14), color: Theme.inkSecondary)
-        reason.numberOfLines = traitCollection.preferredContentSizeCategory.isAccessibilityCategory ? 0 : 1
-        reason.lineBreakMode = .byTruncatingTail
 
         let summary = UIStackView(arrangedSubviews: [heading, reason])
         summary.axis = .vertical
@@ -77,6 +84,10 @@ final class PaydayReviewViewController: ScrollStackViewController, PaydayReviewV
         meterCard?.update(fraction: summary.fraction, isOver: summary.isOver,
                           statusText: summary.statusText, animated: animated)
         cta.configuration?.title = summary.ctaTitle
+    }
+
+    func setCTAEnabled(_ enabled: Bool) {
+        cta.isEnabled = enabled
     }
 
     func playSuccessFeedback() {
