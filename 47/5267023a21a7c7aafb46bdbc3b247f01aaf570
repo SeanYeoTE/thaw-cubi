@@ -1,0 +1,22 @@
+Thaw/Services/WantStore.swift
+  s_2764fa3a700550::t_cf4d5770a7fe29 107,109-112,116-129
+  s_2764fa3a700550::t_496b675c60b1e0 130-131
+ThawTests/BackendStateTests.swift
+  s_2764fa3a700550::t_298f007c8897f0 243-257
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "475267023a21a7c7aafb46bdbc3b247f01aaf570",
+  "prompts": {},
+  "sessions": {
+    "s_2764fa3a700550": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "5ec068fd-afaf-4a1a-bf2b-3276c50d73a4",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
