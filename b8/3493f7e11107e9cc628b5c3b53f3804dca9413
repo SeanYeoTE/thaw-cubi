@@ -1,0 +1,127 @@
+Thaw/Features/StillWantIt/StillWantItContracts.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 23-24,38
+docs/qa/sprint-13-report.md
+  s_0b792c0b36a370::t_3fc7e128d3b50b 1-91
+README.md
+  s_0b792c0b36a370::t_3fc7e128d3b50b 3,5,7-9,11,13-20,22,24,26-28,30,32,34-38,40-48,50,52,54-60,62,64,66,68-74,76-80,82,84,86,88,90,92-98,100-109
+.github/workflows/pages.yml
+  s_0b792c0b36a370::t_3fc7e128d3b50b 1-33
+Thaw/App/AppDelegate.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 14,18-20
+site/favicon.svg
+  s_0b792c0b36a370::t_3fc7e128d3b50b 1
+Thaw/DesignSystem/CubiMotion.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 49-50,95-97
+Thaw/Features/PaydayReview/PaydayReviewPresenter.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 8,11,22-26,28-29,35-39,44,50-52,63,72,76-89,91,94
+Thaw/Features/PaydayReview/PaydayReviewViewController.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 32-39,57,89-90
+  s_0b792c0b36a370::t_f4a71b0c9efe2e 91-92
+Thaw/Features/Saved/SavedContracts.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 55-59
+site/privacy.html
+  s_0b792c0b36a370::t_3fc7e128d3b50b 1-92
+Thaw/Features/Shared/AdaptiveViews.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 9-13,39
+Thaw/Features/StillWantIt/StillWantItPresenter.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 9-12,25-30,38,40-41,47,49-50,55-57,62,66-74,77,81-82,87,90-93
+Thaw/Services/NotificationScheduler.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 10-20,30-31,62-63,98,102-121,147-174,186,189-191,197-205,207-210
+docs/design/README.md
+  s_0b792c0b36a370::t_3fc7e128d3b50b 13-28
+Thaw/Models/FunMoneyPlan.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 1-69
+Thaw/Features/Payday/PaydayPresenter.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 61,72,74-76,82,84-86,88,101,112,122-128,135-136,139-141,143-144
+Thaw/DesignSystem/ThawListScreen.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 26-42,53-67,91-93,99,103-105,107-108,114-115,117-120,144-149,179-180,189-195
+Thaw/Features/Saved/SavedViewController.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 61-72,218,260,297,406,422,440-443,445-465
+ThawTests/CubiMotionTests.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 31-35,40-54
+  s_0b792c0b36a370::t_999c0417eb9392 55
+ThawTests/PresenterStillWantItTests.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 10,16,22,90-92,95,100-145
+  s_0b792c0b36a370::t_631155a3a325b8 146
+ThawUITests/PersonaTests.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 59-62,65-83,108,120,149,167-174,188-196,198-209,211,213-223,236,238
+ThawTests/PresenterPaydayReviewTests.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 11,16,22,33-42,59-65,67-68,73-116
+  s_0b792c0b36a370::t_b82d8ce95d3091 117
+Thaw.xcodeproj/project.pbxproj
+  s_0b792c0b36a370::t_3fc7e128d3b50b 24,58,111,143,145,220,288,290-291,553,582,584,595,793,893,923,925,936
+Thaw/Features/AddWant/AddWantPresenter.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 126-129,151-165
+  s_0b792c0b36a370::t_60fbf3cdd67d0d 166
+ThawTests/PresenterAddWantTests.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 1,34,40-43,328-331,338,364-461
+  s_0b792c0b36a370::t_9427a6389c9a9d 462
+ThawTests/ThawColumnTests.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 33-125
+Thaw/Features/PaydayReview/ReviewChoiceControl.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 26,46,58-59,61
+site/main.js
+  s_0b792c0b36a370::t_3fc7e128d3b50b 1-26
+Thaw/Features/PaydayReview/PaydayReviewInteractor.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 14-16,18
+ThawTests/IntegrationReviewTests.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 1-97
+Thaw/Features/PaydayReview/PaydayReviewContracts.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 29,31-33,48-49,63
+ThawUITests/UITestSupport.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 15-39
+Thaw/Features/StillWantIt/StillWantItInteractor.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 15
+Thaw/DesignSystem/Theme.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 59-61,63
+Thaw/Features/Home/HomeViewController.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 28,118-121,282,292,298
+Thaw/Features/StillWantIt/StillWantItViewController.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 105-108
+site/styles.css
+  s_0b792c0b36a370::t_3fc7e128d3b50b 1-183
+Thaw/App/Reminders.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 3-9,18,25-37,40-45,49-53,55,58,62-66,69,73-83
+  s_0b792c0b36a370::t_ab19bede0ad21d 84
+Thaw/Features/PaydaySetup/SettingsViewController.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 19-20
+ThawTests/NotificationSchedulingTests.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 1-202
+ThawTests/PresenterHomeTests.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 316-355
+site/index.html
+  s_0b792c0b36a370::t_3fc7e128d3b50b 1-251
+site/support.html
+  s_0b792c0b36a370::t_3fc7e128d3b50b 1-99
+ThawTests/PresenterPaydayTests.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 197-198,285-417
+Thaw/App/ReviewRouter.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 3-43,47,56-60,65-70,75-99
+Thaw/Features/AddWant/AddWantViewController.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 5-7,13,18-20,34-36,49,54,82,121-122,140-143,174-177,195-231,256,274,278-292,350,353,361,364-374,389
+  s_0b792c0b36a370::t_ce92e7e7250e49 71-74
+ThawTests/ReviewRouterTests.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 1-94
+site/README.md
+  s_0b792c0b36a370::t_3fc7e128d3b50b 1-38
+ThawUITests/AccessibilityAuditTests.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 24-27,46-50,53,75-79,83-86
+ThawUITests/ReviewFlowUITests.swift
+  s_0b792c0b36a370::t_3fc7e128d3b50b 35-40,88-97,100,116,137,155,168,170
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b83493f7e11107e9cc628b5c3b53f3804dca9413",
+  "prompts": {},
+  "sessions": {
+    "s_0b792c0b36a370": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "cbd386d5-7de1-489c-8c71-86144eadca73",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
