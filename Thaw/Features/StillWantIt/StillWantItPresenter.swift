@@ -6,7 +6,10 @@ final class StillWantItPresenter: StillWantItPresenterProtocol {
     private let router: StillWantItRouterProtocol
     private let onFinish: (() -> Void)?
     private var index = 0
-    private var boughtTotal: Decimal = 0
+    /// Wants bought in this session only; earlier buys this payday aren't netted from fun money.
+    private var bought: [Want] = []
+    /// True while a decision is applied (the Let go moment) or the screen is leaving.
+    private var isBusy = false
 
     // Explicit deinit: the synthesized one on a MainActor class with weak refs corrupts the heap in the test host.
     deinit {}
@@ -19,7 +22,12 @@ final class StillWantItPresenter: StillWantItPresenterProtocol {
         self.onFinish = onFinish
     }
 
-    private var current: Want { interactor.wants[index] }
+    private var isFinished: Bool { index >= interactor.wants.count }
+
+    /// The want on screen; nil once every want is decided.
+    private var current: Want? {
+        interactor.wants.indices.contains(index) ? interactor.wants[index] : nil
+    }
 
     func viewDidLoad() {
         guard !interactor.wants.isEmpty else { return }
@@ -27,43 +35,62 @@ final class StillWantItPresenter: StillWantItPresenterProtocol {
     }
 
     func tapLetGo() {
-        let want = current
+        guard let want = beginDecision() else { return }
         interactor.skip(want)
+        // Publish straight away so other tabs update during the moment, not after it.
+        interactor.publishChange()
         let line = CubiMood.proudLine(amount: Formatting.sgd(want.price))
         view?.showSkipMoment(line: line) { [weak self] in self?.advance() }
     }
 
     func tapBuy() {
-        let want = current
+        guard let want = beginDecision() else { return }
         interactor.buy(want)
-        boughtTotal += want.price
+        interactor.publishChange()
+        bought.append(want)
         advance()
     }
 
     func tapWait() {
-        interactor.wait(current)
+        guard let want = beginDecision() else { return }
+        interactor.wait(want)
+        interactor.publishChange()
         advance()
     }
 
     func tapClose() {
+        guard !isFinished else { return }
         router.dismiss(completion: nil)
     }
 
+    /// The want to decide, or nil when a decision is already running or every want is decided.
+    private func beginDecision() -> Want? {
+        guard !isBusy, let want = current else { return nil }
+        isBusy = true
+        view?.setActionsEnabled(false)
+        return want
+    }
+
+    /// Navigation only: the decision is already written and published.
     private func advance() {
         index += 1
-        interactor.publishChange()
-        if index >= interactor.wants.count {
+        if isFinished {
             router.dismiss(completion: onFinish)
         } else {
             render()
+            isBusy = false
+            view?.setActionsEnabled(true)
         }
     }
 
     private func render() {
-        let want = current
+        guard let want = current else { return }
         let budget = interactor.budget
         let reason = want.reason.isEmpty ? "No reason written." : "\u{201C}\(want.reason)\u{201D}"
-        let summary = FunMoneySummary.make(keptPrices: [boughtTotal, want.price], budget: budget)
+        // Spoken-for if this want is bought too; quick thaws don't count against fun money (D4).
+        let plan = FunMoneyPlan.make(wants: bought + [want], funMoney: budget,
+                                     timerThreshold: interactor.timerThreshold)
+        let summary = FunMoneySummary(kept: plan.paydayTotal, budget: plan.funMoney)
         let count = interactor.wants.count
         view?.render(StillWantItViewModel(
             progressText: count > 1 ? "\(index + 1) of \(count)" : "",

@@ -56,19 +56,31 @@ final class PersonaTests: XCTestCase {
         tapWhenReady(t, "text \(label)")
     }
 
-    /// Opens the Add sheet from Cooling and types the fields. Needs re-check after U4 (new Add/Edit sheet).
+    @MainActor var nameField: XCUIElement { app.element(id: "addwant.name") }
+    @MainActor var priceField: XCUIElement { app.element(id: "addwant.price") }
+
+    /// Opens the Add sheet from Cooling and types the fields.
     @MainActor func addWant(name: String, price: String, reason: String = "") {
         tapID("home.add", label: "Add a want")
-        let fields = app.textFields
-        XCTAssertTrue(fields.element(boundBy: 0).waitForExistence(timeout: 8), "[\(persona)] add sheet missing")
-        fields.element(boundBy: 0).tap(); fields.element(boundBy: 0).typeText(name)
-        if !price.isEmpty {
-            XCTAssertGreaterThan(fields.count, 1, "[\(persona)] price field missing")
-            fields.element(boundBy: 1).tap(); fields.element(boundBy: 1).typeText(price)
-        }
-        if !reason.isEmpty, app.textViews.count > 0 {
-            app.textViews.element(boundBy: 0).tap(); app.textViews.element(boundBy: 0).typeText(reason)
-        }
+        XCTAssertTrue(nameField.waitForExistence(timeout: 8), "[\(persona)] add sheet missing")
+        nameField.tap(); nameField.typeText(name)
+        if !price.isEmpty { type(price, into: priceField, "price field") }
+        if !reason.isEmpty { type(reason, into: app.element(id: "addwant.reason"), "reason field") }
+    }
+
+    @MainActor func type(_ text: String, into field: XCUIElement, _ what: String) {
+        XCTAssertTrue(field.waitForExistence(timeout: 8), "[\(persona)] \(what) missing")
+        field.tap(); field.typeText(text)
+    }
+
+    /// Waits for the Add sheet to close after a valid submit.
+    @MainActor func waitForSheetToClose() {
+        XCTAssertTrue(nameField.waitForNonExistence(timeout: 8), "[\(persona)] add sheet did not close")
+    }
+
+    /// Waits for the app to settle (XCUITest waits for idle before resolving a query); for screenshots only.
+    @MainActor func settle() {
+        _ = app.tabBars.firstMatch.waitForExistence(timeout: 2)
     }
 
     @MainActor func finishOnboarding() {
@@ -93,7 +105,7 @@ final class PersonaTests: XCTestCase {
         shot("onboarding-payday")
         tap("Last working day"); shot("payday-last-working-day")
         tap("Same date every month")
-        app.buttons["Increment"].firstMatch.tapIfExists()
+        tapWhenReady(app.buttons["Increment"].firstMatch, "payday day stepper")
         shot("payday-adjusted")
         finishOnboarding()
         waitForCoolingCard("Mechanical keyboard"); shot("cooling-home")
@@ -105,6 +117,7 @@ final class PersonaTests: XCTestCase {
         addWant(name: "Film camera", price: "250", reason: "Want to take photos on my trip")
         shot("add-want-filled")
         tap("Add to Thaw")
+        waitForSheetToClose()
         waitForCoolingCard("Film camera"); shot("cooling-with-new-want")
         tapText("Film camera")
         XCTAssertTrue(app.buttons["BackButton"].waitForExistence(timeout: 8), "new want detail did not open")
@@ -133,9 +146,7 @@ final class PersonaTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(rows.count, 2, "thawed fixture should list several wants to review")
         tapID("review.wait"); shot("review-wait-one")
         tapID("review.keep"); shot("review-keep-one")
-        let done = app.element(id: "review.done")
-        let cta = done.exists ? done : button("Keep")
-        tapWhenReady(cta, "review confirm button")
+        tapID("review.done")
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10), "review did not dismiss")
         shot("after-review")
         tapTab("Stats"); shot("stats-after-review")
@@ -153,12 +164,14 @@ final class PersonaTests: XCTestCase {
         addWant(name: "Sneakers", price: "")
         shot("add-want-no-price")
         tap("Add to Thaw")
-        // Exploratory: a want without a price may prompt or be rejected.
-        sleep(1); shot("after-add-no-price")
-        if app.textFields.count > 1 {
-            app.textFields.element(boundBy: 1).tap(); app.textFields.element(boundBy: 1).typeText("120")
-            tap("Add to Thaw")
-        }
+        // A want needs a price: the sheet stays open with an error until one is entered.
+        let error = app.staticTexts["Enter a price above S$0."]
+        XCTAssertTrue(error.waitForExistence(timeout: 8), "[\(persona)] missing-price error not shown")
+        XCTAssertTrue(nameField.exists, "[\(persona)] sheet should stay open without a price")
+        shot("after-add-no-price")
+        type("120", into: priceField, "price field")
+        tap("Add to Thaw")
+        waitForSheetToClose()
         waitForCoolingCard("Sneakers"); shot("home-one-want")
         tapTab("Stats"); shot("stats")
         tapTab("Settings"); shot("settings")
@@ -172,25 +185,42 @@ final class PersonaTests: XCTestCase {
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10), "history fixture should skip onboarding")
         shot("launch-with-history")
         tapID("home.add", label: "Add a want")
-        tap("Add to Thaw"); shot("empty-submit")
-        XCTAssertTrue(app.textFields.firstMatch.exists, "empty submit should keep the sheet open")
-        app.textFields.element(boundBy: 0).tap()
-        app.textFields.element(boundBy: 0).typeText(String(repeating: "Supercalifragilistic 🔥 ", count: 12))
-        app.textFields.element(boundBy: 1).tap()
-        app.textFields.element(boundBy: 1).typeText("99999999999999999999")
+        XCTAssertTrue(nameField.waitForExistence(timeout: 8), "[\(persona)] add sheet missing")
+        tap("Add to Thaw")
+        XCTAssertTrue(app.staticTexts["Add a name for the item."].waitForExistence(timeout: 8),
+                      "[\(persona)] empty submit should show the name error")
+        XCTAssertTrue(nameField.exists, "[\(persona)] empty submit should keep the sheet open")
+        shot("empty-submit")
+        nameField.tap()
+        nameField.typeText(String(repeating: "Supercalifragilistic 🔥 ", count: 12))
+        type("99999999999999999999", into: priceField, "price field")
         shot("absurd-inputs")
-        tap("Add to Thaw"); sleep(1); shot("absurd-submitted")
-        // Exploratory from here: outcomes of absurd input are not yet specified.
-        if app.alerts.count > 0 { app.alerts.buttons.firstMatch.tap() }
-        if app.textFields.count > 1 {
-            app.textFields.element(boundBy: 1).tap()
-            app.textFields.element(boundBy: 1).typeText("-5abc!@#")
+        tap("Add to Thaw")
+        // Exploratory from here: outcomes of absurd input are not yet specified. Wait for the sheet to either
+        // close or show an error, instead of sleeping, then branch on the settled state.
+        let closed = NSPredicate(format: "exists == false")
+        let sheetClosed = XCTNSPredicateExpectation(predicate: closed, object: nameField)
+        let anyError = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == true"),
+                                                 object: app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@ OR label BEGINSWITH %@", "Enter a price", "Add a name")).firstMatch)
+        _ = XCTWaiter.wait(for: [sheetClosed, anyError], timeout: 8, enforceOrder: false)
+        shot("absurd-submitted")
+        if nameField.exists {
+            priceField.tap()
+            priceField.typeText("-5abc!@#")
             shot("negative-price")
-            tap("Add to Thaw"); sleep(1); shot("negative-price-submitted")
+            tap("Add to Thaw"); settle(); shot("negative-price-submitted")
         }
-        if app.textFields.count > 0 {
-            app.swipeDown(); sleep(1); shot("swipe-dismiss-attempt")
-            if app.alerts.count > 0 { shot("discard-alert"); app.alerts.buttons["Discard"].tap() }
+        if nameField.exists {
+            // A sheet with input asks before discarding, whether swiped down or closed.
+            app.swipeDown()
+            let discard = app.dialogButton("Discard")
+            if !discard.waitForExistence(timeout: 3) {
+                tapWhenReady(app.navigationBars.buttons["Cancel"].firstMatch, "Add sheet Cancel button")
+            }
+            XCTAssertTrue(discard.waitForExistence(timeout: 8), "[\(persona)] discard confirmation missing")
+            shot("discard-confirmation")
+            discard.tap()
+            XCTAssertTrue(nameField.waitForNonExistence(timeout: 8), "[\(persona)] add sheet did not close after Discard")
         }
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 8), "tab bar missing after sheet")
         for _ in 0..<15 { for t in ["Stats", "Settings", "Cooling"] where app.tab(t).exists { app.tab(t).tap() } }
@@ -203,9 +233,9 @@ final class PersonaTests: XCTestCase {
         shot("settings-maxed")
         for _ in 0..<40 { for b in app.buttons.matching(identifier: "Decrement").allElementsBoundByIndex { b.tapIfExists() } }
         shot("settings-minned")
-        XCUIDevice.shared.orientation = .landscapeLeft; sleep(1); shot("landscape-settings")
+        XCUIDevice.shared.orientation = .landscapeLeft; settle(); shot("landscape-settings")
         tapTab("Cooling"); shot("landscape-home")
-        XCUIDevice.shared.orientation = .portrait; sleep(1)
+        XCUIDevice.shared.orientation = .portrait; settle()
         app.terminate(); app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10), "relaunch did not reach tabs (persistence)")
         shot("relaunch-persisted")

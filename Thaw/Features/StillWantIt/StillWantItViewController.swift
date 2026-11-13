@@ -102,6 +102,10 @@ final class StillWantItViewController: ScrollStackViewController, StillWantItVie
         }
     }
 
+    func setActionsEnabled(_ enabled: Bool) {
+        for button in [letGo, buy, wait] { button.isEnabled = enabled }
+    }
+
     @objc private func closeTapped() {
         presenter?.tapClose()
     }

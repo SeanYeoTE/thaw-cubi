@@ -28,9 +28,29 @@ final class CubiMotionTests: XCTestCase {
                 XCTAssertEqual(step.animation.repeatCount, .infinity, "\(mood)")
                 let parts = (step.animation as? CAAnimationGroup)?.animations ?? [step.animation]
                 for case let property as CAPropertyAnimation in parts {
-                    XCTAssertTrue(property.isAdditive, "\(mood)")
+                    if property.keyPath == "opacity" {
+                        XCTAssertFalse(property.isAdditive, "\(mood) opacity must be absolute to show")
+                    } else {
+                        XCTAssertTrue(property.isAdditive, "\(mood) \(property.keyPath ?? "")")
+                    }
                 }
             }
+        }
+    }
+
+    @MainActor func testIdleFadesUseAbsoluteOpacity() {
+        let fades = [CubiMood.proud, .thawing].flatMap { mood in
+            CubiMotion.idleSteps(for: mood, reduceMotion: false).flatMap { step in
+                ((step.animation as? CAAnimationGroup)?.animations ?? [step.animation])
+                    .compactMap { $0 as? CABasicAnimation }
+                    .filter { $0.keyPath == "opacity" }
+            }
+        }
+        XCTAssertEqual(fades.count, 2, "the proud twinkle and the thawing drip both fade")
+        for fade in fades {
+            XCTAssertFalse(fade.isAdditive)
+            XCTAssertEqual(fade.fromValue as? Float, 1)
+            XCTAssertLessThan(fade.toValue as? Float ?? 1, 1)
         }
     }
 }

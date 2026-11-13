@@ -16,6 +16,8 @@ final class SettingsViewController: ThawListViewController, SettingsViewProtocol
 
     override var listBottomAnchor: NSLayoutYAxisAnchor { view.keyboardLayoutGuide.topAnchor }
 
+    override var listAppearance: ThawListAppearance { .insetGrouped }
+
     override func sectionLayout(at index: Int, environment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
         let configuration = SettingsListStyle.listConfiguration(footer: section(at: index)?.footer != nil)
         return ThawColumn.insetGroupedSection(configuration, environment: environment)

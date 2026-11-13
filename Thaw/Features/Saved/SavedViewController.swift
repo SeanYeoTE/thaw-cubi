@@ -58,6 +58,18 @@ final class SavedViewController: ThawListViewController, SavedViewProtocol {
         navigationController?.navigationBar.prefersLargeTitles = true
         collectionView.delegate = self
         dataSource = makeDataSource()
+        // The range picker and chart take fixed fonts, so rebuild the top cell when the text size changes.
+        registerForTraitChanges([UITraitPreferredContentSizeCategory.self]) { (self: SavedViewController, _) in
+            self.reconfigureTop()
+        }
+    }
+
+    private func reconfigureTop() {
+        guard let dataSource else { return }
+        var snapshot = dataSource.snapshot()
+        guard snapshot.itemIdentifiers.contains(.top) else { return }
+        snapshot.reconfigureItems([.top])
+        dataSource.apply(snapshot, animatingDifferences: false)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -203,6 +215,7 @@ final class SavedViewController: ThawListViewController, SavedViewProtocol {
         }
         if let history = model.history {
             let filter = FilterChipBar(titles: history.filterTitles, selectedIndex: history.selectedFilter)
+            filter.accessibilityIdentifier = "stats.filter"
             filter.onChange = { [weak self] index in self?.presenter?.selectHistoryFilter(at: index) }
             stack.addArrangedSubview(filter)
         }
@@ -244,6 +257,7 @@ final class SavedViewController: ThawListViewController, SavedViewProtocol {
         column.spacing = 0
         column.isAccessibilityElement = true
         column.accessibilityLabel = hero.spoken
+        column.accessibilityIdentifier = "stats.hero"
 
         let row = AdaptiveStackView(arrangedSubviews: [avatar, column])
         row.compactAlignment = .center
@@ -280,7 +294,7 @@ final class SavedViewController: ThawListViewController, SavedViewProtocol {
 
     private func savedChart(_ chart: SavedChartViewModel) -> UIView {
         UIHostingConfiguration {
-            SavedChartView(months: chart.months, label: chart.accessibilityLabel)
+            SavedChartView(months: chart.months, label: chart.accessibilityLabel, value: chart.accessibilityValue)
         }
         .margins(.all, 0)
         .makeContentView()
@@ -302,7 +316,6 @@ final class SavedViewController: ThawListViewController, SavedViewProtocol {
         let label = UILabel()
         label.text = text
         label.font = font
-        label.adjustsFontForContentSizeCategory = true
         label.textColor = color
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
@@ -390,6 +403,7 @@ private final class MonthHeaderCell: UICollectionViewCell {
 private struct SavedChartView: View {
     let months: [SavedMonthlyAmount]
     let label: String
+    let value: String
     @State private var rawSelection: Date?
     @State private var selectedMonth: Date?
 
@@ -405,7 +419,7 @@ private struct SavedChartView: View {
                 .annotation(position: .top, overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
                     if point.month == highlightedMonth {
                         Text(point.selectionText)
-                            .font(Font(ThawFont.body(13, weight: .semibold)))
+                            .font(.footnote.weight(.semibold).monospacedDigit())
                             .foregroundStyle(Color(Theme.ink))
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
@@ -423,6 +437,31 @@ private struct SavedChartView: View {
         }
         .padding(.top, 28)
         .frame(height: 180)
+        // One element covering the whole chart, so the axis labels and the selection label sit inside an
+        // accessibility frame (the audit flagged them as potentially inaccessible text). The value reads every
+        // month and the descriptor keeps Audio Graph.
+        .accessibilityElement(children: .ignore)
         .accessibilityLabel(label)
+        .accessibilityValue(value)
+        .accessibilityIdentifier("stats.chart")
+        .accessibilityChartDescriptor(SavedChartDescriptor(title: label, months: months))
+    }
+}
+
+private struct SavedChartDescriptor: AXChartDescriptorRepresentable {
+    let title: String
+    let months: [SavedMonthlyAmount]
+
+    func makeChartDescriptor() -> AXChartDescriptor {
+        let names = months.map(\.spokenMonth)
+        let maxAmount = max(months.map(\.amount).max() ?? 0, 1)
+        let xAxis = AXCategoricalDataAxisDescriptor(title: "Month", categoryOrder: names)
+        let yAxis = AXNumericDataAxisDescriptor(title: "Saved", range: 0...maxAmount, gridlinePositions: []) { amount in
+            "S$\(Int(amount.rounded()))"
+        }
+        let series = AXDataSeriesDescriptor(name: title, isContinuous: false, dataPoints: months.map {
+            AXDataPoint(x: $0.spokenMonth, y: $0.amount, label: $0.spokenAmount)
+        })
+        return AXChartDescriptor(title: title, summary: nil, xAxis: xAxis, yAxis: yAxis, additionalAxes: [], series: [series])
     }
 }

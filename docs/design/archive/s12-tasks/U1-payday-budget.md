@@ -1,12 +1,14 @@
 # U1: Payday tab, the budget decision
 
-Read [../README.md](../README.md) first for the working rules, copy rules and build command.
+> **Done.** Shipped in SeanYeoTE/thaw-cubi#19. Kept for history; the code is the source of truth. Fixes found in review: `docs/design/README.md` (s13).
+
+Read [../README.md](../s12-README.md) first for the working rules, copy rules and build command.
 
 **Owns:** `Thaw/Features/Payday`, `Thaw/App` (badge and notification routing), `ThawTests/PresenterPaydayTests.swift`.
 **Wave:** 1. **Product decision:** D2. Confirm the direction below with the user before building.
 
 ## Problem
-Look at the Payday panel in [../s11-screens.jpg](../s11-screens.jpg).
+Look at the Payday panel in [../../s11-screens.jpg](../../s11-screens.jpg).
 - **Most of the month the tab repeats Cooling.** It shows the same four wants under "Thawing this payday" that Cooling shows under "This payday".
 - **The budget line doesn't say what it means.** "S$702 of S$300" sits under a full orange bar, with no "S$402 over" and no hint about what to do.
 - **The rows don't show timing.** Payday rows show no days left, while quick-thaw rows do, so the two kinds read differently for the same want.

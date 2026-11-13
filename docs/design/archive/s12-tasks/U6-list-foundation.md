@@ -1,6 +1,8 @@
 # U6: Shared list foundation and polish
 
-Read [../README.md](../README.md) first for the working rules and build command.
+> **Done.** Shipped in SeanYeoTE/thaw-cubi#19. Kept for history; the code is the source of truth. Fixes found in review: `docs/design/README.md` (s13).
+
+Read [../README.md](../s12-README.md) first for the working rules and build command.
 
 **Owns:** `Thaw/DesignSystem`, `Thaw/Features/Shared` (except `WantStore+Review.swift`), `Thaw/Features/Home`, `Thaw/Features/Saved`, `Thaw/Features/PaydaySetup`. For the `Thaw/Features/Payday` view controller, coordinate with whoever merged U1; it is free once U1 is merged.
 **Wave:** 2. Start only after U1 to U4 are merged, because this touches files they used.
