@@ -313,4 +313,44 @@ final class PresenterHomeTests: XCTestCase {
         XCTAssertEqual(relaunched.filter, .all)
         XCTAssertEqual(relaunched.sort, .soonest)
     }
+
+    /// Launching on another tab (`-thawTab payday`) leaves Home's view unloaded; a decision made there posts a
+    /// DataChange, which used to render into the unloaded view and trap on the nil diffable data source.
+    func testDataChangeBeforeHomeViewLoadsDoesNotCrash() {
+        let interactor = FakeInteractor()
+        interactor.cooling = [Fixture.want("Linen overshirt", 69), Fixture.want("Case", 24)]
+        let view = HomeViewController()
+        let presenter = HomePresenter(view: view, interactor: interactor, router: FakeRouter())
+        view.presenter = presenter
+
+        presenter.dataDidChange()
+        XCTAssertFalse(view.isViewLoaded, "Rendering must not force Home's view to load")
+
+        view.loadViewIfNeeded()
+        view.beginAppearanceTransition(true, animated: false)
+        view.endAppearanceTransition()
+        presenter.dataDidChange()
+        XCTAssertTrue(view.isViewLoaded)
+    }
+
+    /// Mirrors Let go: the want moves from this payday to a later one, and must then sit in exactly one section.
+    func testEachWantAppearsInExactlyOneSectionAfterItMovesToLater() {
+        let (presenter, view, interactor, _) = make()
+        var shirt = Fixture.want("Linen overshirt", 69)
+        var keyboard = Fixture.want("Keyboard", 189)
+        shirt.thawsAt = .now.addingTimeInterval(-3_600)
+        keyboard.thawsAt = shirt.thawsAt
+        interactor.cooling = [shirt, keyboard]
+        presenter.viewWillAppear()
+
+        var moved = shirt
+        moved.thawsAt = interactor.nextPayday.addingTimeInterval(86_400 * 30)
+        interactor.cooling = [moved, keyboard]
+        presenter.dataDidChange()
+
+        let ids = view.models.last?.sections.flatMap(\.cards).map(\.id) ?? []
+        XCTAssertEqual(ids.count, Set(ids).count)
+        XCTAssertEqual(Set(ids), [shirt.id, keyboard.id])
+        XCTAssertEqual(view.models.last?.sections.map(\.title), ["This payday", "Later"])
+    }
 }
