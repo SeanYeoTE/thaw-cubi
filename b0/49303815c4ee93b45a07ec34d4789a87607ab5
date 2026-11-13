@@ -1,0 +1,21 @@
+docs/qa/sprint-13-report.md
+  s_d46021aedd5bb4::t_6ae8fc43b223c8 1-54
+docs/design/README.md
+  s_d46021aedd5bb4::t_8556bb0037c74e 13-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b049303815c4ee93b45a07ec34d4789a87607ab5",
+  "prompts": {},
+  "sessions": {
+    "s_d46021aedd5bb4": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "5c55ebcd-e546-4996-bc46-0de92740308b",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
