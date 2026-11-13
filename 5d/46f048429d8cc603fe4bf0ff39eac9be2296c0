@@ -1,0 +1,19 @@
+docs/design/README.md
+  s_d1f75f2d3885ab::t_2822c5aced4c48 61,63,67-71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5d46f048429d8cc603fe4bf0ff39eac9be2296c0",
+  "prompts": {},
+  "sessions": {
+    "s_d1f75f2d3885ab": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "5d181abe-2f88-40d0-91b8-deab55040ff8",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
