@@ -1,0 +1,21 @@
+site/README.md
+  s_77b8e9a180f151::t_47ce3e8af7eff2 19,24,28
+site/index.html
+  s_77b8e9a180f151::t_0668012296e89f 84
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7eca06d4965176ac7a50cd22352db62b8a15f016",
+  "prompts": {},
+  "sessions": {
+    "s_77b8e9a180f151": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "be7e3205-824d-4d25-9bda-9b77a8049a26",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
