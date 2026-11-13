@@ -58,14 +58,17 @@ Full suite run on `main` at `8c5c8cf`, iPhone 17 Pro simulator:
 - **D2:** the Payday tab is about the budget decision. Quick thaws sit in their own section and are left out of the payday total.
 - **D3:** Item detail has two actions, **Let go · save S$X** (with confirmation) and **Decide now**. The standalone Wait button was removed.
 
-**To confirm with the user before building:**
+**Decided for s13** (13 Nov 2026, the recommendations, all reversible):
 
-| # | Question | Recommendation | Task |
+| # | Question | Decision | Task |
 |---|---|---|---|
 | D4 | Do ready quick thaws count against fun money in the Payday review and in "Still want it?"? | **No, to match D2.** Show them in the review as their own group. Their choices still apply, but they don't move the meter or the Keep defaults. | V1 |
 | D5 | When a want overflows the budget, do later, cheaper wants still "fit"? | **Yes, best fit in thaw order:** walk wants by `thawsAt`, keep any that still fit, wait the rest. Use the same rule for the Payday tab's Fits / Over split and the review's defaults. | V1 |
-| D6 | The Stats header became a dark hero card with a larger Cubi (from #20, not briefed). Keep it? | Keep it if it passes the audit, because it matches the Payday hero. Otherwise go back to the light header. | V2 |
-| D7 | Where should tapping a quick-thaw ("timer") notification go? Today it opens the whole review. | That want's "Still want it?" screen, or Item detail if it's already decided. | V5 |
+| D6 | The Stats header became a dark hero card with a larger Cubi (from #20, not briefed). Keep it? | **Keep**, provided every text colour on the card meets 4.5:1 and the audit passes. Otherwise go back to the light header. | V2 |
+| D7 | Where should tapping a quick-thaw ("timer") notification go? Today it opens the whole review. | **That want's "Still want it?" screen**, or Item detail if it's already decided. | V5 |
+| D8 | Should the payday notification set an app icon badge? | **No.** The in-app Payday tab badge is enough. | V5 |
+
+**Process for s13:** wave-1 agents build and run unit tests only. UI tests, audits, screenshots and simulator checks run once, on the merged result (wave 2). Agents don't commit `Thaw.xcodeproj`; it's regenerated with `xcodegen` after the merge.
 
 ## Working rules (unchanged)
 
