@@ -1,0 +1,21 @@
+Thaw/Features/AddWant/AddWantPresenter.swift
+  s_0b792c0b36a370::t_a492e1f57dee44 34,42-43,48-49,82
+Thaw/Features/AddWant/AddWantViewController.swift
+  s_0b792c0b36a370::t_a492e1f57dee44 13-14,69,97,120-122,127,261,267,294-295
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1b4bf9f1c95b4bb09e044b7ca33c52c62d04e47f",
+  "prompts": {},
+  "sessions": {
+    "s_0b792c0b36a370": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "cbd386d5-7de1-489c-8c71-86144eadca73",
+        "model": "unknown"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
