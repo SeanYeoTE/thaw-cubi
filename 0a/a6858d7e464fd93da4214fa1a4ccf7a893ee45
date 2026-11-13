@@ -1,0 +1,31 @@
+Thaw/Features/Home/HomeViewController.swift
+  s_ce88981b813e8c::t_0c4f4b9573615e 28,118-121
+  s_875a7a9f4a6a06::t_f5a65e7b5b4a00 282,292,298
+ThawTests/PresenterHomeTests.swift
+  s_ce88981b813e8c::t_da422b8a96d6fc 316-338,343-355
+  s_ce88981b813e8c::t_23f9882e4dc88d 339-342
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0aa6858d7e464fd93da4214fa1a4ccf7a893ee45",
+  "prompts": {},
+  "sessions": {
+    "s_875a7a9f4a6a06": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "df0349bf-5da5-43d9-bdcc-308ba2374505",
+        "model": "openrouter/OpenRouter/anthropic/claude-opus-5.5"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    },
+    "s_ce88981b813e8c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "70bc3e4a-007b-42b6-af78-37864f8dd31c",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Sean <tseensean@gmail.com>"
+    }
+  }
+}
