@@ -1,12 +1,14 @@
 # U3: Item detail
 
-Read [../README.md](../README.md) first for the working rules, copy rules and build command.
+> **Done.** Shipped in SeanYeoTE/thaw-cubi#19. Kept for history; the code is the source of truth. Fixes found in review: `docs/design/README.md` (s13).
+
+Read [../README.md](../s12-README.md) first for the working rules, copy rules and build command.
 
 **Owns:** `Thaw/Features/ItemDetail`, `ThawTests/PresenterItemDetailTests.swift`.
 **Wave:** 1. **Product decision:** D3. Confirm with the user before building.
 
 ## Problem
-See the Item detail panel in [../s11-screens.jpg](../s11-screens.jpg). Today the screen stacks, top to bottom:
+See the Item detail panel in [../../s11-screens.jpg](../../s11-screens.jpg). Today the screen stacks, top to bottom:
 - a nav bar with the title "Item detail", which says nothing;
 - the name;
 - "S$420 · frozen Thu, 5 Nov";

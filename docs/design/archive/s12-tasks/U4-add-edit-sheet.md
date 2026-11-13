@@ -1,6 +1,8 @@
 # U4: Add and Edit sheet
 
-Read [../README.md](../README.md) first for the working rules, copy rules and build command.
+> **Done.** Shipped in SeanYeoTE/thaw-cubi#19. Kept for history; the code is the source of truth. Fixes found in review: `docs/design/README.md` (s13).
+
+Read [../README.md](../s12-README.md) first for the working rules, copy rules and build command.
 
 **Owns:** `Thaw/Features/AddWant`, `ThawTests/PresenterAddWantTests.swift`, `ThawTests/IntegrationEditTests.swift`.
 **Wave:** 1.
@@ -8,7 +10,7 @@ Read [../README.md](../README.md) first for the working rules, copy rules and bu
 **Careful:** the Share extension (`ThawShare/`) reuses this module for "Add to Thaw" from Safari. Don't edit `ThawShare/`, but check that sharing still works after your change (see Simulator check).
 
 ## Problem
-See the "Stats · tap a row" panel in [../s11-screens.jpg](../s11-screens.jpg). The sheet has:
+See the "Stats · tap a row" panel in [../../s11-screens.jpg](../../s11-screens.jpg). The sheet has:
 - **Explainer paragraphs:**
   - Add: "Thaw will read this back to you when it thaws. It joins your Cooling list…" / "Items under S$30…".
   - Edit: "You can change the name, price and reason. Moving the price across S$30…".

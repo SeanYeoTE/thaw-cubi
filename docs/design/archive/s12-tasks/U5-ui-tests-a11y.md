@@ -1,6 +1,8 @@
 # U5: UI tests and accessibility audit
 
-Read [../README.md](../README.md) first for the working rules and build command.
+> **Done.** Shipped in SeanYeoTE/thaw-cubi#19. Kept for history; the code is the source of truth. Fixes found in review: `docs/design/README.md` (s13).
+
+Read [../README.md](../s12-README.md) first for the working rules and build command.
 
 **Owns:** `ThawUITests`, `docs/screenshots`.
 **Wave:** phase 1 in wave 1; phase 2 after wave 1 is merged.

@@ -1,49 +1,73 @@
-# Thaw design handover (s12)
+# Thaw design handover (s13: review fixes)
 
-The s11 redesign is finished: four tabs (Cooling · Payday · Stats · Settings), shared components and accessibility fixes, all in SeanYeoTE/thaw-cubi#18. [s11-screens.jpg](s11-screens.jpg) shows where the app is now.
+s12 shipped in SeanYeoTE/thaw-cubi#19, with Cubi changes in #20 and #21. A review on 12 Nov 2026 found a crash, a decision that can be applied twice, budget figures that disagree between screens, and 11 failing accessibility audits. A follow-up read of the notification code found that "Remind me tonight" is wiped by the next refresh, and that the different notification paths count different wants. s13 fixes those. It adds no new features.
 
-s12 finishes the job. It brings the remaining screens into the same style, makes the Payday tab about the budget decision, gets the review flow working end to end, and adds the testing s11 skipped. Six task docs follow; each can be handed to one agent cold.
+## Review results that set the scope
 
-## Before anyone starts
+Full suite run on `main` at `8c5c8cf`, iPhone 17 Pro simulator:
+- **Unit tests:** 233, all pass.
+- **UI tests:** 23 run, 12 fail:
+  - all 11 accessibility audits;
+  - `ReviewFlowUITests.testReviewCloseWithChangesAsksBeforeDiscarding`.
 
-1. **Already done:** #18 is merged into `main` (11 Nov 2026). `main` also has the UI test target and `-thawFixture thawed` from #17.
-2. **Base branch: `docs/s12-handover`.** It is `main` plus these handover docs. Every agent branches from it, in its own git worktree, named `feature/s12-<task>` (for example `feature/s12-u3-item-detail`). Commit prefix: `[s12]`.
-3. **Merging:** each task opens its PR against `main`. Whoever merges first brings the docs along; the rest are unaffected, because the docs are their only shared change.
+| # | Finding | Severity | Task |
+|---|---|---|---|
+| 1 | Crash: double-tap Buy or Wait on the last want in "Still want it?" | Must fix | V1 |
+| 2 | Double-tapping Done in the Payday review applies decisions twice; a Wait want moves two paydays | Must fix | V1 |
+| 3 | The Payday tab and the review disagree on the budget (quick thaws, cut-off rule, ordering) | Must fix | V1 |
+| 4 | Accessibility audit: 123× "Dynamic Type font sizes are partially unsupported", 1× text clipped (Payday review), 2× potentially inaccessible text (Stats) | Must fix | V2 (fonts, Stats, tests), V1 (clipped review text) |
+| 5 | UI test queries the review discard dialog as an alert; it is an action sheet | Must fix | V2 |
+| 6 | Cubi idle loops make opacity fades additive, so the star twinkle and drip fade never show | Must fix | V3 |
+| 7 | Drawn large title sits 20 pt inside the cards on iPad and wide screens (Cooling, Stats) | Should fix | V3 |
+| 8 | Reopening a decided want in Edit shows no thaw line, so it can return as already thawed without warning | Should fix | V3 |
+| 9 | The gap above Delete in the Edit sheet is likely lost (spacing attached to a hidden label) | Should fix | V3 |
+| 10 | After Let go in "Still want it?", other tabs refresh only after the Cubi moment ends | Should fix | V1 |
+| 11 | No s12 QA report, and D1–D3 weren't recorded | Process | This README, V4 |
+| 12 | "Remind me tonight" is wiped by the next `Reminders.refresh`, because `cancelAll()` removes every pending notification and the reminder is never rescheduled | Must fix | V5 |
+| 13 | The payday notification, the Payday tab's "Remind me tonight" and the notification's own "Remind me tonight" action count different wants | Must fix | V5 |
+| 14 | Notifications have been barely tested since sprint 3: no test of what gets scheduled or where a tap goes. The s11 change (a tap opens the Payday tab) has never been checked on a device. The notification handler also captures fun money once at launch. | Must fix | V5 |
 
 ## Tasks
 
 | ID | Doc | Owns (only edit these) | Wave |
 |---|---|---|---|
-| U1 | [Payday tab: the budget decision](tasks/U1-payday-budget.md) | `Thaw/Features/Payday`, `Thaw/App`, `ThawTests/PresenterPaydayTests.swift` | 1 |
-| U2 | [Review flow](tasks/U2-review-flow.md) | `Thaw/Features/PaydayReview`, `Thaw/Features/StillWantIt`, their presenter tests, `Thaw/Features/Shared/WantStore+Review.swift` | 1 |
-| U3 | [Item detail](tasks/U3-item-detail.md) | `Thaw/Features/ItemDetail`, `ThawTests/PresenterItemDetailTests.swift` | 1 |
-| U4 | [Add and Edit sheet](tasks/U4-add-edit-sheet.md) | `Thaw/Features/AddWant`, `ThawTests/PresenterAddWantTests.swift`, `ThawTests/IntegrationEditTests.swift` | 1 |
-| U5 | [UI tests and accessibility audit](tasks/U5-ui-tests-a11y.md) | `ThawUITests`, `docs/screenshots` | 1, then again in 2 |
-| U6 | [Shared list foundation and polish](tasks/U6-list-foundation.md) | `Thaw/DesignSystem`, `Thaw/Features/Shared` (except U2's file), `Thaw/Features/Home`, `Thaw/Features/Saved`, `Thaw/Features/PaydaySetup` | 2 |
+| V1 | [Review and budget correctness](tasks/V1-review-budget-correctness.md) | `Thaw/Features/Payday`, `Thaw/Features/PaydayReview`, `Thaw/Features/StillWantIt`, `Thaw/Models` (budget maths only), their presenter tests, a new `ThawTests/Integration*Review*Tests.swift` | 1 |
+| V2 | [Dynamic Type and UI tests](tasks/V2-dynamic-type-ui-tests.md) | `Thaw/DesignSystem/Theme.swift`, `Thaw/Features/Saved`, `ThawUITests`, `docs/screenshots` | 1, then a rerun in 2 |
+| V3 | [Cubi, title and Edit sheet polish](tasks/V3-polish.md) | `Thaw/DesignSystem/CubiMotion.swift`, `Thaw/DesignSystem/CubiView.swift`, `ThawTests/CubiMotionTests.swift`, `Thaw/DesignSystem/ThawListScreen.swift`, `ThawTests/ThawColumnTests.swift`, `Thaw/Features/AddWant`, `ThawTests/PresenterAddWantTests.swift` | 1 |
+| V5 | [Notifications](tasks/V5-notifications.md) | `Thaw/App`, `Thaw/Services/NotificationScheduler.swift`, `ThawTests/BackendNotificationTests.swift`, new `ThawTests/NotificationSchedulingTests.swift` and `ThawTests/ReviewRouterTests.swift` | 1 (step 4 count rule in 2, after V1) |
+| V4 | [s13 QA pass and report](tasks/V4-qa-report.md) | `docs/qa`, `docs/design/s11-screens.jpg` (replaced by `s13-screens.jpg`), the findings table in this README | 2 |
 
 **Waves:**
-- **Wave 1, all in parallel:** U1, U2, U3, U4, and U5 phase 1. None of them share files.
-- **Wave 2, after wave 1 is merged:** U6, and U5 phase 2 (rerun everything and extend the audit to the new screens).
+- **Wave 1, in parallel:** V1, V2, V3 and V5. No file is owned by more than one task.
+- **Wave 2, after wave 1 is merged:**
+  - V5 switches its notification counts to V1's single budget rule.
+  - V2 reruns the full UI and audit suite against the merged result. V2's font change can move layouts on V1's and V3's screens.
+  - V4 does the QA pass, including notifications.
 
-**If you need a file outside your list,** don't edit it. Write it in your report so the owner, or whoever merges, can make the change.
+**Setup:**
+- Base branch: `docs/s13-fixes` (`main` plus these docs).
+- Each agent works in its own git worktree on `feature/s13-<task>`, for example `feature/s13-v1-review`. Commit prefix: `[s13]`.
+- Open PRs against `main`.
 
-**`project.yml` belongs to the user.** Folders are synchronised, so new files under `Thaw/` are picked up after `xcodegen generate`.
+**Out of scope:** if you need a file outside your list, don't edit it. Write it in your report. `project.yml` belongs to the user.
 
-**New shared components:** in wave 1, build any new reusable view inside your own feature folder. U6 moves the ones worth sharing into `Thaw/DesignSystem`, which stops four agents editing `Components.swift` at once.
+## Product decisions
 
-**Accessibility identifiers:** keep the existing `accessibilityIdentifier`s working, because U5's UI tests rely on them. If you rename or remove one, list it in your report. Give new controls identifiers in the form `<screen>.<thing>`, for example `detail.wait` or `review.keep`.
+**Already made in s12** (built as recommended in #19, and now recorded here):
+- **D1:** the batch Payday review offers Keep · Wait · Let go.
+- **D2:** the Payday tab is about the budget decision. Quick thaws sit in their own section and are left out of the payday total.
+- **D3:** Item detail has two actions, **Let go · save S$X** (with confirmation) and **Decide now**. The standalone Wait button was removed.
 
-## Product decisions to confirm with the user
-
-These change behaviour, so each owner confirms with the user before building. The task docs give my recommendation.
+**To confirm with the user before building:**
 
 | # | Question | Recommendation | Task |
 |---|---|---|---|
-| D1 | The batch Payday review only offers **Keep** or **Wait**. Skipping (which is how you save money) happens only from a want's own page. Should the review offer **Let go** too? | Yes. Each review row gets Keep · Wait · Let go. | U2 |
-| D2 | What is the Payday tab for, most of the month? | The budget decision: how much is spoken for, how far over, and which wants push you over. It stops repeating Cooling's list. | U1 |
-| D3 | Item detail has three actions (Wait one more payday, Decide now, Skip it now). | Two clear actions: **Let go** (saves the money) and **Decide now**. "Wait one more payday" moves into the decision screen. | U3 |
+| D4 | Do ready quick thaws count against fun money in the Payday review and in "Still want it?"? | **No, to match D2.** Show them in the review as their own group. Their choices still apply, but they don't move the meter or the Keep defaults. | V1 |
+| D5 | When a want overflows the budget, do later, cheaper wants still "fit"? | **Yes, best fit in thaw order:** walk wants by `thawsAt`, keep any that still fit, wait the rest. Use the same rule for the Payday tab's Fits / Over split and the review's defaults. | V1 |
+| D6 | The Stats header became a dark hero card with a larger Cubi (from #20, not briefed). Keep it? | Keep it if it passes the audit, because it matches the Payday hero. Otherwise go back to the light header. | V2 |
+| D7 | Where should tapping a quick-thaw ("timer") notification go? Today it opens the whole review. | That want's "Still want it?" screen, or Item detail if it's already decided. | V5 |
 
-## Working rules (unchanged from s11)
+## Working rules (unchanged)
 
 - **VIPER**, as in `docs/contracts/sprint-4-viper.md`:
   - the view controller only does UIKit;
@@ -51,34 +75,30 @@ These change behaviour, so each owner confirms with the user before building. Th
   - the interactor wraps `WantStore` and `Reminders`;
   - the router wires the module and navigates.
 - Add an explicit `deinit {}` on MainActor classes that hold weak references.
-- **Live updates:** interactors observe `DataChange`. Every mutation is followed by `DataChange.post()` and `reminders.refresh(requestingPermission: false)`.
+- **Live updates:** every mutation is followed by `DataChange.post()` and `reminders.refresh(requestingPermission: false)`.
 - **Modals:**
-  - Use page sheets, except for onboarding.
+  - Use page sheets.
   - Every sheet has a close button and supports `accessibilityPerformEscape`.
-  - Sheets holding unsaved input set `isModalInPresentation` and ask before discarding.
+  - Sheets holding unsaved input set `isModalInPresentation` and confirm before discarding.
   - Dismiss only what you presented.
-- **Layout:** a 700 pt content column, `Theme.Spacing.screen` margins plus safe area. Light mode only.
-  - List screens draw their own large title, because the system one stays blank over a collection view until the first scroll. See `HomeViewController` and `SettingsViewController`.
+- **Layout:** a 700 pt column, `Theme.Spacing.screen` margins plus safe area. List screens use `ThawListViewController` for their drawn title and column. Light mode only.
 - **Colour:**
-  - `Theme.controlBorder` for the edges of interactive controls (3:1).
+  - `Theme.controlBorder` for interactive edges (3:1).
   - `Theme.timer` for quick-thaw tone on light backgrounds.
   - `Theme.border` only for decorative edges.
   - Never use colour as the only cue.
 - **Accessibility:**
   - Dynamic Type everywhere.
-  - Horizontal rows switch to stacked layouts at accessibility sizes.
-  - Touch targets are at least 44 pt.
-  - Visible text can be terse, but VoiceOver gets the full sentence.
+  - Stacked layouts at accessibility sizes.
+  - Touch targets of at least 44 pt.
+  - Full sentences for VoiceOver.
   - Anything reachable by swipe is also reachable by tap.
-
-## Copy rules
-
-1. One idea per line, one line per row. No status sentences on rows.
-2. Section headers carry shared context; don't repeat it on every row.
-3. Numbers over sentences: "14 days", "S$1,240", "3 ready". Captions are 1 to 3 words.
-4. Cubi says at most one short line per screen, and only when it adds something.
-5. No repeated advice. Hints appear once, in empty states.
-6. Explainer paragraphs under forms are a smell. If a rule needs explaining, show it in place, for example "Thaws on payday · 25 Nov" next to the price.
+- **Copy:**
+  - one line per row;
+  - numbers over sentences;
+  - at most one Cubi line per screen;
+  - no explainer paragraphs.
+- **Every action that changes data must be safe to tap twice.** Guard with a flag or by disabling the control until the screen leaves. This is new in s13, from findings 1 and 2.
 
 ## Build and check
 
@@ -87,29 +107,25 @@ export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
 xcodebuild -project Thaw.xcodeproj -scheme Thaw -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath .build/dd-<task> test
 ```
 
-**Launch arguments:**
-- `-thawReset`: empty app, starts in onboarding.
-- `-thawFixture sprint1`: four cooling wants.
-- `-thawFixture history`: five decided wants.
-- `-thawFixture thawed`: three wants ready to review. Use this for U1 and U2.
-- A DEBUG first launch seeds both cooling and history.
+- **Unit tests only:** add `-only-testing:ThawTests`.
+- **UI tests only:** add `-only-testing:ThawUITests`. The full UI suite takes about 16 minutes.
+- **Fixtures:**
+  - `-thawReset`: empty app, starts in onboarding.
+  - `-thawFixture sprint1`: four cooling wants.
+  - `-thawFixture history`: decided wants.
+  - `-thawFixture thawed`: three ready wants (S$189, S$69, S$420 against S$300 fun money).
+- **Simulator taps can lag by one action.** Confirm each tap with a screenshot.
 
-**Simulator taps can lag by one action.** Take a screenshot after each tap to confirm it landed before tapping again. If the same lag happens on a real device, report it as a bug.
-
-**Your report must include:**
-- build and test results, with any failure output;
-- before and after screenshots at the default text size and at AX3;
-- what you did not check;
+**Report, at the end of each task:**
+- build and test results, with failure output;
+- before and after screenshots at the default size and at AX3;
+- what you didn't check;
 - identifiers you changed;
 - files outside your list that need changes.
 
-## Known gaps not in s12
-
-- **Dark mode and Increase Contrast:** the app forces light mode ([SceneDelegate.swift](../../Thaw/App/SceneDelegate.swift)), and the theme colours are fixed values. Worth its own sprint.
-- **UX-16** (no confirmation before Skip, no toast after Wait): partly covered by D3 in U3. Recheck after.
-
 ## History
 
-- [archive/s11-README.md](archive/s11-README.md) and [archive/s11-tasks/](archive/s11-tasks/): the s11 handover, done.
+- [archive/s12-README.md](archive/s12-README.md) and [archive/s12-tasks/](archive/s12-tasks/): s12, done.
+- [archive/s11-README.md](archive/s11-README.md) and [archive/s11-tasks/](archive/s11-tasks/): s11, done.
 - [archive/ux-audit.md](archive/ux-audit.md): the earlier modality audit.
-- Contracts: `docs/contracts/`. QA reports: `docs/qa/`.
+- [s11-screens.jpg](s11-screens.jpg): screenshots from the end of s11. V4 replaces it with `s13-screens.jpg`.

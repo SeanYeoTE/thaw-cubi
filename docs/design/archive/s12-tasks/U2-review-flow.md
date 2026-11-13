@@ -1,6 +1,8 @@
 # U2: Review flow (Payday review and Still want it)
 
-Read [../README.md](../README.md) first for the working rules, copy rules and build command.
+> **Done.** Shipped in SeanYeoTE/thaw-cubi#19. Kept for history; the code is the source of truth. Fixes found in review: `docs/design/README.md` (s13).
+
+Read [../README.md](../s12-README.md) first for the working rules, copy rules and build command.
 
 **Owns:** `Thaw/Features/PaydayReview`, `Thaw/Features/StillWantIt`, `ThawTests/PresenterPaydayReviewTests.swift`, `ThawTests/PresenterStillWantItTests.swift`, `Thaw/Features/Shared/WantStore+Review.swift`.
 **Wave:** 1. **Product decision:** D1. Confirm with the user before building.
