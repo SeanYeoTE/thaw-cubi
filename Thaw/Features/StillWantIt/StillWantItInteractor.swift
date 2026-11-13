@@ -12,6 +12,7 @@ final class StillWantItInteractor: StillWantItInteractorProtocol {
     }
 
     var budget: Decimal { store.effectiveSettings.funMoney }
+    var timerThreshold: Decimal { store.effectiveSettings.timerThreshold }
 
     func skip(_ want: Want) {
         store.update(want.id, status: .skipped)

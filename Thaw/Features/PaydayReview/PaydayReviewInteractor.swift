@@ -12,6 +12,7 @@ final class PaydayReviewInteractor: PaydayReviewInteractorProtocol {
     }
 
     var budget: Decimal { store.effectiveSettings.funMoney }
+    var timerThreshold: Decimal { store.effectiveSettings.timerThreshold }
 
     func apply(choices: [UUID: ReviewChoice]) {
         for want in wants {

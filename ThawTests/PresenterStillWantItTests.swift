@@ -7,16 +7,19 @@ final class PresenterStillWantItTests: XCTestCase {
         var models: [StillWantItViewModel] = []
         var momentLine: String?
         var momentCompletion: (() -> Void)?
+        var actionsEnabled: [Bool] = []
         func render(_ model: StillWantItViewModel) { models.append(model) }
         func showSkipMoment(line: String, completion: @escaping () -> Void) {
             momentLine = line
             momentCompletion = completion
         }
+        func setActionsEnabled(_ enabled: Bool) { actionsEnabled.append(enabled) }
     }
 
     private final class FakeInteractor: StillWantItInteractorProtocol {
         var wants: [Want]
         var budget: Decimal = 300
+        var timerThreshold: Decimal = 30
         var log: [String] = []
         init(wants: [Want]) { self.wants = wants }
         func skip(_ want: Want) { log.append("skip \(want.name)") }
@@ -84,11 +87,61 @@ final class PresenterStillWantItTests: XCTestCase {
         presenter.viewDidLoad()
         presenter.tapLetGo()
         XCTAssertEqual(view.momentLine, "S$189 stays with you.")
-        XCTAssertEqual(interactor.log, ["skip Keyboard"])
+        // Published before the moment completes, so other tabs update straight away.
+        XCTAssertEqual(interactor.log, ["skip Keyboard", "publish"])
+        XCTAssertEqual(view.actionsEnabled, [false])
         view.momentCompletion?()
         XCTAssertEqual(interactor.log, ["skip Keyboard", "publish"])
+        XCTAssertEqual(view.actionsEnabled, [false, true])
         XCTAssertEqual(view.models.last?.progressText, "2 of 2")
         XCTAssertEqual(view.models.last?.meterText, "S$231 left if you buy")
+    }
+
+    func testTapsDuringLetGoMomentAreIgnored() {
+        let (presenter, _, interactor, _) = make()
+        presenter.viewDidLoad()
+        presenter.tapLetGo()
+        presenter.tapBuy()
+        presenter.tapWait()
+        presenter.tapLetGo()
+        XCTAssertEqual(interactor.log, ["skip Keyboard", "publish"])
+    }
+
+    func testTappingAgainAfterLastWantIsDecidedDoesNothing() {
+        var finished = 0
+        let view = FakeView(), interactor = FakeInteractor(wants: [first]), router = FakeRouter()
+        let presenter = StillWantItPresenter(view: view, interactor: interactor, router: router,
+                                             onFinish: { finished += 1 })
+        presenter.viewDidLoad()
+        presenter.tapBuy()
+        presenter.tapBuy()
+        presenter.tapWait()
+        presenter.tapLetGo()
+        presenter.tapClose()
+        XCTAssertEqual(interactor.log, ["buy Keyboard", "publish"])
+        XCTAssertEqual(router.dismissed, 1)
+        XCTAssertEqual(finished, 1)
+        XCTAssertEqual(view.actionsEnabled, [false])
+    }
+
+    func testWaitTwiceOnLastWantWaitsOnce() {
+        let view = FakeView(), interactor = FakeInteractor(wants: [first]), router = FakeRouter()
+        let presenter = StillWantItPresenter(view: view, interactor: interactor, router: router, onFinish: nil)
+        presenter.viewDidLoad()
+        presenter.tapWait()
+        presenter.tapWait()
+        XCTAssertEqual(interactor.log, ["wait Keyboard", "publish"])
+        XCTAssertEqual(router.dismissed, 1)
+    }
+
+    func testQuickThawDoesNotCountAgainstFunMoney() {
+        let quick = Fixture.want("Case", 24)
+        let view = FakeView(), interactor = FakeInteractor(wants: [first, quick]), router = FakeRouter()
+        let presenter = StillWantItPresenter(view: view, interactor: interactor, router: router, onFinish: nil)
+        presenter.viewDidLoad()
+        presenter.tapBuy()
+        XCTAssertEqual(view.models.last?.name, "Case")
+        XCTAssertEqual(view.models.last?.meterText, "S$111 left if you buy")
     }
 
     func testSingleWantHidesProgress() {
