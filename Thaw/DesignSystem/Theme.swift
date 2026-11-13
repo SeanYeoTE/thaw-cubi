@@ -56,8 +56,11 @@ enum ThawFont {
         }
     }
 
+    /// Uncapped, so text reaches the system maximum at every size (a cap fails the Dynamic Type audit as
+    /// "partially unsupported"). Display sizes (26 pt and up) map to `.title1`/`.largeTitle`, which grow at most
+    /// about 2.1x and 1.8x at AX5, so their titles stay within the layouts without a cap.
     private static func scaled(_ font: UIFont, for size: CGFloat) -> UIFont {
-        UIFontMetrics(forTextStyle: style(for: size)).scaledFont(for: font, maximumPointSize: size * 2.4)
+        UIFontMetrics(forTextStyle: style(for: size)).scaledFont(for: font)
     }
 
     static func display(_ size: CGFloat) -> UIFont {

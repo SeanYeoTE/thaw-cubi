@@ -12,6 +12,31 @@ extension XCUIApplication {
         return byLabel.exists ? byLabel : descendants(matching: .any).matching(predicate).firstMatch
     }
 
+    /// A button in an alert or action sheet by its title. Action sheets aren't `alerts`, so query every button.
+    @MainActor func dialogButton(_ title: String) -> XCUIElement {
+        let predicate = NSPredicate(format: "label == %@ OR identifier == %@", title, title)
+        return descendants(matching: .button).matching(predicate).firstMatch
+    }
+
+    /// Counts elements with the identifier, scrolling down so cells below the fold are loaded too, then scrolls
+    /// back to the top. Distinct elements are told apart by their accessibility label.
+    @MainActor func countAll(id: String, maxScrolls: Int = 6) -> Int {
+        let query = descendants(matching: .any).matching(identifier: id)
+        var seen = Set<String>()
+        var scrolls = 0
+        while true {
+            let before = seen.count
+            for element in query.allElementsBoundByIndex where element.exists {
+                seen.insert(element.label)
+            }
+            guard seen.count > before, scrolls < maxScrolls else { break }
+            swipeUp()
+            scrolls += 1
+        }
+        for _ in 0..<scrolls { swipeDown() }
+        return seen.count
+    }
+
     @MainActor func tab(_ name: String) -> XCUIElement {
         tabBars.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
     }
