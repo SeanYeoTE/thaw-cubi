@@ -11,6 +11,9 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
     private let statusRow = UIStackView()
     private let statusButton = UIButton(type: .system)
     private let deleteButton = UIButton(type: .system)
+    /// Keeps the gap above Delete: custom spacing after a hidden view (the error label) is dropped.
+    private let deleteGap = UIView()
+    private var thawAnnouncement: Task<Void, Never>?
     private var statusOptions: [AddWantStatusOption] = []
     private var selectedStatus: Want.Status?
     private let captionLabel = UILabel()
@@ -23,6 +26,9 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
+
+    /// Space between the last field (or the error) and Delete.
+    static let deleteSpacing: CGFloat = 40
 
     override func buildContent() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(systemItem: .cancel, primaryAction: UIAction { [weak self] _ in
@@ -129,8 +135,11 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         deleteButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
         deleteButton.addAction(UIAction { [weak self] _ in self?.presenter?.tapDelete() }, for: .touchUpInside)
         deleteButton.isHidden = true
+        deleteGap.isHidden = true
+        deleteGap.heightAnchor.constraint(equalToConstant: Self.deleteSpacing - stack.spacing).isActive = true
+        stack.addArrangedSubview(deleteGap)
+        stack.setCustomSpacing(0, after: deleteGap)
         stack.addArrangedSubview(deleteButton)
-        stack.setCustomSpacing(40, after: errorLabel)
         presenter?.viewDidLoad()
     }
 
@@ -160,7 +169,10 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         statusButton.accessibilityIdentifier = "addwant.status"
         statusButton.accessibilityLabel = "Status"
         statusButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true
-        statusRow.addArrangedSubview(makeLabel("Status", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary))
+        let caption = makeLabel("Status", font: ThawFont.body(13, weight: .medium), color: Theme.inkSecondary)
+        // The button below is already labelled "Status", so VoiceOver would read it twice.
+        caption.isAccessibilityElement = false
+        statusRow.addArrangedSubview(caption)
         statusRow.addArrangedSubview(statusButton)
         stack.addArrangedSubview(statusRow)
     }
@@ -281,6 +293,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         refreshStatusMenu()
         deleteButton.configuration?.title = screen.deleteTitle
         deleteButton.isHidden = screen.deleteTitle == nil
+        deleteGap.isHidden = deleteButton.isHidden
         if let initial = screen.initial {
             nameField.text = initial.name
             priceField.text = initial.price
@@ -290,8 +303,20 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
     }
 
     func render(thawLine: String?) {
+        let changed = thawLine != thawLabel.text
         thawLabel.text = thawLine
         thawLabel.isHidden = thawLine == nil
+        if changed, isViewLoaded, view.window != nil { announceThawLine() }
+    }
+
+    /// Reads the thaw line out once typing settles, so VoiceOver doesn't speak every keystroke.
+    private func announceThawLine() {
+        thawAnnouncement?.cancel()
+        thawAnnouncement = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(1))
+            guard !Task.isCancelled, let self, let line = self.thawLabel.text, !self.thawLabel.isHidden else { return }
+            UIAccessibility.post(notification: .announcement, argument: line)
+        }
     }
 
     func showSavedMoment(line: String, completion: @escaping () -> Void) {
@@ -305,5 +330,6 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         errorLabel.text = message
         errorLabel.isHidden = false
         scrollToVisible(errorLabel)
+        UIAccessibility.post(notification: .announcement, argument: message)
     }
 }

@@ -23,6 +23,15 @@ enum ThawColumn {
         return NSDirectionalEdgeInsets(top: top, leading: safeArea.left + side, bottom: bottom, trailing: safeArea.right + side)
     }
 
+    /// Width of the title text, so its leading edge lines up with the cards. Plain sections fill the 700 pt
+    /// column; inset-grouped cards sit a further `Theme.Spacing.screen` inside it.
+    static func titleWidth(for appearance: ThawListAppearance) -> CGFloat {
+        switch appearance {
+        case .plain: maxWidth
+        case .insetGrouped: maxWidth - 2 * Theme.Spacing.screen
+        }
+    }
+
     /// Inset-grouped list section, capped to the column on wide screens.
     static func insetGroupedSection(
         _ configuration: UICollectionLayoutListConfiguration, environment: NSCollectionLayoutEnvironment
@@ -33,6 +42,14 @@ enum ThawColumn {
         section.contentInsets.trailing += extra
         return section
     }
+}
+
+/// How a list screen lays out its sections, which decides where its title starts.
+enum ThawListAppearance {
+    /// Sections use `ThawColumn.insets` with `contentInsetsReference = .none`.
+    case plain
+    /// Sections use `ThawColumn.insetGroupedSection`.
+    case insetGrouped
 }
 
 /// The large screen title, drawn by the screen because the system one stays blank over a collection view until
@@ -56,17 +73,19 @@ final class ThawListTitleView: UICollectionReusableView {
     private let label = ThawScreenTitleLabel()
     private var top: NSLayoutConstraint!
     private var bottom: NSLayoutConstraint!
+    private var width: NSLayoutConstraint!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         label.translatesAutoresizingMaskIntoConstraints = false
         addSubview(label)
-        let width = label.widthAnchor.constraint(equalToConstant: ThawColumn.maxWidth - 2 * Theme.Spacing.screen)
+        width = label.widthAnchor.constraint(equalToConstant: ThawColumn.titleWidth(for: .plain))
         width.priority = .defaultHigh
         top = label.topAnchor.constraint(equalTo: topAnchor)
         bottom = label.bottomAnchor.constraint(equalTo: bottomAnchor)
+        // Centred in the safe area, like the sections, so landscape stays aligned too.
         NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: centerXAnchor),
+            label.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor),
             label.leadingAnchor.constraint(greaterThanOrEqualTo: safeAreaLayoutGuide.leadingAnchor, constant: Theme.Spacing.screen),
             label.trailingAnchor.constraint(lessThanOrEqualTo: safeAreaLayoutGuide.trailingAnchor, constant: -Theme.Spacing.screen),
             width, top, bottom,
@@ -75,8 +94,9 @@ final class ThawListTitleView: UICollectionReusableView {
 
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
 
-    func configure(text: String, insets: ThawListTitleInsets) {
+    func configure(text: String, insets: ThawListTitleInsets, appearance: ThawListAppearance = .plain) {
         label.text = text
+        width.constant = ThawColumn.titleWidth(for: appearance)
         top.constant = insets.top
         bottom.constant = -insets.bottom
     }
@@ -99,6 +119,9 @@ class ThawListViewController: UIViewController {
 
     /// Space around the title text. Screens override it to keep their own rhythm.
     var titleInsets: ThawListTitleInsets { .standard }
+
+    /// Learned from the first section's layout, so the title lines up with plain and inset-grouped cards alike.
+    private(set) var listAppearance: ThawListAppearance = .plain
 
     /// Where the list ends. Settings overrides it to stop above the keyboard.
     var listBottomAnchor: NSLayoutYAxisAnchor { view.bottomAnchor }
@@ -129,7 +152,7 @@ class ThawListViewController: UIViewController {
             elementKind: Self.titleKind
         ) { [weak self] view, _, _ in
             guard let self else { return }
-            view.configure(text: self.title ?? "", insets: self.titleInsets)
+            view.configure(text: self.title ?? "", insets: self.titleInsets, appearance: self.listAppearance)
         }
 
         let titleItem = NSCollectionLayoutBoundarySupplementaryItem(
@@ -138,7 +161,12 @@ class ThawListViewController: UIViewController {
         let configuration = UICollectionViewCompositionalLayoutConfiguration()
         configuration.boundarySupplementaryItems = [titleItem]
         let layout = UICollectionViewCompositionalLayout(sectionProvider: { [weak self] index, environment in
-            self?.sectionLayout(at: index, environment: environment)
+            guard let self else { return nil }
+            let section = self.sectionLayout(at: index, environment: environment)
+            if index == 0, let section {
+                self.listAppearance = Self.appearance(of: section)
+            }
+            return section
         }, configuration: configuration)
 
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
@@ -153,6 +181,11 @@ class ThawListViewController: UIViewController {
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: listBottomAnchor),
         ])
+    }
+
+    /// Plain column sections opt out of the system margins; inset-grouped list sections keep them.
+    static func appearance(of section: NSCollectionLayoutSection) -> ThawListAppearance {
+        section.contentInsetsReference == .none ? .plain : .insetGrouped
     }
 
     func dequeueTitle(in collectionView: UICollectionView, at indexPath: IndexPath) -> UICollectionReusableView {
