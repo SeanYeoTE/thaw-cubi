@@ -68,6 +68,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         priceField.widthAnchor.constraint(equalToConstant: 120).isActive = true
         let nameAndPrice = AdaptiveStackView(arrangedSubviews: [nameField, priceField])
         nameAndPrice.compactAlignment = .top
+        nameAndPrice.largeAlignment = .fill
         nameAndPrice.spacing = 12
         nameAndPrice.distribution = .fill
         stack.addArrangedSubview(nameAndPrice)

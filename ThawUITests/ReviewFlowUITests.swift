@@ -85,8 +85,16 @@ final class ReviewFlowUITests: XCTestCase {
         tapWhenReady(all("payday.review").firstMatch, "Review button")
         tapWhenReady(all("review.letGo").firstMatch, "Let go on row 1")
         tapWhenReady(closeButton, "Close")
-        // The discard confirmation is an action sheet, not an alert.
-        tapWhenReady(app.dialogButton("Keep choosing"), "Keep choosing")
+        // The discard confirmation is an action sheet, not an alert. On iOS 26 it shows as a popover without its
+        // cancel button, so "Keep choosing" is a tap outside it.
+        XCTAssertTrue(app.dialogButton("Discard").waitForExistence(timeout: 8), "discard confirmation missing")
+        let keepChoosing = app.dialogButton("Keep choosing")
+        if keepChoosing.exists {
+            keepChoosing.tap()
+        } else {
+            tapWhenReady(app.otherElements["PopoverDismissRegion"], "outside the discard popover")
+        }
+        XCTAssertTrue(app.dialogButton("Discard").waitForNonExistence(timeout: 5), "discard confirmation stayed open")
         XCTAssertTrue(all("review.row").firstMatch.exists, "review should stay open")
         tapWhenReady(closeButton, "Close")
         tapWhenReady(app.dialogButton("Discard"), "Discard")
