@@ -2,12 +2,15 @@ import UIKit
 
 final class AddWantViewController: ScrollStackViewController, AddWantViewProtocol, UITextViewDelegate, UIAdaptivePresentationControllerDelegate {
     var presenter: AddWantPresenterProtocol?
-    private let nameField = UITextField()
+    /// A text view, not a field, so long names wrap instead of being clipped at large text sizes. Newlines are
+    /// kept out of it.
+    private let nameField = UITextView()
     private let priceField = UITextField()
     private let reasonView = UITextView()
     private let errorLabel = UILabel()
     private let thawLabel = UILabel()
     private let reasonPlaceholder = UILabel()
+    private let namePlaceholder = UILabel()
     private let statusRow = UIStackView()
     private let statusButton = UIButton(type: .system)
     private let deleteButton = UIButton(type: .system)
@@ -44,11 +47,12 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         captionLabel.isHidden = true
         stack.addArrangedSubview(captionLabel)
 
-        configure(nameField, placeholder: "What do you want?")
+        configureNameField()
         configure(priceField, placeholder: "0")
         nameField.accessibilityLabel = "Name"
         nameField.accessibilityIdentifier = "addwant.name"
         nameField.autocapitalizationType = .sentences
+        nameField.returnKeyType = .next
         priceField.accessibilityLabel = "Price in Singapore dollars"
         priceField.accessibilityIdentifier = "addwant.price"
         priceField.keyboardType = .decimalPad
@@ -65,7 +69,10 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
             prefix.bottomAnchor.constraint(lessThanOrEqualTo: prefixBox.bottomAnchor),
         ])
         priceField.leftView = prefixBox
-        priceField.widthAnchor.constraint(equalToConstant: 120).isActive = true
+        // Below required, so the price takes the full width once the pair stacks at accessibility sizes.
+        let priceWidth = priceField.widthAnchor.constraint(equalToConstant: 120)
+        priceWidth.priority = .defaultHigh
+        priceWidth.isActive = true
         let nameAndPrice = AdaptiveStackView(arrangedSubviews: [nameField, priceField])
         nameAndPrice.compactAlignment = .top
         nameAndPrice.largeAlignment = .fill
@@ -111,6 +118,8 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
             reasonPlaceholder.topAnchor.constraint(equalTo: reasonView.topAnchor, constant: 12),
             reasonPlaceholder.leadingAnchor.constraint(equalTo: reasonView.leadingAnchor, constant: 17),
             reasonPlaceholder.trailingAnchor.constraint(equalTo: reasonView.frameLayoutGuide.trailingAnchor, constant: -17),
+            // Grows the box at large text sizes so the placeholder isn't cut off.
+            reasonPlaceholder.bottomAnchor.constraint(lessThanOrEqualTo: reasonView.frameLayoutGuide.bottomAnchor, constant: -12),
         ])
 
         buildStatusRow()
@@ -191,8 +200,44 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         })
     }
 
+    private func configureNameField() {
+        nameField.delegate = self
+        nameField.font = ThawFont.body(16)
+        nameField.adjustsFontForContentSizeCategory = true
+        nameField.textColor = Theme.ink
+        nameField.backgroundColor = Theme.surface
+        nameField.layer.cornerRadius = 12
+        nameField.layer.borderWidth = 1
+        nameField.layer.borderColor = Theme.controlBorder.cgColor
+        nameField.isScrollEnabled = false
+        // 14 pt to the text, like the price field: 9 pt inset plus the text container's 5 pt line padding.
+        nameField.textContainerInset = UIEdgeInsets(top: 15, left: 9, bottom: 15, right: 9)
+        nameField.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true
+        nameField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        nameField.setContentHuggingPriority(.defaultLow, for: .horizontal)
+
+        namePlaceholder.text = "What do you want?"
+        namePlaceholder.font = ThawFont.body(16)
+        namePlaceholder.adjustsFontForContentSizeCategory = true
+        namePlaceholder.textColor = Theme.inkSecondary
+        namePlaceholder.numberOfLines = 0
+        namePlaceholder.isAccessibilityElement = false
+        namePlaceholder.isUserInteractionEnabled = false
+        namePlaceholder.translatesAutoresizingMaskIntoConstraints = false
+        nameField.addSubview(namePlaceholder)
+        NSLayoutConstraint.activate([
+            namePlaceholder.leadingAnchor.constraint(equalTo: nameField.frameLayoutGuide.leadingAnchor, constant: 14),
+            namePlaceholder.trailingAnchor.constraint(lessThanOrEqualTo: nameField.frameLayoutGuide.trailingAnchor, constant: -14),
+            namePlaceholder.topAnchor.constraint(equalTo: nameField.frameLayoutGuide.topAnchor, constant: 15),
+            namePlaceholder.bottomAnchor.constraint(lessThanOrEqualTo: nameField.frameLayoutGuide.bottomAnchor, constant: -15),
+        ])
+    }
+
+    private func updateNamePlaceholder() {
+        namePlaceholder.isHidden = !(nameField.text ?? "").isEmpty
+    }
+
     private func configure(_ field: UITextField, placeholder: String) {
-        field.placeholder = placeholder
         field.addAction(UIAction { [weak self, weak field] _ in
             if let field { self?.scrollToVisible(field) }
         }, for: .editingDidBegin)
@@ -216,6 +261,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
     }
 
     private func inputDidChange() {
+        updateNamePlaceholder()
         presenter?.inputChanged(input)
     }
 
@@ -233,8 +279,23 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
     }
 
     func textViewDidChange(_ textView: UITextView) {
-        reasonPlaceholder.isHidden = !textView.text.isEmpty
+        if textView === reasonView { reasonPlaceholder.isHidden = !textView.text.isEmpty }
         inputDidChange()
+    }
+
+    /// The name is one line of data even when it wraps: Return moves on to the price, pasted newlines become spaces.
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        guard textView === nameField, text.contains(where: \.isNewline) else { return true }
+        if text == "\n" {
+            priceField.becomeFirstResponder()
+            return false
+        }
+        let cleaned = text.components(separatedBy: .newlines).joined(separator: " ")
+        if let current = textView.text, let swap = Range(range, in: current) {
+            textView.text = current.replacingCharacters(in: swap, with: cleaned)
+            textViewDidChange(textView)
+        }
+        return false
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -297,6 +358,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         deleteGap.isHidden = deleteButton.isHidden
         if let initial = screen.initial {
             nameField.text = initial.name
+            updateNamePlaceholder()
             priceField.text = initial.price
             reasonView.text = initial.reason
             reasonPlaceholder.isHidden = !initial.reason.isEmpty
