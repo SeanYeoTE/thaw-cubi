@@ -101,7 +101,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         reasonView.backgroundColor = Theme.surface
         reasonView.layer.cornerRadius = 12
         reasonView.layer.borderWidth = 1
-        reasonView.layer.borderColor = Theme.controlBorder.cgColor
+        reasonView.setBorderColor(Theme.controlBorder)
         reasonView.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
         reasonView.heightAnchor.constraint(greaterThanOrEqualToConstant: 120).isActive = true
         stack.addArrangedSubview(reasonView)
@@ -166,7 +166,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         statusButton.backgroundColor = Theme.surface
         statusButton.layer.cornerRadius = 12
         statusButton.layer.borderWidth = 1
-        statusButton.layer.borderColor = Theme.controlBorder.cgColor
+        statusButton.setBorderColor(Theme.controlBorder)
         statusButton.showsMenuAsPrimaryAction = true
         statusButton.accessibilityIdentifier = "addwant.status"
         statusButton.accessibilityLabel = "Status"
@@ -200,7 +200,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         nameField.backgroundColor = Theme.surface
         nameField.layer.cornerRadius = 12
         nameField.layer.borderWidth = 1
-        nameField.layer.borderColor = Theme.controlBorder.cgColor
+        nameField.setBorderColor(Theme.controlBorder)
         nameField.isScrollEnabled = false
         // 14 pt to the text, like the price field: 9 pt inset plus the text container's 5 pt line padding.
         nameField.textContainerInset = UIEdgeInsets(top: 15, left: 9, bottom: 15, right: 9)
@@ -240,7 +240,7 @@ final class AddWantViewController: ScrollStackViewController, AddWantViewProtoco
         field.backgroundColor = Theme.surface
         field.layer.cornerRadius = 12
         field.layer.borderWidth = 1
-        field.layer.borderColor = Theme.controlBorder.cgColor
+        field.setBorderColor(Theme.controlBorder)
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 14, height: 1))
         field.leftViewMode = .always
         field.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [.foregroundColor: Theme.inkSecondary])

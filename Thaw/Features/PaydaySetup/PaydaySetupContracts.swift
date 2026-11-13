@@ -63,7 +63,7 @@ protocol PaydaySetupRouterProtocol: AnyObject {
 // MARK: Settings tab
 
 nonisolated enum SettingsRowID: Hashable {
-    case payday, nextPayday, funMoney, timerThreshold, timerDays, reviewTime
+    case payday, nextPayday, funMoney, timerThreshold, timerDays, reviewTime, appearance
 }
 
 struct SettingsRowViewModel: Equatable {
@@ -75,6 +75,8 @@ struct SettingsRowViewModel: Equatable {
         case stepper(value: Int, minimum: Int, maximum: Int)
         /// Time picker; minutes since midnight.
         case time(minutes: Int)
+        /// Light, Dark or System segmented choice.
+        case appearance(AppearanceMode)
     }
 
     let id: SettingsRowID
@@ -100,6 +102,7 @@ struct SettingsContent: Equatable {
 protocol SettingsViewProtocol: AnyObject {
     func render(_ content: SettingsContent)
     func playSaveFeedback()
+    func applyAppearance(_ mode: AppearanceMode)
 }
 
 protocol SettingsPresenterProtocol: AnyObject {
@@ -110,6 +113,7 @@ protocol SettingsPresenterProtocol: AnyObject {
     func amountEdited(_ id: SettingsRowID, text: String)
     func stepperChanged(_ id: SettingsRowID, value: Int)
     func reviewTimeChanged(minutes: Int)
+    func appearanceChanged(_ mode: AppearanceMode)
 }
 
 protocol SettingsRouterProtocol: AnyObject {

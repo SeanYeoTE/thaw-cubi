@@ -57,6 +57,7 @@ final class SettingsViewController: ThawListViewController, SettingsViewProtocol
     private func configureDataSource() {
         let plain = UICollectionView.CellRegistration<UICollectionViewListCell, SettingsRowID> { [weak self] cell, _, id in
             guard let model = self?.row(id) else { return }
+            SettingsListStyle.styleBackground(cell)
             var configuration = UIListContentConfiguration.valueCell()
             SettingsListStyle.style(&configuration)
             configuration.text = model.title
@@ -83,11 +84,17 @@ final class SettingsViewController: ThawListViewController, SettingsViewProtocol
             cell.configure(model, minutes: minutes)
             cell.onChange = { [weak self] minutes in self?.presenter?.reviewTimeChanged(minutes: minutes) }
         }
+        let appearance = UICollectionView.CellRegistration<SettingsAppearanceCell, SettingsRowID> { [weak self] cell, _, id in
+            guard let model = self?.row(id), case .appearance(let mode) = model.control else { return }
+            cell.configure(model, mode: mode)
+            cell.onChange = { [weak self] mode in self?.presenter?.appearanceChanged(mode) }
+        }
         dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView) { [weak self] view, path, id in
             switch self?.row(id)?.control {
             case .amount: view.dequeueConfiguredReusableCell(using: amount, for: path, item: id)
             case .stepper: view.dequeueConfiguredReusableCell(using: stepper, for: path, item: id)
             case .time: view.dequeueConfiguredReusableCell(using: time, for: path, item: id)
+            case .appearance: view.dequeueConfiguredReusableCell(using: appearance, for: path, item: id)
             default: view.dequeueConfiguredReusableCell(using: plain, for: path, item: id)
             }
         }
@@ -125,6 +132,10 @@ final class SettingsViewController: ThawListViewController, SettingsViewProtocol
             snapshot.reconfigureItems(snapshot.itemIdentifiers)
         }
         dataSource.apply(snapshot, animatingDifferences: false)
+    }
+
+    func applyAppearance(_ mode: AppearanceMode) {
+        mode.apply(to: view.window?.windowScene)
     }
 
     func playSaveFeedback() {

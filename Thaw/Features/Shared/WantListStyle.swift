@@ -27,7 +27,7 @@ enum WantListStyle {
             done(true)
             onEdit()
         }
-        edit.image = UIImage(systemName: "pencil")
+        edit.image = UIImage(systemName: "pencil")?.withTintColor(Theme.onAccent, renderingMode: .alwaysOriginal)
         edit.backgroundColor = Theme.accent
         let configuration = UISwipeActionsConfiguration(actions: [delete, edit])
         configuration.performsFirstActionWithFullSwipe = false

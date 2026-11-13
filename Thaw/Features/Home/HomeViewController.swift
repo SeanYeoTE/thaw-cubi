@@ -61,7 +61,7 @@ final class HomeViewController: ThawListViewController, HomeViewProtocol, UIColl
     private func makeAddItem() -> UIBarButtonItem {
         let add = UIButton(type: .custom)
         add.setImage(UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .bold)), for: .normal)
-        add.tintColor = .white
+        add.tintColor = Theme.onAccent
         add.backgroundColor = Theme.accent
         add.layer.cornerRadius = 22
         add.accessibilityLabel = "Add a want"

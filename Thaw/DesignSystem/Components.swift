@@ -32,7 +32,7 @@ final class CardView: UIView {
         backgroundColor = Theme.surface
         layer.cornerRadius = Theme.Radius.card
         layer.borderWidth = 1
-        layer.borderColor = Theme.border.cgColor
+        setBorderColor(Theme.border)
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
@@ -48,7 +48,7 @@ final class PillButton: UIButton {
         case .primary:
             config = .filled()
             config.baseBackgroundColor = Theme.accent
-            config.baseForegroundColor = .white
+            config.baseForegroundColor = Theme.onAccent
         case .secondary:
             config = .filled()
             config.baseBackgroundColor = Theme.surface
@@ -117,7 +117,7 @@ final class CubeIconView: UIView {
         eyes.move(to: p(89, 86)); eyes.addLine(to: p(107, 86))
         eyes.lineWidth = 8 * scale
         eyes.lineCapStyle = .round
-        Theme.ink.setStroke()
+        Theme.cubiInk.setStroke()
         eyes.stroke()
 
         let mouth = UIBezierPath()

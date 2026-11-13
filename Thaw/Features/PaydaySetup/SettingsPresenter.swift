@@ -64,6 +64,13 @@ final class SettingsPresenter: SettingsPresenterProtocol, PaydaySetupInteractorO
         save(updated)
     }
 
+    func appearanceChanged(_ mode: AppearanceMode) {
+        guard mode != AppearanceMode.saved else { return }
+        AppearanceMode.saved = mode
+        view?.applyAppearance(mode)
+        render()
+    }
+
     // MARK: Saving
 
     private func save(_ updated: PaydaySettings) {
@@ -109,6 +116,7 @@ final class SettingsPresenter: SettingsPresenterProtocol, PaydaySetupInteractorO
         let funMoney = Formatting.sgd(settings.funMoney)
         let threshold = Formatting.sgd(settings.timerThreshold)
         let timer = PaydayRuleModel.daysText(settings.timerDays)
+        let appearance = AppearanceMode.saved
         return SettingsContent(title: "Settings", sections: [
             SettingsSectionViewModel(id: "payday", header: "Payday", footer: nil, rows: [
                 SettingsRowViewModel(id: .payday, title: "Payday", value: rule.summary,
@@ -135,6 +143,11 @@ final class SettingsPresenter: SettingsPresenterProtocol, PaydaySetupInteractorO
                                      control: .stepper(value: settings.timerDays,
                                                        minimum: Self.timerDaysRange.lowerBound,
                                                        maximum: Self.timerDaysRange.upperBound)),
+            ]),
+            SettingsSectionViewModel(id: "appearance", header: "Appearance", footer: nil, rows: [
+                SettingsRowViewModel(id: .appearance, title: "Theme", value: appearance.title,
+                                     accessibilityLabel: "Theme", accessibilityValue: appearance.title,
+                                     control: .appearance(appearance)),
             ]),
             SettingsSectionViewModel(id: "reminders", header: "Reminders",
                                      footer: "Entered by you, kept on this phone. Thaw never reads your bank.", rows: [

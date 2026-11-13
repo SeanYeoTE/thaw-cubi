@@ -12,7 +12,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         ThawAppearance.apply()
         let window = UIWindow(windowScene: windowScene)
         window.tintColor = Theme.accent
-        window.overrideUserInterfaceStyle = .light
+        AppearanceMode.saved.apply(to: window)
         window.rootViewController = store.settings == nil ? onboarding() : tabs()
         window.makeKeyAndVisible()
         self.window = window

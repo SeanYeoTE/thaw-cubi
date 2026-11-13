@@ -27,7 +27,7 @@ final class ReviewChoiceControl: UIStackView {
                 config.imagePadding = 4
                 if button.isSelected {
                     config.baseBackgroundColor = Theme.accent
-                    config.baseForegroundColor = .white
+                    config.baseForegroundColor = Theme.onAccent
                     config.image = UIImage(systemName: "checkmark")
                 } else {
                     config.baseBackgroundColor = Theme.surface
