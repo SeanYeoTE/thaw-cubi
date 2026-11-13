@@ -10,22 +10,22 @@ Full suite run on `main` at `8c5c8cf`, iPhone 17 Pro simulator:
   - all 11 accessibility audits;
   - `ReviewFlowUITests.testReviewCloseWithChangesAsksBeforeDiscarding`.
 
-| # | Finding | Severity | Task |
-|---|---|---|---|
-| 1 | Crash: double-tap Buy or Wait on the last want in "Still want it?" | Must fix | V1 |
-| 2 | Double-tapping Done in the Payday review applies decisions twice; a Wait want moves two paydays | Must fix | V1 |
-| 3 | The Payday tab and the review disagree on the budget (quick thaws, cut-off rule, ordering) | Must fix | V1 |
-| 4 | Accessibility audit: 123× "Dynamic Type font sizes are partially unsupported", 1× text clipped (Payday review), 2× potentially inaccessible text (Stats) | Must fix | V2 (fonts, Stats, tests), V1 (clipped review text) |
-| 5 | UI test queries the review discard dialog as an alert; it is an action sheet | Must fix | V2 |
-| 6 | Cubi idle loops make opacity fades additive, so the star twinkle and drip fade never show | Must fix | V3 |
-| 7 | Drawn large title sits 20 pt inside the cards on iPad and wide screens (Cooling, Stats) | Should fix | V3 |
-| 8 | Reopening a decided want in Edit shows no thaw line, so it can return as already thawed without warning | Should fix | V3 |
-| 9 | The gap above Delete in the Edit sheet is likely lost (spacing attached to a hidden label) | Should fix | V3 |
-| 10 | After Let go in "Still want it?", other tabs refresh only after the Cubi moment ends | Should fix | V1 |
-| 11 | No s12 QA report, and D1–D3 weren't recorded | Process | This README, V4 |
-| 12 | "Remind me tonight" is wiped by the next `Reminders.refresh`, because `cancelAll()` removes every pending notification and the reminder is never rescheduled | Must fix | V5 |
-| 13 | The payday notification, the Payday tab's "Remind me tonight" and the notification's own "Remind me tonight" action count different wants | Must fix | V5 |
-| 14 | Notifications have been barely tested since sprint 3: no test of what gets scheduled or where a tap goes. The s11 change (a tap opens the Payday tab) has never been checked on a device. The notification handler also captures fun money once at launch. | Must fix | V5 |
+| # | Finding | Severity | Task | Status (V4) |
+|---|---|---|---|---|
+| 1 | Crash: double-tap Buy or Wait on the last want in "Still want it?" | Must fix | V1 | Fixed in code: actions disabled while a decision runs (`StillWantItPresenter.beginDecision`); `PresenterStillWantItTests.testTappingAgainAfterLastWantIsDecidedDoesNothing`, `testWaitTwiceOnLastWantWaitsOnce`. Not checked on the simulator (V4 blocked) |
+| 2 | Double-tapping Done in the Payday review applies decisions twice; a Wait want moves two paydays | Must fix | V1 | Fixed in code: `applied` guard in `PaydayReviewPresenter`; `IntegrationReviewTests.testReviewAppliesEachChoiceOnceEvenWhenDoneIsTappedTwice`, `testDoneTwiceAppliesOnce`. Not checked on the simulator |
+| 3 | The Payday tab and the review disagree on the budget (quick thaws, cut-off rule, ordering) | Must fix | V1 | Fixed in code: one rule, `FunMoneyPlan`, used by the Payday tab, the review, "Still want it?" and `Reminders`; `PresenterPaydayTests.testPaydayTabAndReviewAgreeOnLeftWithAQuickThaw`. Figures not compared on the simulator |
+| 4 | Accessibility audit: 123× "Dynamic Type font sizes are partially unsupported", 1× text clipped (Payday review), 2× potentially inaccessible text (Stats) | Must fix | V2 (fonts, Stats, tests), V1 (clipped review text) | Fixed: all 11 audits pass on `36136f7` (23 UI tests, 0 failures) |
+| 5 | UI test queries the review discard dialog as an alert; it is an action sheet | Must fix | V2 | Fixed: `testReviewCloseWithChangesAsksBeforeDiscarding` passes on `36136f7` |
+| 6 | Cubi idle loops make opacity fades additive, so the star twinkle and drip fade never show | Must fix | V3 | Fixed in code: idle fades use absolute opacity; `CubiMotionTests.testIdleFadesUseAbsoluteOpacity`. Not seen by eye |
+| 7 | Drawn large title sits 20 pt inside the cards on iPad and wide screens (Cooling, Stats) | Should fix | V3 | Fixed in code: `ThawColumnTests.testTitleLinesUpWithPlainSections`, `testTitleLinesUpWithInsetGroupedCards`. Not seen on iPad |
+| 8 | Reopening a decided want in Edit shows no thaw line, so it can return as already thawed without warning | Should fix | V3 | Fixed in code: "Back to cooling · …" line; `PresenterAddWantTests.testReopening*`. Not seen by eye |
+| 9 | The gap above Delete in the Edit sheet is likely lost (spacing attached to a hidden label) | Should fix | V3 | Fixed in code: `deleteGap` spacer in `AddWantViewController`. Not seen by eye |
+| 10 | After Let go in "Still want it?", other tabs refresh only after the Cubi moment ends | Should fix | V1 | Fixed in code: `publishChange()` before the Cubi moment; `testLetGoShowsMomentThenAdvancesAndSpendsNothing`. Not seen on the simulator |
+| 11 | No s12 QA report, and D1–D3 weren't recorded | Process | This README, V4 | Partly fixed: D1–D3 recorded above. The s13 report, [sprint-13-report.md](../qa/sprint-13-report.md), exists, but the simulator pass was blocked, so this stays open |
+| 12 | "Remind me tonight" is wiped by the next `Reminders.refresh`, because `cancelAll()` removes every pending notification and the reminder is never rescheduled | Must fix | V5 |  |
+| 13 | The payday notification, the Payday tab's "Remind me tonight" and the notification's own "Remind me tonight" action count different wants | Must fix | V5 |  |
+| 14 | Notifications have been barely tested since sprint 3: no test of what gets scheduled or where a tap goes. The s11 change (a tap opens the Payday tab) has never been checked on a device. The notification handler also captures fun money once at launch. | Must fix | V5 |  |
 
 ## Tasks
 
