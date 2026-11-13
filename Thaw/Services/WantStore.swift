@@ -104,8 +104,29 @@ nonisolated final class WantStore: @unchecked Sendable {
     }
 
     func save(settings newSettings: PaydaySettings) {
+        let old = effectiveSettings
         settings = newSettings
+        if old.rule != newSettings.rule || old.reviewHour != newSettings.reviewHour
+            || old.reviewMinute != newSettings.reviewMinute {
+            rescheduleCoolingWants(from: old, to: newSettings)
+        }
         persist()
+    }
+
+    /// Moves payday-based wants that haven't thawed yet onto the new payday rule, keeping any paydays
+    /// they were already told to wait. Timer wants and wants already awaiting review are untouched.
+    private func rescheduleCoolingWants(from old: PaydaySettings, to new: PaydaySettings, now: Date = .now) {
+        for index in wants.indices where wants[index].status == .cooling
+            && wants[index].price >= old.timerThreshold && wants[index].thawsAt > now {
+            let frozenOn = wants[index].frozenOn
+            var oldDate = old.nextPayday(after: frozenOn, calendar: calendar)
+            var newDate = new.nextPayday(after: frozenOn, calendar: calendar)
+            while oldDate < wants[index].thawsAt {
+                oldDate = old.paydayAfter(oldDate, calendar: calendar)
+                newDate = new.paydayAfter(newDate, calendar: calendar)
+            }
+            wants[index].thawsAt = newDate
+        }
     }
 
     func decide(id: UUID, keep: Bool, now: Date = .now) {

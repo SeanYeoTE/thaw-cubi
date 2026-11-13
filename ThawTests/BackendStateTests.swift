@@ -240,4 +240,19 @@ final class BackendStateTests: XCTestCase {
         XCTAssertEqual(store.want(id: want.id)?.status, .skipped)
         XCTAssertEqual(store.want(id: want.id)?.thawsAt, want.thawsAt)
     }
+
+    func testChangingPaydayMovesCoolingPaydayWantsOnly() {
+        let store = WantStore(fileURL: nil)
+        store.save(settings: .default)
+        store.add(name: "Keyboard", price: 189, reason: "r")
+        store.add(name: "Case", price: 10, reason: "r")
+        let timerDate = store.wants[0].thawsAt
+        var changed = PaydaySettings.default
+        changed.rule = .sameDate(day: 1)
+        store.save(settings: changed)
+
+        let keyboard = store.wants.first { $0.name == "Keyboard" }!
+        XCTAssertEqual(keyboard.thawsAt, changed.nextPayday(after: keyboard.frozenOn, calendar: .current))
+        XCTAssertEqual(store.wants.first { $0.name == "Case" }!.thawsAt, timerDate)
+    }
 }
